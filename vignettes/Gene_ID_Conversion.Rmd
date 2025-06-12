@@ -1,0 +1,170 @@
+---
+title: "Accessing component databases of VEuPathDB"
+author:
+- name: Rohit Satyam
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: Alberto Maillo
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: David Gomez-Cabrero
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: Arnab Pain
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+abstract: >
+  This section covers the capability of `plasmoRUtils` to access various VEuPathDb database and carry out ID conversion tasks, fetch preconfigured data tables and few other tasks. 
+clean: false
+date: "`r format(Sys.Date(), '%d %B, %Y')`"
+package: plasmoRUtils
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Accessing component databases of VEuPathDB}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{BiocStyle} 
+  %\VignettePackage{plasmoRUtils}
+  %\VignetteEngine{knitr::rmarkdown}
+bibliography: references.bib
+link-citations: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,cache = TRUE, warning = FALSE,message = FALSE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+The `r Rpackage("plasmoRUtils")` package streamlines access to VEuPathDB's family of 12 specialized databases such as ToxoDB, PlasmoDB, and PiroplasmaDB [@amos2022veupathdb]. It provides direct data retrieval capabilities through VEuPathDB's RESTful API, enabling seamless integration of biological data into R workflows. The package supports downloading both standard and customized data tables, making it particularly valuable for researchers needing to combine data from multiple sources for downstream analysis.
+
+```{r setup}
+# Load package and some other useful packages by using
+suppressPackageStartupMessages(
+  suppressWarnings({
+    library(plasmoRUtils)
+    library(dplyr)
+    library(plyr)}))
+```
+
+# Gene ID Conversion
+
+A common challenge in bioinformatics involves mapping between different identifier systems across databases. For apicomplexan research, this might include converting between UniProt IDs, legacy gene identifiers, and current Ensembl gene IDs. The `toGeneid()` function addresses this need by retrieving up-to-date annotations from VEuPathDB databases, supporting bidirectional conversion between various ID types through flexible parameter specification.
+
+## Retrieving Gene Annotations and Alternative IDs
+
+The `toGeneid()` function enables annotation retrieval when provided with Ensembl gene IDs. By default, it returns essential information including gene names, symbols, outdated gene IDs, and protein Uniprot IDs. The function's versatility extends to supporting custom field requests through its `customFields` parameter, with available options documented in the `getTable()` help section.
+
+```{r}
+## Get annotations for list of geneIDs for PF3D7
+toGeneid(c("PF3D7_0420300", "PF3D7_0621000"), from="ensembl")
+## Get annotations for list of geneIDs for organisms other than PF3D7
+toGeneid(inputid = c("TGME49_304740","TGME49_208030"),from="ensembl",org="Toxoplasma gondii ME49", db="toxodb")
+
+## Convert uniprot IDs back to gene IDs. It will also provide Product description and Gene Symbol
+
+toGeneid(inputid = c("Q8I1N6","C6KT48"),from="uniprot",to="ensembl" )
+
+
+## Using customFields to get only columns of interest
+toGeneid(inputid = c("TGME49_304740","TGME49_208030"),
+         from="ensembl",org="Toxoplasma gondii ME49",
+         db="toxodb",
+         customFields=c("primary_key","predicted_go_component","annotated_go_function"))
+
+```
+
+> **Note:** Successful ID conversion requires precise organism nomenclature matching VEuPathDB's conventions. For example, *`Toxoplasma gondii ME49`* must include proper spacing and special characters. Invalid query would be *`Toxoplasma gondiiME49`* or short forms `TgME49`.
+
+This functionality proves particularly valuable for enhancing differential expression analysis results with comprehensive annotations, enabling complete workflow automation without leaving command-line interfaces on HPC systems.
+
+## Accessing Preconfigured Data Tables from VEuPathDB's component sites
+
+Since VEuPathDB API documentation specifically encourages to use specific organism database as quoted below, we developed `getTable()` function to fetch fields of interests from each database separately.
+
+> There are 12 component sites and one portal: VEuPathDB.org. The component sites are: AmoebaDB, CryptoDB, FungiDB, GiardiaDB, HostDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, ToxoDB, TrichDB, TriTrypDB and VectorBase. For most record types (all but dataset and organism), when running a search, the portal reaches out to component sites to get the search results. That means it will be faster to use a component site directly when you can.
+
+Some frequently required fields have been provided in the help section of `getTable()`.
+
+```{r}
+## To fetch table for all the genes present in an organism
+
+getTable(org="Plasmodium falciparum 3D7", db="plasmodb") %>% head()
+
+## User can also provide custom fields. For example we wish to download the P. falciparum 3D7 Proteome and phosphoproteome data during intraerythrocytic development (Quantitative) (Pease et al.)
+
+getTable(org="Plasmodium falciparum 3D7", db="plasmodb", customFields = c("primary_key","pan_6365","pan_6366","pan_6367")) %>% head()
+
+```
+
+For more information on fields that can be supplied to `getTable()`, use the following steps:
+
+1.  Go to database of your interest (Say "PlasmoDB")
+
+2.  Click on `Annotation, curation and identifiers` tab on your left and select `List of IDs`
+
+3.  Scroll down and click on `Build a Web Services URL from this Search >>` hyperlink.
+
+4.  Under the section `Choose Columns:` choose fields of your interest. Most of these fields are included in help section of `getTable()`. However, fields specific to a particular database such as dataset related fields (starts with "pan\_") are excluded.
+
+5.  Once you select fields, they are updated in **POST** section of the webpage query builder.
+
+The constituent databases of VEuPathDB also provide some preconfigured tables which can not be fetched via `getTable()` function. To enable users to fetch such tables, we wrote another function called `getPreconfiguredTable()` the usage of which has been shown below.
+
+```{r}
+## Fetch pathway table for all the genes from MPMP database
+
+getPreconfiguredTable(org = "Plasmodium falciparum 3D7",db = "plasmodb",customField = "MetabolicPathwaysMPMP") %>% head()
+
+```
+
+Please note that the MPMP pathway version provided by PlasmoDB is [outdated](https://plasmodb.org/plasmo/app/record/dataset/DS_1e177b728b) (`03-2019`). Some pathways have been revised or removed in its entirety. If you wish to access the latest MPMP version, you can use `data("mpmp.28Aug2024")` for you analysis which was scraped by us. If you wish to use this geneset for MPMP pathway enrichment analysis using `r CRANpkg("pathfindR")`, you can do so by using `data("pathfindrMPMP")`.
+
+Similarly, predictions like `TMHMM` and `SignalP` and `InterPro` have not been updated given the recent funding crunch and should be therefore used with caution. We will discuss more about it in a separate tutorial.
+
+> Note: We urge the users to cite the original articles of the related datasets alongside plasmoRUtils.
+
+## Fetching genome metadata and strain names
+
+In above examples, we saw the importance of passing exact name to the `org` argument for `toGeneid()` to function properly. A helper function is provided to achieve this called `listVeupathdb()`. By default, 11 columns are returned including organism name, the respective database present in "VEuPathDB Project" column and some more additional information. However, you can limit the search to columns of your interests as shown below. As stated by VEuPathDB:
+
+> The best use of the VEuPathDB portal is to get a table with all organisms in our sites, and for each organism: the component site, and the urls to access their fasta and gff files.
+
+```{r}
+listVeupathdb() %>% head()
+listVeupathdb(customFields=c("species", "project_id")) %>% head()
+```
+
+Since this function also provide URLs of FASTA and GFF files, you can use it to find the URLs of the files you are interested in and import them in R directly without leaving the console.
+
+```{r}
+listVeupathdb() %>% 
+  subset(.,Organism =="Edhazardia aedis USNM 41457") %>% 
+  select(`GFF Download Link`) %>% as.character() %>% 
+  rtracklayer::import.gff3() %>% head()
+```
+
+## Mapping PDB IDs to Gene IDs
+
+There is currently no facility in VEuPathDB to convert the PDB IDs to respective gene IDs. If PDB ID corresponds to a multimer complex and if you have multiple such PDB ids, it becomes arduous to map them to Gene IDs manually. To provide solution to this issue, we can first convert the PDB chains to Uniprot IDs using our own `pdb2uniprot()` function and then can use `toGeneid()` function to obtain gene IDs.
+
+```{r}
+pdbids <- c("7D2W","4U5A","6E10")
+df <- lapply(pdbids, pdb2uniprot) %>% plyr::ldply()
+
+geneids <- toGeneid(inputid = unique(df$attribute),from = "uniprot",to = "ensembl")
+
+## Combining the geneIDs with df
+S4Vectors::merge(df,geneids,all=TRUE, by.x="attribute", by.y="UniProt ID(s)") %>% head()
+
+```
+
+# Session {.unnumbered}
+
+```{r}
+sessionInfo()
+```
+
+# References {.unnumbered}

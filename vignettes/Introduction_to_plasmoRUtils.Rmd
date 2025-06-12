@@ -1,0 +1,331 @@
+---
+title: "Introduction to plasmoRUtils"
+author:
+- name: Rohit Satyam
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: Alberto Maillo
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: David Gomez-Cabrero
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: Arnab Pain
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+abstract: >
+  The package `plasmoRUtils` is designed to enable users to access various *Plasmodium* and Apicomplexan-related databases through single-line R functions. It also provides convenience functions for rapid analysis.
+date: "`r format(Sys.Date(), '%d %B, %Y')`"
+package: plasmoRUtils
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+    toc: true
+    number_sections: true
+vignette: |
+  %\VignetteIndexEntry{Introduction to plasmoRUtils}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{BiocStyle}
+  %\VignettePackage{plasmoRUtils}
+  %\VignetteEngine{knitr::rmarkdown}
+bibliography: references.bib
+link-citations: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,cache = TRUE, warning = FALSE,message = FALSE,
+  comment = "#>"
+)
+```
+
+# Installation
+
+Before downloading the package, install the following dependencies.
+
+```{r, eval=FALSE}
+cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'ggsci', 'rvest', 'easyPubMed', 'plyr', 'scales', 'ggplot2', 'glue', 'tidyr', 'tibble', 'data.table', 'plotly', 'purrr', 'stringr', 'S4Vectors', 'echarts4r', 'magrittr', 'bio3d', 'httr', 'jsonlite', 'ggpubr', 'gt', 'mgsub', 'reshape2','pathfindR')
+
+install.packages(setdiff(cranpkgs, rownames(installed.packages())), dependencies = TRUE)
+
+biocpkgs <- c("rmarkdown","pRoloc","knitr","BiocStyle","DESeq2","styler","utils","IRanges","BiocGenerics","rtracklayer","scuttle","txdbmaker","topGO","drawProteins","GenomicFeatures","biomaRt","AnnotationForge","Biostrings","GenomeInfoDb","SingleCellExperiment","SingleR","NOISeq","GenomicRanges","BSgenome")
+
+BiocManager::install(setdiff(biocpkgs, rownames(installed.packages())), dependencies = TRUE)
+
+```
+
+
+The `r Rpackage("plasmoRUtils")` package is available on CRAN and can be installed as follows:
+
+```{r, eval=FALSE}
+install.packages("plasmoRUtils")
+
+# Once installed load the library as
+library(plasmoRUtils)
+
+## To re-check if all the dependencies that are required by plasmoRUtils are installed
+install_dependencies()
+```
+
+# Introduction
+
+Using `r Rpackage("plasmoRUtils")`, users can fetch data from VEuPathDB and its 12 component sites databases (VEuPathDBs) and transform it into formats compatible with other R packages in a straightforward manner. Data tables (both preconfigured and user-configured) can be downloaded from VEuPathDBs directly within R/RStudio, thanks to a variety of R functions and the RESTful API provided by VEuPathDBs.
+
+For databases that lack APIs, we developed database-specific "searchX" functions (where X represents the database) that utilize the rvest package for web crawling to retrieve data, which is then transformed into tables that can be saved and shared. Additionally, we created a function to enable programmatic access to the MPMP database for the first time, allowing users to download and share data tables at their convenience. The package also provides several other data sets that we reanalyzed using the latest annotations from VEuPathDBs that can be used by various functions.
+
+Databases covered includes:
+
+1.  [HitPredict](https://www.hitpredict.org/)
+2.  [ApicoTFDB](https://bioinfo.icgeb.res.in/PtDB/)
+3.  [Malaria.tools](https://malaria.sbs.ntu.edu.sg/)
+4.  Malaria Parasite Metabolic Pathways ([MPMP](https://mpmp.huji.ac.il/)) database
+5.  Malaria Important Interacting Proteins ([MIIP](http://www.hpppi.iicb.res.in/pfnet/stage-map.html))
+6.  [Phenoplasm](https://phenoplasm.org/)
+7.  [PlasmoBase](http://genome.lcqb.upmc.fr/plasmobase/)
+8.  [Uniprot](https://www.uniprot.org/)
+9.  [Malaria Cell Atlas](https://www.malariacellatlas.org/), etc. For exhaustive list, see subsections below.
+
+```{r setup}
+# Load package and some other useful packages by using
+suppressPackageStartupMessages(
+  suppressWarnings({
+    library(plasmoRUtils)
+    library(dplyr)
+    library(plyr)}))
+```
+
+# Accessing databases with plasmoRUtils search functions
+
+`r Rpackage("plasmoRUtils")` package have several search function to fetch information from databases. The functions are tabulated below:
+
+| Function                   | Database Access                        |
+|----------------------------|----------------------------------------|
+| **`searchApicoTFdb()`**    | ApicoTFdb                              |
+| **`searchGSC()`**          | Google Scholar                         |
+| **`searchHP()`**           | Hit Predict                            |
+| **`searchIpDb()`**         | InParanoiDb                            |
+| **`searchKipho()`**        | KiPho Database                         |
+| **`searchMT()`**           | Malaria Tools                          |
+| **`searchMidb()`**         | Minor Intron Database                  |
+| **`searchMiip()`**         | Malaria Important Interacting Proteins |
+| **`searchPM()`**           | PubMed                                 |
+| **`searchPhPl()`**         | PhenoPlasm                             |
+| **`searchTedConsensus()`** | The Encyclopedia of Domains            |
+
+
+## **`searchApidoTFdb()`**
+
+This function helps user fetch the all the transcription factors for a particular apicomplexan of interest from ApicoTFDb[@Sardar2019]. For ease of usage the organism names have been abbreviated as follows in the Table below:
+
+| Category               | Abbreviation | Species                   |
+|------------------------|--------------|---------------------------|
+| **Plasmodium Species** | pb           | *Plasmodium berghii*      |
+|                        | pv           | *Plasmodium vivax*        |
+|                        | pf           | *Plasmodium falciparum*   |
+|                        | pk           | *Plasmodium knowlesi*     |
+|                        | py           | *Plasmodium yoelii*       |
+|                        | pc           | *Plasmodium chabaudi*     |
+| **Other Apicomplexan** | tg49         | *Toxoplasma Gondii ME49*  |
+|                        | tg89         | *Toxoplasma Gondii P89*   |
+|                        | cp           | *Cryptosporidium parvum*  |
+|                        | em           | *Eimeria maxima*          |
+|                        | bb           | *Babesia bovis*           |
+|                        | et           | *Eimeria tenella*         |
+|                        | nu           | *Neospora caninum*        |
+|                        | cy           | *Cyclospora cayetanensis* |
+
+
+Using the function is relatively easy and can be achieved as
+
+```{r}
+## Searching all plasmodium TFs
+searchApicoTFdb(org="pf") %>% head()
+## Searching all cyclospora TFs
+searchApicoTFdb(org="tg49") %>% head()
+```
+
+## **`searchGSC()`**
+
+Sometimes, it is difficult to keep track of the corpus while you are working on your gene of interest and you might want to keep up with your competing groups across the globe. `searchGSC()` function can help you collect all the necessary literature where your gene ID of interest has been mentioned and return the results in form of a data frame.
+
+Since Google Scholar searches are not restricted to the Article abstracts but extends till supplementary section, this function can be very helpful to capture articles that mentions your gene ID of interest and are otherwise missed by normal Google search. Besides, since most of the pre-print literature is indexed at Google Scholar, you can also find papers by your competing groups that are yet to be peer-reviewed.
+
+> Note: We would like to warn users that this function is experimental and have been seen to get your IP blocked temporarily for 24 hrs if used more than 20 times. For large array of genes, we encourage users to use more specialized APIs.
+
+```{r}
+## Searching all plasmodium TFs
+searchGSC(c("PF3D7_0420300", "PF3D7_0621000"))
+```
+
+## **`searchHP()`**
+
+This function enables you to search HitPredict[@López2015] database and procure high-confidence Protein-Protein interactions(PPI) for your organism of interest. All it requires is a gene ID and taxon ID. HitPredict database provides PPI data in form of Uniprot IDs which are not always ideal for apicomplexan biologists. Therefore, we provide functionality to convert these Uniprot IDs back to gene IDs by setting `uniprotToGID=TRUE` . Since the only apicomplexan in HitPredict is *`Plasmodium falciparum`* this gene ID mapping conversion functionality is only limited for Plasmodium. It should be turned off, when using it for non-apicomplexan organism as shown below.
+
+```{r}
+## Single gene query
+searchHP("PF3D7_0418300") %>% head()
+
+## To use it for other organism, turn off uniprotToGID and provide taxid of the organism
+test <- searchHP("BRCA1",taxid = "9606" , uniprotToGID = FALSE)
+
+## Multiple gene query
+res <- lapply(c("PF3D7_0418300","PF3D7_1118500"), function(x){searchHP(x,uniprotToGID = FALSE)})%>% plyr::ldply()
+
+res %>% tail()
+
+## You can now use toGeneid function which uses PlasmoDB release 68 annotation to
+## map the uniprot IDs back to the gene IDs
+toGeneid(res$Interactor,from = "uniprot","ensembl") %>% full_join(., res, by = c("UniProt ID(s)" = "Interactor"))
+
+
+```
+
+Another scenario where users might be interested in setting `uniportToGID=FALSE` might be when they are querying thousands of IDs. Since ID conversion is carried out using `r Biocpkg("biomaRt")`, it might be redundant to convert same Uniprot ID multiple times if it has multiple interacting partners.
+
+For convenience, we therefore provide another function `toGeneid()` which will quickly converts the Uniprot IDs back to Ensembl IDs.
+
+## **`searchIpDb()`**
+
+This function enables you to search [InParanoiDB 9](https://inparanoidb.sbc.su.se/) [@Persson2023] database and procure high-confidence orthologs for your organism of interest. The input required is a character vector of gene IDs.
+
+```{r}
+gids <- c("PF3D7_0807800", "PF3D7_1023900")
+searchIpDb(gids) %>% head()
+```
+
+You might see some of the Uniprot ID failing such as `Q2KNU4` and `Q2KNU5` and their respective URLs. These Uniprot IDs are missing from the InParanoiDB 9 database.
+
+## **`searchKipho()`**
+
+This functions let you fetch the Malaria Parasite Kinome-Phosphatome Resource (KiPho) database [@Pandey2017] without leaving R. The organism in KiPho includes (see below):
+
+| Abbreviation | Species                 |
+|--------------|-------------------------|
+| pb           | *Plasmodium berghii*    |
+| pv           | *Plasmodium vivax*      |
+| pf           | *Plasmodium falciparum* |
+| pc           | *Plasmodium chabaudi*   |
+
+
+Beside the organism, user needs to specify `type="kinase"` to fetch the Kinome and `"type=phosphatase"` to fetch Phosphatome.
+
+```{r}
+searchKipho(org="pf",type = "kinase")
+searchKipho(org="pf",type = "phosphatase")
+```
+
+## **`searchMT()`**
+
+This function enables you to find the Condition Specific and Tissue Specific expression of gene of interest in two organisms: *Plasmodium falciparum* and *Plasmodium berghi.*
+
+```{r, eval=FALSE}
+geneID <- c("PBANKA_0100600", "PBANKA_0102900", "PF3D7_0102900")
+res <- searchMT(geneID = geneID)
+res
+
+# To get overview of stages your genes of interest are highly expressed in. Commented here as the html plot disrupts the HTML vignette rendering.
+# res %>% easyPie()
+```
+
+You can also feed the output of `searchMT()` to a companion function to quickly get a sense of the stages in which your genes of interests are highly expressed in. Another convenience function for malaria.tools database is `plotAllCondition()` function. This let you create publication ready plots of TPM normalized expression values across multiple stages of parasite using bulk-rnaseq data from malaria.tools. These plots are similar to what you see in the database itself.
+
+```{r}
+
+# TPM plot (non-interactive)
+plotAllCondition(geneID = "PBANKA_0100600")
+plotAllCondition(geneID = "PBANKA_0100600",plotify = TRUE) ## interactive
+
+## To get the data used for making above plot use returnData argument
+plotAllCondition(geneID = "PBANKA_0100600",returnData = TRUE) %>% head()
+```
+
+Users can also plot stage specific average TPMs as well similar to the plots rendered in malaria.tools using `plotStageSpecific()` function.
+
+```{r}
+plotStageSpecific(geneID = "PBANKA_0100600",plotify = TRUE)
+```
+
+## **`searchMidb()`**
+
+This function enables you to fetch minor-introns information from MiDB database in bulk. By default, all intron classes are fetched (major-like, major_hybrid, minor-like, minor_hybrid, non-canonical). For more information on minor introns visit [MiDB database](https://midb.pnb.uconn.edu/index.php).
+
+```{r}
+## Let's see what organisms are present in MiDB
+data("midbSpecies")
+
+df <- searchMidb("Toxoplasma gondii ME49")
+df %>% head()
+```
+
+## **`searchMiip()`**
+
+This function enables you to fetch Protein-protein interaction pairs of *Plasmodium falciparum* and the respective stage (sexual and asexual) they interact from [MIIP database](http://www.hpppi.iicb.res.in/pfnet/).
+
+```{r}
+
+searchMiip(c("PF3D7_0807800","PF3D7_1023900"))
+```
+
+## **`searchPM()`**
+
+Aside from `searchGSC` you can also use `searchPM()` to fetch literature information where your gene IDs of interest have been mentioned. This will however limit the search to title abstract and keywords. In the background, it makes use of `easyPubMed()` functions such as `get_pubmed_ids` and `articles_to_list` and then transforms the output in form of a table that is easy explore
+
+```{r}
+
+searchPM(geneID = c("PF3D7_0420300","PF3D7_0621000"))
+```
+
+Gene IDs for which no results are available will be shown on the screen. However, when a query is successful, the function also prints the exact query that can be used by you for reproducibility purposes. This behavior can be turned off if you have a lot of gene IDs using `verbose=FALSE`.
+
+```         
+"Plasmodium falciparum"[All Fields] AND "PF3D7_0420300"[Title/Abstract:~0] AND 2010/01/01:2025/12/31[Date - Publication] 
+```
+
+## **`searchPhPl()`**
+
+This convenience function allow users to fetch Disruptability and Mutant Phenotypes tables for gene of interest from PhenoPlasm database. `fetch=1` helps fetch the Disruptability and `fetch=2` helps fetch the Mutant Phenotype table.
+
+```{r}
+searchPhPl(geneID = c("PF3D7_0420300","PF3D7_0621000","PF3D7_0523800"), org="pf") %>% head()
+searchPhPl(geneID = c("PF3D7_0420300","PF3D7_0621000","PF3D7_0523800"), org="pf", fetch=2) %>% head()
+```
+
+Oftentime, you would like to get the summary table like the one plotted in PhenoPlasm that combines both Disruptability and Mutant Phenotype information. Rather than using screen grab to get the snapshot of the table, one can now download the table from [`Advanced Search`](https://phenoplasm.org/advanced.php) button by submitting the geneIDs of interest and can feed that file to `easyPhplplottbl()` function of `r Rpackage("plasmoRUtils")` to render such table from the `phenotype.txt` files directly
+
+```{r, eval=FALSE}
+# Read the file
+df <- read.csv("phenotype.txt", skip = 2, sep = "\t") %>%
+dplyr::select(-3, -4) %>% #remove the empty cols: GeneLocalisation and OrthologLocalisation
+dplyr::rename_with(~ gsub("Sprozoite", "Sporozoite", .x)) #Correct the colnames
+
+easyPhplplottbl(df)
+
+## Or you can pass the file path directly
+easyPhplplottbl("phenotype.txt")
+```
+
+```{r}
+#Load sample data (subset of genes from phenotype.txt file above)
+data(pf3d7PhplTable)
+easyPhplplottbl(pf3d7PhplTable)
+```
+
+Windows users might face issues saving these plots as pdf directly in which case, the tables can be saved as HTML files which can then be converted to SVG or PDF formats using various online converters to combine them with other plots.
+
+> **Note:** As per [Phenotype taxonomy](https://phenoplasm.org/csvsupport.php) of Phenoplasm, the database uses "D" for both `Difference from wild-type` and `Egress defect` which is confusing and difficult to resolve programmatically. An example of this is `PF3D7_1337800` that have "D S D" in the "Gene Asexual". While we have requested the database maintainer to fix this, please watch out for borderline cases like these.
+
+## **`searchTedConsensus()`**
+
+This function helps users fetch the domain information from **The Encyclopedia of Domains** database given set of uniprot IDs. Usually these table contains a numeric CATH labels which are difficult to comprehend and user has to click on them one by one to find the domain name. We enable conversion of these CATH labels to description using `returnCATHdesc=TRUE`. This will try to scrap the labels for given CATH label from CATH database wherever possible.
+
+```{r}
+searchTedConsensus(c("Q7K6A1","Q8IAP8","C0H4D0","C6KT90","Q8IBJ7"), returnCATHdesc=FALSE)
+
+searchTedConsensus(c("Q7K6A1","Q8IAP8","C0H4D0","C6KT90","Q8IBJ7"), returnCATHdesc=TRUE)
+```
+
+In the example above, `C0H4D0` have CATH label [`3.30.70.2380`](https://www.cathdb.info/version/v4_4_0/superfamily/3.30.70.2380). But this superfamily doesn't have a name. Besides, sometimes instead of Superfamily CATH labels, TED might use CATH-Gene3D Hierarchy. No description is returned in such cases.
+
+# Session Info {.unnumbered}
+
+```{r}
+utils::sessionInfo()
+```
+
+# References {.unnumbered}
