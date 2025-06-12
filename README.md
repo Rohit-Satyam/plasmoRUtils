@@ -26,11 +26,17 @@ version](https://img.shields.io/badge/R%3E%3D-4-6666ff.svg)](https://cran.r-proj
 Before downloading the package, install the following dependencies.
 
 ``` r
-cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'ggsci', 'rvest', 'easyPubMed', 'plyr', 'scales', 'ggplot2', 'glue', 'tidyr', 'tibble', 'data.table', 'plotly', 'purrr', 'stringr', 'S4Vectors', 'echarts4r', 'magrittr', 'bio3d', 'httr', 'jsonlite', 'ggpubr', 'gt', 'mgsub', 'reshape2','pathfindR')
+cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'ggsci', 'rvest',
+'easyPubMed', 'plyr', 'scales', 'ggplot2', 'glue', 'tidyr', 'tibble', 'data.table', 'plotly',
+'purrr', 'stringr', 'S4Vectors', 'echarts4r', 'magrittr', 'bio3d', 'httr', 'jsonlite',
+'ggpubr', 'gt', 'mgsub', 'reshape2','pathfindR')
 
 install.packages(setdiff(cranpkgs, rownames(installed.packages())), dependencies = TRUE)
 
-biocpkgs <- c("rmarkdown","pRoloc","knitr","BiocStyle","DESeq2","styler","utils","IRanges","BiocGenerics","rtracklayer","scuttle","txdbmaker","topGO","drawProteins","GenomicFeatures","biomaRt","AnnotationForge","Biostrings","GenomeInfoDb","SingleCellExperiment","SingleR","NOISeq","GenomicRanges","BSgenome")
+biocpkgs <- c("rmarkdown","pRoloc","knitr","BiocStyle","DESeq2","styler","utils","IRanges",
+"BiocGenerics","rtracklayer","scuttle","txdbmaker","topGO","drawProteins","GenomicFeatures",
+"biomaRt","AnnotationForge","Biostrings","GenomeInfoDb","SingleCellExperiment",
+"SingleR","NOISeq","GenomicRanges","BSgenome")
 
 BiocManager::install(setdiff(biocpkgs, rownames(installed.packages())), dependencies = TRUE)
 ```
@@ -56,15 +62,21 @@ install_dependencies()
 
 ## Documentation
 
-The documentation of this package is available
-[here](%22https://Rohit-Satyam.org/plasmoRUtils/index.html%22)
+The documentation of this package is available at the following:
+
+1.  [Introduction to
+    plasmoRUtils](https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Introduction_to_plasmoRUtils.html)
+2.  [Accessing component databases of
+    VEuPathDB](https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Gene_ID_Conversion.html)
+3.  [Other useful
+    functions](https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Miscellaneous_function.html)
 
 ## To-do List
 
-1.  Provide function to access Plasmobase.
-2.  Write wrapper function easypathFindR to quickly perform Pathway
-    enrichment analysis.
-3.  Write function to make String PPI quickly.
+1.  Provide a function to access Plasmobase.
+2.  Write a wrapper function, easypathFindR, to perform Pathway
+    enrichment analysis quickly.
+3.  Write a function to make String PPI quickly.
 
 ## Contributing
 
