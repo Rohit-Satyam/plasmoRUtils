@@ -61,8 +61,9 @@ install_dependencies()
 ```
 
 ## Documentation
+The detailed vignettes are available at `plasmoRUtils` website. To visit, click [here](https://rohit-satyam.github.io/plasmoRUtils/)
 
-The documentation of this package is available at the following:
+The documentation of this package is also available at the following:
 
 1.  [Introduction to
     plasmoRUtils](https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Introduction_to_plasmoRUtils.html)
