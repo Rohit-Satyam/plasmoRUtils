@@ -211,6 +211,7 @@ Other data sets provided with the package includes:
 -   Time course Bulk RNASeq (Single-end) from [@toenhake2018chromatin]: `data("toenhake2018")`
 -   Reanalyzed scRNAseq of \*T. gondii\* data from [@lou2024single]: `data("gubbels2024")`
 -   Reanalyzed scRNAseq of \*T. gondii\* data from [@xue2020single]: `data("boothroyd2020")`
+-   Reanalyzed Bulk RNASeq (Paired -End) from [@Wichers2019]: `data("wichers2019")`
 
 Next, Malaria cell atlas (MCA) is a database comprising of single cell data sets and can be accessed using the following functions.
 
@@ -227,6 +228,7 @@ set.seed(12458)
 ## Fetching the URL
 mcalist <- listMCA()
 data("subudhi2020") ## reference dataset
+subudhi2020 <- subudhi2020[,1:42] ## Skipping samples after 43 Hpi since they highly correlate with 43hpi itself.
 
 ## Using this reference set
 url <- "https://www.malariacellatlas.org/downloads/pf-ch10x-set4-biorxiv.zip"
@@ -239,21 +241,33 @@ meta <- easyMCA(url,type="data")
 meta <- subset(meta, meta$STAGE_LR %in% c("ring","trophozoite","schizont") & DAY != "Field")
 raw_counts <- raw_counts[,rownames(meta)]
 
-## Filtering away field isolates and asexual stage cells
+## Filtering away field isolates and sexual stage cells
 
 labels <- easyLabelTransfer(queryCounts = raw_counts,
                             refCounts = subudhi2020@assays@data$counts, referenceMeta = subudhi2020@colData, labelCol = "timetag", isrefBulk = TRUE)
 
 table(labels$pruned.labels)
 
-plotScoreHeatmap(labels)
+df <- labels$labels %>% table() %>% data.frame()
+df$. <- factor(df$., levels = subudhi2020$timetag %>% unique())
+
+ggpubr::ggbarplot(df,x=".",y="Freq", label = TRUE, color = "#2595be", fill = "#2595be")+
+  geom_hline(yintercept = 100,colour = "red", linetype=2 )+
+  labs(x="Time-points",y="No. of Cells")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+
+plotScoreHeatmap(labels,show_colnames = F,
+                       show.pruned = F, 
+                       cluster_cols = F, 
+                       cluster_rows = FALSE, 
+                       rows.order=unique(subudhi2020$timetag))
 ```
 
 You can see that cells from some time points are underrepresented in our Malaria Cell Atlas.
 
 ### GO Enrichment using `easytopGO()`
 
-VEuPathDB constituent database allow users to perform GO Enrichment analysis. However, there is no option to set the background genes and by default all the genes in the are used. This is not an ideal approach. Moreover, since Gene Ontologies are curated using different pipelines by different enrichment providers, the results might differ just based on source of Ontologies. Similarly the Ontology data might not be available in other databases such as BioMart and you would like to use custom GAF file
+VEuPathDB constituent database allow users to perform GO Enrichment analysis. However, there is no option to set the background genes and by default all the genes in the are used. This is not an ideal approach. Moreover, since Gene Ontologies are curated using different pipelines by different enrichment providers, the results might differ just based on source of Ontologies. Similarly the Ontology data might not be available in other databases such as BioMart and you would like to use custom GAF file.
 
 Users of parasite domain might wish to use GAF files provided by VEuPathDB constituent database and of specific genome assembly as per their hypothesis. To enable users to do that, GO enrichment analysis can be performed easily and quickly using our `easytopGO()` wrapper function. This function requires users to provide a named numeric vector, where names are Ensembl Gene IDs and numeric vector could be adjusted p-values. Users can also supply genes to be used as background using `bkggset` argument. Finally users can use `gaf` argument to supply .gaf file obtained from VEuPathDBs constituent database of interest.
 
@@ -283,7 +297,11 @@ gores<-easytopGO(geneID = p_values,useGAF = TRUE,useBiomart = FALSE,gaf=url,
 bkggset = background.gset, category = "BP", stats = "ks")
 
 ## Plotting the results. 
-easyGOPlot(gores, title = "GO Biological processes", limit = 20, sortby = "ks")
+goplt <- easyGOPlot(gores, title = "GO Biological processes", limit = 20, sortby = "ks")
+goplt
+
+## Making circular plot
+goplt+theme_minimal()+coord_radial(inner.radius = 0.3, rotate.angle = TRUE,r_axis_inside = TRUE)+ylab("")+ggeasy::easy_legend_at("bottom")
 
 ```
 

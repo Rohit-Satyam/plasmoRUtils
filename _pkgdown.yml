@@ -18,6 +18,7 @@ articles:
   - Introduction_to_plasmoRUtils
   - Gene_ID_Conversion
   - Miscellaneous_function
+  - Need_for_reanalysis
 reference:
 - title: "Install dependencies"
   contents:

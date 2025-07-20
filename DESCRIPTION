@@ -1,5 +1,5 @@
 Package: plasmoRUtils
-Title: A one-stop solution to make plasmodium biology easy
+Title: A one-stop R Package for Plasmodium and other Apicomplexan parasite-related Bioinformatics analysis
 Version: 1.0.0
 Authors@R: c(
     person("Rohit", "Satyam", , "rohit.satyam@kaust.edu.sa", role = c("aut", "cre"),
