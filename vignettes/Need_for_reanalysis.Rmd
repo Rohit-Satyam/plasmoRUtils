@@ -1,0 +1,262 @@
+---
+title: "RNASeq: Need for reanalysis?"
+author:
+- name: Rohit Satyam
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: Alberto Maillo
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: David Gomez-Cabrero
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: Arnab Pain
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+abstract: >
+  This section examines how annotations evolve across successive VEuPathDB releases. As exon–intron boundaries are continually refined with incoming sequencing data, tracking shifts in effective gene length enables users to decide whether existing published datasets warrant reanalysis based on the magnitude of those changes.  
+clean: false
+date: "`r format(Sys.Date(), '%d %B, %Y')`"
+package: plasmoRUtils
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{RNASeq: Need for reanalysis?}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{BiocStyle} 
+  %\VignettePackage{plasmoRUtils}
+  %\VignetteEngine{knitr::rmarkdown}
+bibliography: references.bib
+link-citations: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,cache = TRUE, warning = FALSE,message = FALSE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+In the bioinformatics community, it is common to reuse published RNA-seq count or normalized count data without reprocessing, often overlooking important technical differences such as the version of genome annotation. Assembly updates typically include revisions to:
+
+-   **GFF files**, where gene models and exon‐intron structures are updated, UTRs redefined etc.
+-   **GAF files**, where GO terms are revised based on newly published evidence
+
+For RNA-seq, these updates can substantially affect downstream analyses (e.g., over-representation or pathway enrichment). These changes are often documented in the **NEWS** sections of VEuPathDB.
+
+For instance, in *Plasmodium* and *Toxoplasma*, two key assembly updates were:
+
+-   [Release 51 (16 Mar 2021)](https://plasmodb.org/plasmo/app/static-content/PlasmoDB/news.html#PlasmoDB51Released) for **PlasmoDB**
+-   [Release 66 (28 Nov 2023)](https://toxodb.org/toxo/app/static-content/ToxoDB/news.html#ToxoDB66Released) for **ToxoDB**, which included extensive gene‐model revisions
+
+From an RNA-seq perspective, here we will focus on two factors that are known to affect biological outcomes and mappability. These include changes in:
+
+1.  **Number of Genes**
+2.  **Exon‐intron boundaries:** Measured here as **effective gene length** (the sum of exon lengths)
+
+In the example below, we will use *Plasmodium* and *Toxoplasma* releases and the `r Rpackage("plasmoRUtils")` function `getEffLen()` to track how effective gene lengths hift across versions.
+
+# Assessing Changes in Gene Number
+
+We will compare six releases (`24, 30, 40, 50, 60, and 68`) for both *Plasmodium* and *Toxoplasma*. From the NEWS section, we know that in *Plasmodium*, several loci initially annotated as rRNAs, lncRNAs, or coding genes were later removed, and the mitochondrial genome of PF3D7 was revised in [2019](https://pubmed.ncbi.nlm.nih.gov/31080894/). Similarly, *Toxoplasma* TGME49 gene models underwent extensive updates in release 66.
+
+```{r}
+library(plasmoRUtils)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(ggpubr)
+library(GeneStructureTools)
+library(ggplot2)
+
+releases <- c(24,30,40,50,60,68)
+
+## Getching GFFs from PlasmoDB and calculating effective lengths
+pf3d7.gffs <- lapply(releases, function(x){
+ paste0("https://plasmodb.org/common/downloads/release-",x,"/Pfalciparum3D7/gff/data/PlasmoDB-",x,"_Pfalciparum3D7.gff") %>% getEffLen() 
+}) %>% setNames(releases) 
+
+## Getching GFFs from ToxoDB and calculating effective lengths
+tgme49.gffs <- lapply(releases, function(x){
+ paste0("https://toxodb.org/common/downloads/release-",x,"/TgondiiME49/gff/data/ToxoDB-",x,"_TgondiiME49.gff") %>% getEffLen() 
+}) %>% setNames(releases)
+
+## Let's plot changes in number of genes 
+pf3d7.ngenes<- lapply(pf3d7.gffs, nrow)  %>% setNames(releases) %>% plyr::ldply()
+tgme49.ngenes<- lapply(tgme49.gffs, nrow)  %>% setNames(releases) %>% plyr::ldply()
+
+ggpubr::ggline(pf3d7.ngenes,x=".id",y="V1", label = TRUE, color = "#2595be", fill = "#2595be")+labs(x="Releases",y="No. of Genes")+theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+
+ggpubr::ggline(tgme49.ngenes,x=".id",y="V1", label = TRUE, color = "#2595be", fill = "#2595be")+labs(x="Releases",y="No. of Genes")+theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+For *Plasmodium*, the current release has 5720 genes. 57 genes have been removed since Release 24. Similarly 142 genes have been removed from *Toxoplasma* as compared to previous releases.
+
+# Assessing the difference in Effective gene lengths
+
+To get intuition about counts of which genes will be affected mostly, we will calculate coefficient of variation where:
+
+`CV = (Standard Deviation / Mean) × 100`
+
+If the effective gene length of the gene didn't change across releases, the CV will be equal to zero. Similarly if the change in effective length is major for a gene, the CV value will be higher. The CV also gives us intuition about which genes underwent drastic changes; eg: a 100 bp change will matter more for a 200 bp gene than for a 5000 bp gene.
+
+We will calculate CV using following steps:
+
+1.  Since gene IDs might vary across releases, we will first convert old Gene IDs to new gene IDs using `toGeneid()` and retain IDs which are common across all releases.
+2.  In old annotations like release 24, some genes coding for multiple transcripts are present as separate gene entries each coding for 1 transcripts often denoted by versions before them such as `PF3D7_0618900.1,F3D7_0618900.2`. This issue has been fixed in latest releases. To handle this we will remove the versions from gene IDs and take the average effective length for such genes.
+3.  We will than calculate the CV and filter all the genes with CV\>0.
+
+```{r}
+###  Step1
+# Remove version suffix from GeneIDs
+df <- pf3d7.gffs %>% plyr::ldply() %>%
+  mutate(GeneID = GeneStructureTools::removeVersion(GeneID))
+
+# Get annotation table and identify outdated IDs
+annot <- getTable(org = "Plasmodium falciparum 3D7", db = "plasmodb")
+old <- setdiff(unique(df$GeneID), annot$`Gene ID`) ## 152 old IDs
+
+# Map outdated to Ensembl IDs
+new_ids <- toGeneid(old, from = "old", to = "ensembl") %>%
+  select(`Gene ID`, `Previous ID(s)`) %>%
+  distinct() ## only 62 mapped
+
+# Replace outdated IDs in df. These are mostly apicoplast genes
+df$GeneID[match(new_ids$`Gene ID`,df$GeneID )] <- new_ids$`Gene ID`
+
+# Filter for valid GeneIDs
+subdf <- df %>%
+  filter(GeneID %in% annot$`Gene ID`)
+
+###  Step 2 
+# Aggregate length per gene across releases
+df_agg <- subdf %>%
+  group_by(.id, GeneID) %>%
+  summarise(mean_length = round(mean(Length, na.rm = TRUE)), .groups = "drop") %>%
+  pivot_wider(names_from = GeneID, values_from = mean_length, values_fill = NA) %>%
+  column_to_rownames(".id") %>%
+  as.matrix()
+
+###  Step 3
+# Coefficient of variation across releases
+cv <- cv <- apply(df_agg, 2, function(x) (sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)) * 100) %>%
+  sort(decreasing = TRUE)
+
+## Check for how many genes the effective length has changed
+table(cv>0) #4535 genes have their effective length changed
+ggpubr::gghistogram(cv,color = "grey", fill = "grey")
+
+## Let's filter top 20 genes whose effective length has changed drastically and see what they are
+
+annot %>%
+  select(`Gene ID`, `Product Description`) %>%
+  distinct() %>%
+  filter(`Gene ID` %in% names(cv)[1:20]) %>%
+  column_to_rownames("Gene ID") %>%
+  .[names(cv)[1:20], , drop = FALSE] %>%
+  mutate(cv = cv[names(cv)[1:20]]) ## We see a lot of hypothetical genes
+
+# plot top 2 variable genes
+plts <- names(cv)[1:2] %>%
+  lapply(function(gid) {
+    df %>%
+      filter(GeneID == gid) %>%
+      ggline(x = ".id", y = "Length",color = "#2595be", fill = "#2595be") +
+      labs(title = gid, x = "Release", y = "Effective Length") +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+  })
+
+library(sjPlot)
+plot_grid(plts)
+
+```
+
+From the exploration above, we see a 79% of gene models have been revised since release 50 and therefore inform us that any published RNASeq dataset using annotations older than Release 50 must be reanalysed since the read counts are destined to change for these genes.
+
+> If you are working on annotation of hypothetical genes, you should be cautious about which assembly you use since your gene might appear to be down regulated as per old annotation but this might change with change in the current annotation.
+
+Let's recycle the code above for *Toxoplasma*.
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(ggpubr)
+library(GeneStructureTools)
+
+###  Step1
+# Remove version suffix from GeneIDs
+df <- tgme49.gffs %>% plyr::ldply() %>%
+  mutate(GeneID = GeneStructureTools::removeVersion(GeneID))
+
+# Get annotation table and identify outdated IDs
+annot <- getTable(org = "Toxoplasma gondii ME49", db = "toxodb")
+old <- setdiff(unique(df$GeneID), annot$`Gene ID`) ## 583 old IDs
+
+# Map outdated to Ensembl IDs
+new_ids <- toGeneid(old, from = "old", to = "ensembl", org = "Toxoplasma gondii ME49", db = "toxodb") %>%
+  select(`Gene ID`, `Previous ID(s)`) %>%
+  distinct() ## only 332 mapped
+
+# Replace outdated IDs in df. These are mostly apicoplast genes
+df$GeneID[match(new_ids$`Gene ID`,df$GeneID )] <- new_ids$`Gene ID`
+
+# Filter for valid GeneIDs
+subdf <- df %>%
+  filter(GeneID %in% annot$`Gene ID`)
+
+###  Step 2 
+# Aggregate length per gene across releases
+df_agg <- subdf %>%
+  group_by(.id, GeneID) %>%
+  summarise(mean_length = round(mean(Length, na.rm = TRUE)), .groups = "drop") %>%
+  pivot_wider(names_from = GeneID, values_from = mean_length, values_fill = NA) %>%
+  column_to_rownames(".id") %>%
+  as.matrix()
+
+###  Step 3
+# Coefficient of variation across releases
+cv <- cv <- apply(df_agg, 2, function(x) (sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)) * 100) %>%
+  sort(decreasing = TRUE)
+
+## Check for how many genes the effective length has changed
+table(cv>0) #3390 genes have their effective length changed
+ggpubr::gghistogram(cv,color = "grey", fill = "grey")
+
+## Let's filter top 20 genes whose effective length has changed drastically and see what they are
+
+annot %>%
+  select(`Gene ID`, `Product Description`) %>%
+  distinct() %>%
+  filter(`Gene ID` %in% names(cv)[1:20]) %>%
+  column_to_rownames("Gene ID") %>%
+  .[names(cv)[1:20], , drop = FALSE] %>%
+  mutate(cv = cv[names(cv)[1:20]]) ## We see a lot of hypothetical genes
+
+# plot top 2 variable genes
+plts <- names(cv)[1:2] %>%
+  lapply(function(gid) {
+    df %>%
+      filter(GeneID == gid) %>%
+      ggline(x = ".id", y = "Length",color = "#2595be", fill = "#2595be") +
+      labs(title = gid, x = "Release", y = "Effective Length") +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+  })
+
+library(sjPlot)
+plot_grid(plts)
+
+```
+
+In this case 40% of the genes show change in effective length as compared to past releases and this change happened after release 60 (Release 66 to be precise but for brevity of vignette, we chose to use 60 and 68).
+
+# Discussion
+
+The scope of reannotation directly influences whether legacy datasets remain reliable or must be reprocessed; such technical choices inevitably affect downstream biological interpretations. We found that every major bulk transcriptomic study for *Plasmodium* in `PlasmoDB` relies on annotations predating release 51 and can benefit from reanalysis. Therefore, any analysis—be it correlation, co‐expression, or single‐cell mapping—should use reanalyzed data based on up‐to‐date GFFs. Given VEuPathDB’s constrained resources, the reanalysis responsibility falls to the end users to regenerate and share these reprocessed datasets whenever feasible.
+
+# Session {-}
+
+```{r}
+sessionInfo()
+```
