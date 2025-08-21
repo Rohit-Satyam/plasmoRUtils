@@ -53,18 +53,21 @@
 
 
 <dl><dt id="arg-geneid">geneID<a class="anchor" aria-label="anchor" href="#arg-geneid"></a></dt>
-<dd><p>Gene ID of <em>Plasmodium falciparum</em>.</p></dd>
+<dd><p>Gene ID of <em>Plasmodium falciparum</em> or VEupathDB enlisted organisms that are also covered by InParanoiDB. If providing uniprot ID, set idtype="uniprot" to prevent ID conversion.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments that can be passed to <code><a href="toGeneid.html">toGeneid()</a></code> function. This comes in very handy if you are working with parasite gene IDs other than <em>Plasmodium</em>.</p>
-<p>@return A data frame, containing 10 columns.</p></dd>
+<dd><p>Additional arguments that can be passed to <code><a href="toGeneid.html">toGeneid()</a></code> function. This comes in very handy if you are working with parasite gene IDs other than <em>Plasmodium</em>.</p></dd>
 
 
 <dt id="arg-idtype">idtype<a class="anchor" aria-label="anchor" href="#arg-idtype"></a></dt>
 <dd><p>Set this to "uniprot" if using uniprot IDs directly and GenID to uniprot ID conversion is not required.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>A data frame, containing 10 columns.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>To view list of species covered by InParanoiDB 9, use <code><a href="listipdb.html">listipdb()</a></code> function.</p>
