@@ -1,40 +1,45 @@
 #' Fetch data from ApicoTFdb
 #'
-#' This function provides ability to query your gene IDs to ApicoTFDb.
+#' This function provides ability to query your gene IDs to [ApicoTFDb](https://bioinfo.icgeb.res.in/PtDB/index.html).
 #'
 #' @import dplyr
 #' @import rvest
 #' @export
 #'
 #' @param org Abbreviation of organism of interest.
-#' Plasmodium Species:
-#' pb: Plasmodium berghii
-#' pv: Plasmodium vivax
-#' pf: Plasmodium falciparum
-#' pk: Plasmodium knowlesi
-#' py: Plasmodium yoelii
-#' pc: Plasmodium chabaudi
+#' @param fetch Describe the tables to be fetched. Default: "all" will fetch all TFs. To fetch TRs,CRRs,RNA-regs or Experimentally verified TF, use "trs","crrs","rnaregs" and "exptfs" respectively. When using other than "all", org argument will be ignored.
 #'
-#'By Other Apicomplexan Species
-#'tg49: Toxoplasma Gondii ME49
-#'tg89: Toxoplasma Gondii P89
-#'cp: Cryptosporidium parvum
-#'em: Eimeria maxima
-#'bb: Babesia bovis
-#'et: Eimeria tenella
-#'nu: Neurospora caninum
-#'cy: Cyclospora cayetanensis
+#' \itemize{
+#' \strong{Plasmodium Species:}
 #'
+#' \item pb: \emph{Plasmodium berghii}
+#' \item pv: \emph{Plasmodium vivax}
+#' \item pf: \emph{Plasmodium falciparum}
+#' \item pk: \emph{Plasmodium knowlesi}
+#' \item py: \emph{Plasmodium yoelii}
+#' \item pc: \emph{Plasmodium chabaudi}
+#' }
+#'
+#' \itemize{
+#' \strong{By Other Apicomplexan Species}
+#'
+#' \item tg49: \emph{Toxoplasma Gondii} ME49
+#' \item tg89: \emph{Toxoplasma Gondii} P89
+#' \item cp: \emph{Cryptosporidium parvum}
+#' \item em: \emph{Eimeria maxima}
+#' \item bb: \emph{Babesia bovis}
+#' \item et: \emph{Eimeria tenella}
+#' \item nu: \emph{Neurospora caninum}
+#' \item cy: \emph{Cyclospora cayetanensis}
+#' }
 #'
 #' @return df This function returns a dataframe of transcription regulators for organism of interest from ApicoTFDb.
 #' @examples
 #' \dontrun{
-#' test <- searchApicoTFdb(org="pf")
+#' test <- searchApicoTFdb(org = "pf")
 #' }
 #'
-
-
-searchApicoTFdb <- function(org="pf"){
+searchApicoTFdb <- function(org = "pf", fetch = "all") {
   urls <- list(
     pb = "https://bioinfo.icgeb.res.in/PtDB/htmls/berghii_new.html",
     pv = "https://bioinfo.icgeb.res.in/PtDB/htmls/vivax_new.html",
@@ -51,15 +56,57 @@ searchApicoTFdb <- function(org="pf"){
     nu = "https://bioinfo.icgeb.res.in/PtDB/htmls/neurospora.html",
     cy = "https://bioinfo.icgeb.res.in/PtDB/htmls/cyclospora.html"
   )
+  if (fetch == "all") {
+    url <- urls[[org]]
+    webpage <- rvest::read_html(url)
+    table <- webpage %>%
+      rvest::html_nodes("table") %>%
+      rvest::html_table(fill = TRUE) %>%
+      .[[1]] %>%
+      dplyr::filter(!apply(., 1, function(row) all(row == ""))) %>%
+      dplyr::filter(!stringr::str_detect(`Gene ID`, "Gene ID"))
 
-  url <- urls[[org]]
-  webpage <- rvest::read_html(url)
-  table <- webpage %>%
-    rvest::html_nodes("table") %>%
-    rvest::html_table(fill = TRUE) %>%
-    .[[1]] %>%
-    dplyr::filter(!apply(., 1, function(row) all(row == ""))) %>%
-    dplyr::filter(!stringr::str_detect(`Gene ID`, "Gene ID"))
-
-  return(table)
+    return(table)
+  } else if (fetch == "trrs") {
+    url <- "https://bioinfo.icgeb.res.in/PtDB/htmls/TR.html"
+    webpage <- rvest::read_html(url)
+    table <- webpage %>%
+      rvest::html_nodes("table") %>%
+      rvest::html_table(fill = TRUE) %>%
+      .[[1]] %>%
+      .[!(stringr::str_detect(.$`Gene-ID`, "Gene ID")), ] %>%
+      .[, -ncol(.)]
+    return(table)
+  } else if (fetch == "crrs") {
+    url <- "https://bioinfo.icgeb.res.in/PtDB/htmls/CRR.html"
+    webpage <- rvest::read_html(url)
+    table <- webpage %>%
+      rvest::html_nodes("table") %>%
+      rvest::html_table(fill = TRUE) %>%
+      .[[1]] %>%
+      .[!(stringr::str_detect(.$`Gene-ID`, "Gene ID")), ] %>%
+      .[, -ncol(.)]
+    return(table)
+  } else if (fetch == "rnaregs") {
+    url <- "https://bioinfo.icgeb.res.in/PtDB/htmls/RNA.1.html"
+    webpage <- rvest::read_html(url)
+    table <- webpage %>%
+      rvest::html_nodes("table") %>%
+      rvest::html_table(fill = TRUE) %>%
+      .[[1]] %>%
+      .[!(stringr::str_detect(.$`Gene-ID`, "Gene ID")), ] %>%
+      .[, -ncol(.)]
+    return(table)
+  } else if (fetch == "exptfs") {
+    url <- "https://bioinfo.icgeb.res.in/PtDB/htmls/exp_new.html"
+    webpage <- rvest::read_html(url)
+    table <- webpage %>%
+      rvest::html_nodes("table") %>%
+      rvest::html_table(fill = TRUE) %>%
+      .[[1]] %>%
+      .[!(stringr::str_detect(.$`Gene_ID`, "Gene_ID")), ]
+    return(table)
+  }
 }
+
+#styler:::style_active_file()

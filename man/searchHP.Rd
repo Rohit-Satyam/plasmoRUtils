@@ -9,9 +9,9 @@ searchHP(geneID, taxid = "36329", uniprotToGID = TRUE)
 \arguments{
 \item{geneID}{Single gene ID.}
 
-\item{taxid}{Taxon ID of the organism of interest. Default: 36329.}
+\item{taxid}{Taxon ID of the organism of interest. Default: 36329. If taxon id of organism is not known set this to NULL.}
 
-\item{uniprotToGID}{To convert Uniprot ID to gene ID. Set TRUE for Plasmodium geneIDs only.}
+\item{uniprotToGID}{To convert Uniprot ID to gene ID. Set TRUE for \emph{Plasmodium} geneIDs only.}
 }
 \value{
 A data frame, containing 11 columns: "Interaction", "Interactor", "Name", "Experiments", "Category", "Method.Score", "Annotation.Score", "Interaction.Score", "Confidence", "QueryID", "ensembl_gene_id".

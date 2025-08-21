@@ -5,4 +5,9 @@ articles:
   Gene_ID_Conversion: Gene_ID_Conversion.html
   Introduction_to_plasmoRUtils: Introduction_to_plasmoRUtils.html
   Miscellaneous_function: Miscellaneous_function.html
-last_built: 2025-06-12T21:41Z
+  Need_for_reanalysis: Need_for_reanalysis.html
+  retrieving_orthologs: retrieving_orthologs.html
+last_built: 2025-08-21T03:47Z
+urls:
+  reference: https://rohit-satyam.github.io/plasmoRUtils/reference
+  article: https://rohit-satyam.github.io/plasmoRUtils/articles

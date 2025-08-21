@@ -1860,11 +1860,11 @@ function toggle_visibility(id1) {
 <h1 class="title toc-ignore">Accessing component databases of VEuPathDB</h1>
 <p class="author-name">Rohit Satyam<span class="affil-mark">1</span>, Alberto Maillo<span class="affil-mark">1</span>, David Gomez-Cabrero<span class="affil-mark">1</span> and Arnab Pain<span class="affil-mark">1</span></p>
 <p class="author-affiliation"><span class="affil-mark">1</span>King Abdullah University of Science & Technology, Saudi Arabia</p>
-<h4 class="date">12 June, 2025</h4>
+<h4 class="date">21 August, 2025</h4>
 <h4 class="abstract">Abstract</h4>
 <p>This section covers the capability of <code>plasmoRUtils</code> to access various VEuPathDb database and carry out ID conversion tasks, fetch preconfigured data tables and few other tasks.</p>
 <h4 class="package">Package</h4>
-<p>plasmoRUtils 1.0.0</p>
+<p>plasmoRUtils 1.1.0</p>
 
 </div>
 
@@ -1909,11 +1909,11 @@ toGeneid(inputid = c(&quot;TGME49_304740&quot;,&quot;TGME49_208030&quot;),from=&
 ## Convert uniprot IDs back to gene IDs. It will also provide Product description and Gene Symbol
 
 toGeneid(inputid = c(&quot;Q8I1N6&quot;,&quot;C6KT48&quot;),from=&quot;uniprot&quot;,to=&quot;ensembl&quot; )
-#&gt; # A tibble: 2 × 4
-#&gt;   `Gene ID`     `Product Description`      `Gene Name or Symbol` `UniProt ID(s)`
-#&gt;   &lt;chr&gt;         &lt;chr&gt;                      &lt;chr&gt;                 &lt;chr&gt;          
-#&gt; 1 PF3D7_0420300 AP2 domain transcription … ApiAP2                Q8I1N6         
-#&gt; 2 PF3D7_0621000 RNA polymerase subunit si… ApSigma               C6KT48
+#&gt; # A tibble: 2 × 2
+#&gt;   `Gene ID`     `UniProt ID(s)`
+#&gt;   &lt;chr&gt;         &lt;chr&gt;          
+#&gt; 1 PF3D7_0420300 Q8I1N6         
+#&gt; 2 PF3D7_0621000 C6KT48
 
 
 ## Using customFields to get only columns of interest
@@ -2092,13 +2092,13 @@ S4Vectors::merge(df,geneids,all=TRUE, by.x=&quot;attribute&quot;, by.y=&quot;Uni
 #&gt; 4                201                        NA                            4U5A
 #&gt; 5                201                        NA                            4U5A
 #&gt; 6                201                        NA                            4U5A
-#&gt;         Gene ID                       Product Description Gene Name or Symbol
-#&gt; 1 PF3D7_1372300 Plasmodium exported protein (PHISTa-like)                 N/A
-#&gt; 2 PF3D7_1372300 Plasmodium exported protein (PHISTa-like)                 N/A
-#&gt; 3          &lt;NA&gt;                                      &lt;NA&gt;                &lt;NA&gt;
-#&gt; 4          &lt;NA&gt;                                      &lt;NA&gt;                &lt;NA&gt;
-#&gt; 5          &lt;NA&gt;                                      &lt;NA&gt;                &lt;NA&gt;
-#&gt; 6          &lt;NA&gt;                                      &lt;NA&gt;                &lt;NA&gt;</code></pre>
+#&gt;         Gene ID
+#&gt; 1 PF3D7_1372300
+#&gt; 2 PF3D7_1372300
+#&gt; 3          &lt;NA&gt;
+#&gt; 4          &lt;NA&gt;
+#&gt; 5          &lt;NA&gt;
+#&gt; 6          &lt;NA&gt;</code></pre>
 </div>
 </div>
 <div id="session" class="section level1 unnumbered">
@@ -2123,9 +2123,8 @@ S4Vectors::merge(df,geneids,all=TRUE, by.x=&quot;attribute&quot;, by.y=&quot;Uni
 #&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt; [1] plyr_1.8.9          dplyr_1.1.4         plasmoRUtils_1.0.0 
-#&gt; [4] rlang_1.1.6         readr_2.1.5         janitor_2.2.1      
-#&gt; [7] randomcoloR_1.1.0.1 BiocStyle_2.32.1   
+#&gt; [1] plyr_1.8.9         dplyr_1.1.4        plasmoRUtils_1.1.0 rlang_1.1.6       
+#&gt; [5] readr_2.1.5        janitor_2.2.1      BiocStyle_2.32.1  
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
 #&gt;   [1] segmented_2.1-4             ProtGenerics_1.36.0        
@@ -2134,7 +2133,7 @@ S4Vectors::merge(df,geneids,all=TRUE, by.x=&quot;attribute&quot;, by.y=&quot;Uni
 #&gt;   [7] httr_1.4.7                  RColorBrewer_1.1-3         
 #&gt;   [9] doParallel_1.0.17           ggsci_3.2.0                
 #&gt;  [11] tools_4.4.1                 MSnbase_2.30.1             
-#&gt;  [13] backports_1.5.0             utf8_1.2.5                 
+#&gt;  [13] backports_1.5.0             utf8_1.2.6                 
 #&gt;  [15] R6_2.6.1                    lazyeval_0.2.2             
 #&gt;  [17] withr_3.0.2                 prettyunits_1.2.0          
 #&gt;  [19] gridExtra_2.3               preprocessCore_1.66.0      
@@ -2144,12 +2143,12 @@ S4Vectors::merge(df,geneids,all=TRUE, by.x=&quot;attribute&quot;, by.y=&quot;Uni
 #&gt;  [27] randomForest_4.7-1.2        proxy_0.4-27               
 #&gt;  [29] Rsamtools_2.20.0            txdbmaker_1.0.1            
 #&gt;  [31] AnnotationForge_1.46.0      dichromat_2.0-0.1          
-#&gt;  [33] parallelly_1.44.0           limma_3.60.6               
+#&gt;  [33] parallelly_1.45.1           limma_3.60.6               
 #&gt;  [35] rstudioapi_0.17.1           impute_1.78.0              
-#&gt;  [37] RSQLite_2.4.0               FNN_1.1.4.1                
+#&gt;  [37] RSQLite_2.4.1               FNN_1.1.4.1                
 #&gt;  [39] generics_0.1.4              BiocIO_1.14.0              
 #&gt;  [41] vroom_1.6.5                 gtools_3.9.5               
-#&gt;  [43] car_3.1-3                   dendextend_1.19.0          
+#&gt;  [43] car_3.1-3                   dendextend_1.19.1          
 #&gt;  [45] GO.db_3.19.1                Matrix_1.7-1               
 #&gt;  [47] MALDIquant_1.22.3           drawProteins_1.24.0        
 #&gt;  [49] S4Vectors_0.42.1            abind_1.4-8                
@@ -2157,89 +2156,86 @@ S4Vectors::merge(df,geneids,all=TRUE, by.x=&quot;attribute&quot;, by.y=&quot;Uni
 #&gt;  [53] snakecase_0.11.1            carData_3.0-5              
 #&gt;  [55] SummarizedExperiment_1.34.0 recipes_1.3.1              
 #&gt;  [57] SparseArray_1.4.8           BiocFileCache_2.12.0       
-#&gt;  [59] Rtsne_0.17                  grid_4.4.1                 
-#&gt;  [61] blob_1.2.4                  promises_1.3.3             
-#&gt;  [63] crayon_1.5.3                PSMatch_1.8.0              
-#&gt;  [65] lattice_0.22-6              beachmat_2.20.0            
-#&gt;  [67] echarts4r_0.4.5.9000        annotate_1.82.0            
-#&gt;  [69] GenomicFeatures_1.56.0      chromote_0.5.1             
-#&gt;  [71] mzR_2.38.0                  KEGGREST_1.44.1            
-#&gt;  [73] pillar_1.10.2               knitr_1.50                 
-#&gt;  [75] GenomicRanges_1.56.2        rjson_0.2.23               
-#&gt;  [77] lpSolve_5.6.23              future.apply_1.11.3        
-#&gt;  [79] codetools_0.2-20            mgsub_1.7.3                
-#&gt;  [81] glue_1.8.0                  V8_6.0.3                   
-#&gt;  [83] pcaMethods_1.96.0           data.table_1.17.4          
-#&gt;  [85] MultiAssayExperiment_1.30.3 vctrs_0.6.5                
-#&gt;  [87] png_0.1-8                   gtable_0.3.6               
-#&gt;  [89] kernlab_0.9-33              cachem_1.1.0               
-#&gt;  [91] gower_1.0.2                 xfun_0.52                  
-#&gt;  [93] prodlim_2025.04.28          S4Arrays_1.4.1             
-#&gt;  [95] mime_0.13                   coda_0.19-4.1              
-#&gt;  [97] survival_3.8-3              ncdf4_1.24                 
-#&gt;  [99] timeDate_4041.110           SingleCellExperiment_1.26.0
-#&gt; [101] iterators_1.0.14            hardhat_1.4.1              
-#&gt; [103] lava_1.8.1                  statmod_1.5.0              
-#&gt; [105] MLInterfaces_1.84.0         ipred_0.9-15               
-#&gt; [107] nlme_3.1-166                bit64_4.6.0-1              
-#&gt; [109] progress_1.2.3              filelock_1.0.3             
-#&gt; [111] LaplacesDemon_16.1.6        GenomeInfoDb_1.40.1        
-#&gt; [113] bslib_0.9.0                 affyio_1.74.0              
-#&gt; [115] irlba_2.3.5.1               rpart_4.1.23               
-#&gt; [117] colorspace_2.1-1            BiocGenerics_0.50.0        
-#&gt; [119] DBI_1.2.3                   nnet_7.3-19                
-#&gt; [121] tidyselect_1.2.1            processx_3.8.6             
-#&gt; [123] bit_4.6.0                   compiler_4.4.1             
-#&gt; [125] curl_6.2.3                  rvest_1.0.4                
-#&gt; [127] httr2_1.1.2                 graph_1.82.0               
-#&gt; [129] SparseM_1.84-2              xml2_1.3.8                 
-#&gt; [131] plotly_4.10.4               DelayedArray_0.30.1        
-#&gt; [133] bookdown_0.43               rtracklayer_1.64.0         
-#&gt; [135] scales_1.4.0                hexbin_1.28.5              
-#&gt; [137] affy_1.82.0                 rappdirs_0.3.3             
-#&gt; [139] stringr_1.5.1               digest_0.6.37              
-#&gt; [141] mixtools_2.0.0.1            rmarkdown_2.29             
-#&gt; [143] XVector_0.44.0              htmltools_0.5.8.1          
-#&gt; [145] pkgconfig_2.0.3             SingleR_2.6.0              
-#&gt; [147] sparseMatrixStats_1.16.0    MatrixGenerics_1.16.0      
-#&gt; [149] dbplyr_2.5.0                fastmap_1.2.0              
-#&gt; [151] htmlwidgets_1.6.4           UCSC.utils_1.0.0           
-#&gt; [153] shiny_1.10.0                DelayedMatrixStats_1.26.0  
-#&gt; [155] farver_2.1.2                jquerylib_0.1.4            
-#&gt; [157] jsonlite_2.0.0              mclust_6.1.1               
-#&gt; [159] BiocParallel_1.38.0         mzID_1.42.0                
-#&gt; [161] ModelMetrics_1.2.2.2        BiocSingular_1.20.0        
-#&gt; [163] RCurl_1.98-1.17             magrittr_2.0.3             
-#&gt; [165] scuttle_1.14.0              Formula_1.2-5              
-#&gt; [167] GenomeInfoDbData_1.2.12     Rcpp_1.0.14                
-#&gt; [169] viridis_0.6.5               MsCoreUtils_1.16.1         
-#&gt; [171] vsn_3.72.0                  pROC_1.18.5                
-#&gt; [173] stringi_1.8.7               zlibbioc_1.50.0            
-#&gt; [175] MASS_7.3-61                 listenv_0.9.1              
-#&gt; [177] parallel_4.4.1              splines_4.4.1              
-#&gt; [179] Biostrings_2.72.1           hms_1.1.3                  
-#&gt; [181] ps_1.9.1                    igraph_2.1.4               
-#&gt; [183] ggpubr_0.6.0                QFeatures_1.14.2           
-#&gt; [185] ggsignif_0.6.4              reshape2_1.4.4             
-#&gt; [187] biomaRt_2.60.1              stats4_4.4.1               
-#&gt; [189] ScaledMatrix_1.12.0         XML_3.99-0.18              
-#&gt; [191] evaluate_1.0.3              BiocManager_1.30.25        
-#&gt; [193] tzdb_0.5.0                  foreach_1.5.2              
-#&gt; [195] httpuv_1.6.16               tidyr_1.3.1                
-#&gt; [197] purrr_1.0.4                 future_1.49.0              
-#&gt; [199] clue_0.3-66                 bio3d_2.4-5                
-#&gt; [201] ggplot2_3.5.2               rsvd_1.0.5                 
-#&gt; [203] broom_1.0.8                 xtable_1.8-4               
-#&gt; [205] restfulr_0.0.15             AnnotationFilter_1.28.0    
-#&gt; [207] easyPubMed_2.13             e1071_1.7-16               
-#&gt; [209] rstatix_0.7.2               later_1.4.2                
-#&gt; [211] class_7.3-22                viridisLite_0.4.2          
-#&gt; [213] tibble_3.2.1                websocket_1.4.4            
-#&gt; [215] memoise_2.0.1               AnnotationDbi_1.66.0       
-#&gt; [217] GenomicAlignments_1.40.0    IRanges_2.38.1             
-#&gt; [219] cluster_2.1.8               globals_0.18.0             
-#&gt; [221] timechange_0.3.0            caret_7.0-1                
-#&gt; [223] sampling_2.10</code></pre>
+#&gt;  [59] grid_4.4.1                  blob_1.2.4                 
+#&gt;  [61] promises_1.3.3              crayon_1.5.3               
+#&gt;  [63] PSMatch_1.8.0               lattice_0.22-6             
+#&gt;  [65] beachmat_2.20.0             GenomicFeatures_1.56.0     
+#&gt;  [67] annotate_1.82.0             chromote_0.5.1             
+#&gt;  [69] mzR_2.38.0                  KEGGREST_1.44.1            
+#&gt;  [71] pillar_1.11.0               knitr_1.50                 
+#&gt;  [73] GenomicRanges_1.56.2        rjson_0.2.23               
+#&gt;  [75] lpSolve_5.6.23              future.apply_1.20.0        
+#&gt;  [77] codetools_0.2-20            mgsub_1.7.3                
+#&gt;  [79] glue_1.8.0                  pcaMethods_1.96.0          
+#&gt;  [81] data.table_1.17.8           MultiAssayExperiment_1.30.3
+#&gt;  [83] vctrs_0.6.5                 png_0.1-8                  
+#&gt;  [85] gtable_0.3.6                kernlab_0.9-33             
+#&gt;  [87] cachem_1.1.0                gower_1.0.2                
+#&gt;  [89] xfun_0.52                   prodlim_2025.04.28         
+#&gt;  [91] S4Arrays_1.4.1              polyglotr_1.7.0            
+#&gt;  [93] coda_0.19-4.1               survival_3.8-3             
+#&gt;  [95] ncdf4_1.24                  timeDate_4041.110          
+#&gt;  [97] SingleCellExperiment_1.26.0 iterators_1.0.14           
+#&gt;  [99] hardhat_1.4.1               lava_1.8.1                 
+#&gt; [101] statmod_1.5.0               MLInterfaces_1.84.0        
+#&gt; [103] ipred_0.9-15                nlme_3.1-166               
+#&gt; [105] bit64_4.6.0-1               progress_1.2.3             
+#&gt; [107] filelock_1.0.3              LaplacesDemon_16.1.6       
+#&gt; [109] GenomeInfoDb_1.40.1         bslib_0.9.0                
+#&gt; [111] affyio_1.74.0               irlba_2.3.5.1              
+#&gt; [113] rpart_4.1.23                colorspace_2.1-1           
+#&gt; [115] BiocGenerics_0.50.0         DBI_1.2.3                  
+#&gt; [117] nnet_7.3-19                 tidyselect_1.2.1           
+#&gt; [119] processx_3.8.6              bit_4.6.0                  
+#&gt; [121] compiler_4.4.1              curl_6.4.0                 
+#&gt; [123] rvest_1.0.4                 httr2_1.2.0                
+#&gt; [125] graph_1.82.0                SparseM_1.84-2             
+#&gt; [127] xml2_1.3.8                  DelayedArray_0.30.1        
+#&gt; [129] plotly_4.11.0               bookdown_0.43              
+#&gt; [131] rtracklayer_1.64.0          scales_1.4.0               
+#&gt; [133] hexbin_1.28.5               affy_1.82.0                
+#&gt; [135] rappdirs_0.3.3              stringr_1.5.1              
+#&gt; [137] digest_0.6.37               mixtools_2.0.0.1           
+#&gt; [139] rmarkdown_2.29              XVector_0.44.0             
+#&gt; [141] htmltools_0.5.8.1           pkgconfig_2.0.3            
+#&gt; [143] SingleR_2.6.0               sparseMatrixStats_1.16.0   
+#&gt; [145] MatrixGenerics_1.16.0       dbplyr_2.5.0               
+#&gt; [147] fastmap_1.2.0               htmlwidgets_1.6.4          
+#&gt; [149] UCSC.utils_1.0.0            DelayedMatrixStats_1.26.0  
+#&gt; [151] farver_2.1.2                jquerylib_0.1.4            
+#&gt; [153] jsonlite_2.0.0              mclust_6.1.1               
+#&gt; [155] BiocParallel_1.38.0         mzID_1.42.0                
+#&gt; [157] ModelMetrics_1.2.2.2        BiocSingular_1.20.0        
+#&gt; [159] RCurl_1.98-1.17             magrittr_2.0.3             
+#&gt; [161] scuttle_1.14.0              Formula_1.2-5              
+#&gt; [163] GenomeInfoDbData_1.2.12     Rcpp_1.1.0                 
+#&gt; [165] viridis_0.6.5               MsCoreUtils_1.16.1         
+#&gt; [167] vsn_3.72.0                  pROC_1.18.5                
+#&gt; [169] stringi_1.8.7               zlibbioc_1.50.0            
+#&gt; [171] MASS_7.3-61                 listenv_0.9.1              
+#&gt; [173] parallel_4.4.1              Biostrings_2.72.1          
+#&gt; [175] splines_4.4.1               hms_1.1.3                  
+#&gt; [177] ps_1.9.1                    igraph_2.1.4               
+#&gt; [179] ggpubr_0.6.1                QFeatures_1.14.2           
+#&gt; [181] ggsignif_0.6.4              reshape2_1.4.4             
+#&gt; [183] biomaRt_2.60.1              stats4_4.4.1               
+#&gt; [185] ScaledMatrix_1.12.0         XML_3.99-0.18              
+#&gt; [187] evaluate_1.0.4              BiocManager_1.30.26        
+#&gt; [189] tzdb_0.5.0                  foreach_1.5.2              
+#&gt; [191] tidyr_1.3.1                 purrr_1.1.0                
+#&gt; [193] future_1.67.0               clue_0.3-66                
+#&gt; [195] bio3d_2.4-5                 ggplot2_3.5.2              
+#&gt; [197] rsvd_1.0.5                  broom_1.0.8                
+#&gt; [199] xtable_1.8-4                restfulr_0.0.16            
+#&gt; [201] AnnotationFilter_1.28.0     easyPubMed_2.13            
+#&gt; [203] e1071_1.7-16                rstatix_0.7.2              
+#&gt; [205] later_1.4.2                 class_7.3-22               
+#&gt; [207] viridisLite_0.4.2           tibble_3.3.0               
+#&gt; [209] websocket_1.4.4             memoise_2.0.1              
+#&gt; [211] AnnotationDbi_1.66.0        GenomicAlignments_1.40.0   
+#&gt; [213] IRanges_2.38.1              cluster_2.1.8              
+#&gt; [215] globals_0.18.0              timechange_0.3.0           
+#&gt; [217] caret_7.0-1                 sampling_2.11</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>

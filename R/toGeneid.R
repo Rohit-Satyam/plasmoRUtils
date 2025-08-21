@@ -27,7 +27,7 @@ toGeneid <- function (inputid, from = "", to = "", org="Plasmodium falciparum 3D
   fetchtable <- getTable(org=org,db=db,...)
   get_ref <- function(col_name) {
     fetchtable %>%
-      dplyr::select(`Gene ID`, `Product Description`, `Gene Name or Symbol`, all_of(col_name)) %>%
+      dplyr::select(`Gene ID`, all_of(col_name)) %>%
       tidyr::separate_rows(all_of(col_name),sep = "[,;]") %>%
       dplyr::filter(all_of(col_name) !="N/A") %>%
       dplyr::distinct()

@@ -40,6 +40,10 @@ knitr::opts_chunk$set(
 Before downloading the package, install the following dependencies.
 
 ```{r, eval=FALSE}
+## Easiest way to install package and it's dependencies
+
+pak::pkg_install("Rohit-Satyam/plasmoRUtils", dependencies = TRUE)
+
 cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'ggsci', 'rvest', 'easyPubMed', 'plyr', 'scales', 'ggplot2', 'glue', 'tidyr', 'tibble', 'data.table', 'plotly', 'purrr', 'stringr', 'S4Vectors', 'echarts4r', 'magrittr', 'bio3d', 'httr', 'jsonlite', 'ggpubr', 'gt', 'mgsub', 'reshape2','pathfindR')
 
 install.packages(setdiff(cranpkgs, rownames(installed.packages())), dependencies = TRUE)
@@ -77,9 +81,8 @@ Databases covered includes:
 4.  Malaria Parasite Metabolic Pathways ([MPMP](https://mpmp.huji.ac.il/)) database
 5.  Malaria Important Interacting Proteins ([MIIP](http://www.hpppi.iicb.res.in/pfnet/stage-map.html))
 6.  [Phenoplasm](https://phenoplasm.org/)
-7.  [PlasmoBase](http://genome.lcqb.upmc.fr/plasmobase/)
-8.  [Uniprot](https://www.uniprot.org/)
-9.  [Malaria Cell Atlas](https://www.malariacellatlas.org/), etc. For exhaustive list, see subsections below.
+7.  [Uniprot](https://www.uniprot.org/)
+8.  [Malaria Cell Atlas](https://www.malariacellatlas.org/), etc. For exhaustive list, see subsections below.
 
 ```{r setup}
 # Load package and some other useful packages by using
@@ -101,7 +104,6 @@ suppressPackageStartupMessages(
 | **`searchHP()`**           | Hit Predict                            |
 | **`searchIpDb()`**         | InParanoiDb                            |
 | **`searchKipho()`**        | KiPho Database                         |
-| **`searchMT()`**           | Malaria Tools                          |
 | **`searchMidb()`**         | Minor Intron Database                  |
 | **`searchMiip()`**         | Malaria Important Interacting Proteins |
 | **`searchPM()`**           | PubMed                                 |
@@ -138,6 +140,9 @@ Using the function is relatively easy and can be achieved as
 searchApicoTFdb(org="pf") %>% head()
 ## Searching all cyclospora TFs
 searchApicoTFdb(org="tg49") %>% head()
+
+## Fetch all Experimentally validated TRs
+searchApicoTFdb(fetch = "exptfs") %>% head()
 ```
 
 ## **`searchGSC()`**
@@ -149,8 +154,13 @@ Since Google Scholar searches are not restricted to the Article abstracts but ex
 > Note: We would like to warn users that this function is experimental and have been seen to get your IP blocked temporarily for 24 hrs if used more than 20 times. For large array of genes, we encourage users to use more specialized APIs.
 
 ```{r}
-## Searching all plasmodium TFs
-searchGSC(c("PF3D7_0420300", "PF3D7_0621000"))
+## Fetch all the papers between year 2018 and 2021
+searchGSC(
+  geneIDs=c("PF3D7_0420300 OR MAL4P1.192 OR Q8I1N6 OR PFD0985w","PF3D7_0621000",
+            "PF3D7_0420300OR"),
+  translate = "en",  ## to translate the non-english titles
+  year_start = 2018, 
+  year_end   = 2021, max_pages = 2)
 ```
 
 ## **`searchHP()`**
@@ -162,7 +172,7 @@ This function enables you to search HitPredict[@López2015] database and procure
 searchHP("PF3D7_0418300") %>% head()
 
 ## To use it for other organism, turn off uniprotToGID and provide taxid of the organism
-test <- searchHP("BRCA1",taxid = "9606" , uniprotToGID = FALSE)
+test <- searchHP("BRCA1",taxid = "3702" , uniprotToGID = FALSE)
 
 ## Multiple gene query
 res <- lapply(c("PF3D7_0418300","PF3D7_1118500"), function(x){searchHP(x,uniprotToGID = FALSE)})%>% plyr::ldply()
@@ -182,14 +192,17 @@ For convenience, we therefore provide another function `toGeneid()` which will q
 
 ## **`searchIpDb()`**
 
-This function enables you to search [InParanoiDB 9](https://inparanoidb.sbc.su.se/) [@Persson2023] database and procure high-confidence orthologs for your organism of interest. The input required is a character vector of gene IDs.
+This function enables you to search [InParanoiDB 9](https://inparanoidb.sbc.su.se/) [@Persson2023] database and procure high-confidence orthologs for your organism of interest. The input required is a character vector of gene IDs or Uniprot IDs. In case of gene IDs, the ids are converted to Uniprot IDs first to comply with InParanoiDB API query format. We only provide gene ID to Uniprot ID conversion for organisms that are covered by VEuPathDB as `searchIpDb()` function use our own `toGeneid()` function to fetch all Uniprot IDs. Users can separately convert their gene IDs to uniprot IDs as well using other R packages such as  `r Biocpkg("biomaRt")` R package.
 
 ```{r}
-gids <- c("PF3D7_0807800", "PF3D7_1023900")
-searchIpDb(gids) %>% head()
+## Using Gene IDs
+searchIpDb( c("PF3D7_0807800", "PF3D7_1023900")) %>% head()
+
+## Using uniprot IDs
+searchIpDb( c("C5LD32", "A5KAC7"),idtype = "uniprot") %>% head()
 ```
 
-You might see some of the Uniprot ID failing such as `Q2KNU4` and `Q2KNU5` and their respective URLs. These Uniprot IDs are missing from the InParanoiDB 9 database.
+You might see some of the Uniprot ID failing such as `Q2KNU4` and `Q2KNU5` and their respective URLs. These Uniprot IDs are missing from the InParanoiDB 9 database either because either they are old and discontinued or missing from the database. When converting gene IDs to Uniprot IDs, this function try querying all the Uniprot IDs provided by VEuPathDB.
 
 ## **`searchKipho()`**
 
@@ -210,42 +223,11 @@ searchKipho(org="pf",type = "kinase")
 searchKipho(org="pf",type = "phosphatase")
 ```
 
-## **`searchMT()`**
-
-This function enables you to find the Condition Specific and Tissue Specific expression of gene of interest in two organisms: *Plasmodium falciparum* and *Plasmodium berghi.*
-
-```{r, eval=FALSE}
-geneID <- c("PBANKA_0100600", "PBANKA_0102900", "PF3D7_0102900")
-res <- searchMT(geneID = geneID)
-res
-
-# To get overview of stages your genes of interest are highly expressed in. Commented here as the html plot disrupts the HTML vignette rendering.
-# res %>% easyPie()
-```
-
-You can also feed the output of `searchMT()` to a companion function to quickly get a sense of the stages in which your genes of interests are highly expressed in. Another convenience function for malaria.tools database is `plotAllCondition()` function. This let you create publication ready plots of TPM normalized expression values across multiple stages of parasite using bulk-rnaseq data from malaria.tools. These plots are similar to what you see in the database itself.
-
-```{r}
-
-# TPM plot (non-interactive)
-plotAllCondition(geneID = "PBANKA_0100600")
-plotAllCondition(geneID = "PBANKA_0100600",plotify = TRUE) ## interactive
-
-## To get the data used for making above plot use returnData argument
-plotAllCondition(geneID = "PBANKA_0100600",returnData = TRUE) %>% head()
-```
-
-Users can also plot stage specific average TPMs as well similar to the plots rendered in malaria.tools using `plotStageSpecific()` function.
-
-```{r}
-plotStageSpecific(geneID = "PBANKA_0100600",plotify = TRUE)
-```
-
 ## **`searchMidb()`**
 
 This function enables you to fetch minor-introns information from MiDB database in bulk. By default, all intron classes are fetched (major-like, major_hybrid, minor-like, minor_hybrid, non-canonical). For more information on minor introns visit [MiDB database](https://midb.pnb.uconn.edu/index.php).
 
-```{r}
+```{r, eval=FALSE}
 ## Let's see what organisms are present in MiDB
 data("midbSpecies")
 
@@ -258,7 +240,6 @@ df %>% head()
 This function enables you to fetch Protein-protein interaction pairs of *Plasmodium falciparum* and the respective stage (sexual and asexual) they interact from [MIIP database](http://www.hpppi.iicb.res.in/pfnet/).
 
 ```{r}
-
 searchMiip(c("PF3D7_0807800","PF3D7_1023900"))
 ```
 
@@ -286,7 +267,7 @@ searchPhPl(geneID = c("PF3D7_0420300","PF3D7_0621000","PF3D7_0523800"), org="pf"
 searchPhPl(geneID = c("PF3D7_0420300","PF3D7_0621000","PF3D7_0523800"), org="pf", fetch=2) %>% head()
 ```
 
-Oftentime, you would like to get the summary table like the one plotted in PhenoPlasm that combines both Disruptability and Mutant Phenotype information. Rather than using screen grab to get the snapshot of the table, one can now download the table from [`Advanced Search`](https://phenoplasm.org/advanced.php) button by submitting the geneIDs of interest and can feed that file to `easyPhplplottbl()` function of `r Rpackage("plasmoRUtils")` to render such table from the `phenotype.txt` files directly
+Oftentimes, you would like to get the summary table like the one plotted in PhenoPlasm that combines both Disruptability and Mutant Phenotype information. Rather than using screen grab to get the snapshot of the table, one can now download the table from [`Advanced Search`](https://phenoplasm.org/advanced.php) button by submitting the geneIDs of interest and can feed that file to `easyPhplplottbl()` function of `r Rpackage("plasmoRUtils")` to render such table from the `phenotype.txt` files directly
 
 ```{r, eval=FALSE}
 # Read the file
@@ -321,6 +302,31 @@ searchTedConsensus(c("Q7K6A1","Q8IAP8","C0H4D0","C6KT90","Q8IBJ7"), returnCATHde
 ```
 
 In the example above, `C0H4D0` have CATH label [`3.30.70.2380`](https://www.cathdb.info/version/v4_4_0/superfamily/3.30.70.2380). But this superfamily doesn't have a name. Besides, sometimes instead of Superfamily CATH labels, TED might use CATH-Gene3D Hierarchy. No description is returned in such cases.
+
+# Accessing `malaria.tools` database.
+
+Some visualization functions have been developed to produce similar visualizations similar to what rendered by [malaria.tools](https://malaria.sbs.ntu.edu.sg/) database but are publication ready. User can plot Condition Specific and Stage Specific expression of gene of interest in two organisms: *Plasmodium falciparum* and *Plasmodium berghi.*
+
+
+- `plotAllCondition()`: This function lets you create publication ready plots of TPM normalized expression values across multiple stages of parasite using bulk-RNAseq data from malaria.tools.
+
+```{r}
+# TPM plot (non-interactive)
+plotAllCondition(geneID = "PBANKA_0100600")
+plotAllCondition(geneID = "PBANKA_0100600",plotify = TRUE) ## interactive
+
+## To get the data used for making above plot use returnData argument
+plotAllCondition(geneID = "PBANKA_0100600",returnData = TRUE) %>% head()
+```
+
+Users can also plot stage specific average TPMs as well similar to the plots rendered in malaria.tools using `plotStageSpecific()` function.
+
+```{r}
+plotStageSpecific(geneID = "PBANKA_0100600",plotify = TRUE)
+```
+
+> Note: `searchMT()` function available in previous version has been depreciated due to its repeated failure given the database latency. `easyPie` therefore has also been removed
+
 
 # Session Info {.unnumbered}
 

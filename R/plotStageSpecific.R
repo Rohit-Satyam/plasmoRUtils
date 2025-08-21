@@ -11,8 +11,8 @@
 #' @import rvest
 #' @export
 #'
-#' @param geneID Gene ID of Plasmodium falciparum or Plasmodium berghi.
-#' @param returnData Logical. Use true to return dataframe used for making plots.
+#' @param geneID Gene ID of \emph{Plasmodium falciparum} or \emph{Plasmodium berghi}.
+#' @param returnData Logical. Use true to return data frame used for making plots.
 #' @param plotify To make plots interactive using plotly.
 #'
 #' @return A plot (or data theirof) of TPM values across multiple stages of parasite.
