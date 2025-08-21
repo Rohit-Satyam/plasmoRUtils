@@ -9,7 +9,7 @@ plotStageSpecific(geneID, returnData = FALSE, plotify = FALSE)
 \arguments{
 \item{geneID}{Gene ID of \emph{Plasmodium falciparum} or \emph{Plasmodium berghi}.}
 
-\item{returnData}{Logical. Use true to return dataframe used for making plots.}
+\item{returnData}{Logical. Use true to return data frame used for making plots.}
 
 \item{plotify}{To make plots interactive using plotly.}
 }

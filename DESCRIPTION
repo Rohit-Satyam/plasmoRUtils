@@ -1,10 +1,6 @@
 Package: plasmoRUtils
 Title: A one-stop R Package for Plasmodium and other Apicomplexan parasite-related Bioinformatics analysis
-<<<<<<< HEAD
 Version: 1.1.0
-=======
-Version: 1.0.0
->>>>>>> main
 Authors@R: c(
     person("Rohit", "Satyam", , "rohit.satyam@kaust.edu.sa", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9311-4992")),
@@ -31,10 +27,7 @@ Imports:
     data.table,
     dplyr,
     easyPubMed,
-<<<<<<< HEAD
-=======
     echarts4r,
->>>>>>> main
     ggplot2,
     ggpubr,
     ggsci,
@@ -71,10 +64,7 @@ Suggests:
     knitr,
     NOISeq,
     pathfindR,
-<<<<<<< HEAD
     polyglotr,
-=======
->>>>>>> main
     pRoloc,
     rmarkdown,
     rtracklayer,
