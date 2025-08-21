@@ -7,13 +7,14 @@
 searchIpDb(geneID, ..., idtype = "ensembl")
 }
 \arguments{
-\item{geneID}{Gene ID of \emph{Plasmodium falciparum}.}
+\item{geneID}{Gene ID of \emph{Plasmodium falciparum} or VEupathDB enlisted organisms that are also covered by InParanoiDB. If providing uniprot ID, set idtype="uniprot" to prevent ID conversion.}
 
-\item{...}{Additional arguments that can be passed to \code{toGeneid()} function. This comes in very handy if you are working with parasite gene IDs other than \emph{Plasmodium}.
-
-@return A data frame, containing 10 columns.}
+\item{...}{Additional arguments that can be passed to \code{toGeneid()} function. This comes in very handy if you are working with parasite gene IDs other than \emph{Plasmodium}.}
 
 \item{idtype}{Set this to "uniprot" if using uniprot IDs directly and GenID to uniprot ID conversion is not required.}
+}
+\value{
+A data frame, containing 10 columns.
 }
 \description{
 This function retrieves the orthologs from \href{https://inparanoidb.sbc.su.se/}{InParanoiDB 9} database for 640 species given set of Ensembl Gene IDs or uniprot IDs usinf database API.
