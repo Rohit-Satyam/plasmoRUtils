@@ -4,37 +4,46 @@
 \alias{searchApicoTFdb}
 \title{Fetch data from ApicoTFdb}
 \usage{
-searchApicoTFdb(org = "pf")
+searchApicoTFdb(org = "pf", fetch = "all")
 }
 \arguments{
-\item{org}{Abbreviation of organism of interest.
-Plasmodium Species:
-pb: Plasmodium berghii
-pv: Plasmodium vivax
-pf: Plasmodium falciparum
-pk: Plasmodium knowlesi
-py: Plasmodium yoelii
-pc: Plasmodium chabaudi
+\item{org}{Abbreviation of organism of interest.}
 
-By Other Apicomplexan Species
-tg49: Toxoplasma Gondii ME49
-tg89: Toxoplasma Gondii P89
-cp: Cryptosporidium parvum
-em: Eimeria maxima
-bb: Babesia bovis
-et: Eimeria tenella
-nu: Neurospora caninum
-cy: Cyclospora cayetanensis}
+\item{fetch}{Describe the tables to be fetched. Default: "all" will fetch all TFs. To fetch TRs,CRRs,RNA-regs or Experimentally verified TF, use "trs","crrs","rnaregs" and "exptfs" respectively. When using other than "all", org argument will be ignored.
+
+\itemize{
+\strong{Plasmodium Species:}
+
+\item pb: \emph{Plasmodium berghii}
+\item pv: \emph{Plasmodium vivax}
+\item pf: \emph{Plasmodium falciparum}
+\item pk: \emph{Plasmodium knowlesi}
+\item py: \emph{Plasmodium yoelii}
+\item pc: \emph{Plasmodium chabaudi}
+}
+
+\itemize{
+\strong{By Other Apicomplexan Species}
+
+\item tg49: \emph{Toxoplasma Gondii} ME49
+\item tg89: \emph{Toxoplasma Gondii} P89
+\item cp: \emph{Cryptosporidium parvum}
+\item em: \emph{Eimeria maxima}
+\item bb: \emph{Babesia bovis}
+\item et: \emph{Eimeria tenella}
+\item nu: \emph{Neurospora caninum}
+\item cy: \emph{Cyclospora cayetanensis}
+}}
 }
 \value{
 df This function returns a dataframe of transcription regulators for organism of interest from ApicoTFDb.
 }
 \description{
-This function provides ability to query your gene IDs to ApicoTFDb.
+This function provides ability to query your gene IDs to \href{https://bioinfo.icgeb.res.in/PtDB/index.html}{ApicoTFDb}.
 }
 \examples{
 \dontrun{
-test <- searchApicoTFdb(org="pf")
+test <- searchApicoTFdb(org = "pf")
 }
 
 }

@@ -16,7 +16,7 @@ searchPM(
 \arguments{
 \item{geneID}{Character vector of Gene IDs.}
 
-\item{org}{Scientific name of the organism. Default "Plasmodium falciparum"}
+\item{org}{Scientific name of the organism. Default \emph{Plasmodium falciparum}}
 
 \item{query}{String of user defined custom queries. If you wish to pass your own combination od terms use this argument.}
 

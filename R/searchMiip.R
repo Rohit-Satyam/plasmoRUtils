@@ -8,9 +8,9 @@
 #' @import purrr
 #' @export
 #'
-#' @param geneID A character vector of Gene IDs of Plasmodium falciparum or Plasmodium berghi.Remove version from the gene ids.
+#' @param geneID A character vector of Gene IDs of \emph{Plasmodium falciparum} or \emph{Plasmodium berghi}.Remove version from the gene ids.
 #'
-#' @return A dataframe of Protein protein interaction provided by MIIP database.
+#' @return A data frame of Protein protein interaction provided by MIIP database.
 #' @examples
 #' \dontrun{
 #'  df <- searchMiip(c("PF3D7_0807800","PF3D7_1023900"))

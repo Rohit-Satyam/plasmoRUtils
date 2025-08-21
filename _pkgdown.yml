@@ -19,6 +19,7 @@ articles:
   - Gene_ID_Conversion
   - Miscellaneous_function
   - Need_for_reanalysis
+  - retrieving_orthologs
 reference:
 - title: "Install dependencies"
   contents:
@@ -32,8 +33,7 @@ reference:
   desc: "These functions helps users fetch annotations and data in form of tables from various databases."
   contents:
   - starts_with("get")
-  - listMCA
-  - listVeupathdb
+  - starts_with("list")
 - title: "Plotting functions"
   desc: "These functions helps users make publication ready plots quickly."
   contents:

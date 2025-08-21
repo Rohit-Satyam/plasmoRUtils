@@ -1,0 +1,151 @@
+---
+title: "Retrieving Orthologs"
+author:
+- name: Rohit Satyam
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: Alberto Maillo
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: David Gomez-Cabrero
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+- name: Arnab Pain
+  affiliation: King Abdullah University of Science & Technology, Saudi Arabia
+abstract: >
+  This is a quick and dirty tutorial on how to fetch orthologs from OrthoMCL and InparanoiDB databases.
+date: "`r format(Sys.Date(), '%d %B, %Y')`"
+package: plasmoRUtils
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+    toc: true
+    number_sections: true
+vignette: |
+  %\VignetteIndexEntry{Retrieving Orthologs}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{BiocStyle}
+  %\VignettePackage{plasmoRUtils}
+  %\VignetteEngine{knitr::rmarkdown}
+bibliography: references.bib
+link-citations: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,cache = TRUE, warning = FALSE,message = FALSE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+Users might require Ortholog mapping to:
+
+-   to assess phyletic profile of a set of genes and see if they have orthologs in other related organism or not.
+
+-   integrate datasets obtained from two different species. Often such datasets are scRNASeq (eg: [@Tebben2022])
+
+-   borrow annotations such as localization for hypothesis generation.
+
+-   perform co-expression analysis between two different species.
+
+    Whatever the use case maybe, we will see how we can exploit `getpairedOrthologs()` to fetch orthologs of multiple organisms of interest in batch manner and integrate them.
+
+```{r setup}
+# Load package and some other useful packages by using
+suppressPackageStartupMessages(
+  suppressWarnings({
+    library(plasmoRUtils)
+    library(dplyr)
+    library(plyr)}))
+```
+
+Here, we will try to get all *Plasmodium falciparum* 3D7 (1742855) orthologs present in *Toxoplasma gondii* ME49 (1747281), *Plasmodium berghei* ANKA (1742951) and *Plasmodium vivax* Sal1(1744988). The numbers mentioned alongside are vocabulary or unique IDs that OrthoMCL uses to fetch paired orthologs.
+
+```{r}
+#?getpairedOrthologs
+# listOrthomcl()
+
+res <- lapply(c(1744988,1747281,1742951), function(x){
+  getpairedOrthologs(from = 1742855,
+                     to=x,
+                     db="orthomcl",transform = FALSE)
+}) %>% setNames(c("Pvivax","Tgme49","Pb"))
+
+merged_df <- Reduce(function(x, y) merge(x, y, by = "Accession", all = TRUE), res)
+merged_df %>% head()
+
+## Tidying up the dataframe by removing organisms prefixes
+strip_prefix <- function(x) sub("^[^|]+\\|", "", x)     # per-token
+clean_list   <- function(s) {
+    toks <- trimws(strsplit(s, ",", fixed = TRUE)[[1]])
+    paste(vapply(toks, strip_prefix, character(1)), collapse = ",")
+}
+
+merged_df[] <- lapply(merged_df, function(col) vapply(col, clean_list, character(1)))
+
+## Changing column names
+colnames(merged_df) <- c("P falciparum 3D7","P vivax Sal1","T gondii ME49","Plasmodium berghei ANKA")
+
+merged_df %>% head()
+```
+
+Since OrthoMCL and other VEuPathDB database are not updated simultaneously, chances are that you might be using old OrthoMCL ID. If that's the case above function will not be much helpful. The workaround is to fetch the old OrthoMCL IDs for each organisms and their respective databases and use it as an anchor to combine and collapse gene IDs from all the organisms. The code snippet below demonstrate the same.
+
+```{r}
+## List all organisms
+list <- listVeupathdb(customFields = c("primary_key","project_id","species",'species_ncbi_tax_id'))
+
+## Subset organisms I am interested in 
+dbs <- list[grep("3D7|ME49$|Sal-1", list$Organism),]
+dbs
+df <- lapply(1:nrow(dbs), function(x){
+  plasmoRUtils::getTable(org=dbs[x,]$Organism, db=tolower(dbs[x,]$`VEuPathDB Project`),customFields = c("primary_key" ,"gene_orthomcl_name"))
+})
+
+## Retain protein coding genes
+
+df2 <- lapply(df, function(x){
+  x[!(stringr::str_detect(pattern = "N/A",string = x$`Ortholog Group`)),]
+})
+
+## Combine all the tables
+merged_df2 <- Reduce(function(x, y) merge(x, y, by = "Ortholog Group", all = TRUE), df2)
+
+merged_df2 %>% head(n = 10)
+## Combining all the gene IDs in each column so that we have 1 row per orthogroup
+merged_df2 <- merged_df2 %>% 
+  dplyr::group_by( `Ortholog Group`) %>% 
+  dplyr::summarise(dplyr::across(dplyr::everything(), 
+                                 ~paste(unique(.x), collapse = ",")), .groups = "drop")
+
+## Changing column names
+colnames(merged_df2) <- c("Orthogroup ID","P vivax Sal1","P falciparum 3D7","T gondii ME49")
+merged_df2 %>% head(n = 10)
+```
+
+## Fetching orthologs from InParanoiDB
+
+InParanoiDB uses NCBI taxon IDs as unique identifiers. For *P. falciparum* (36329), *T. gondii* (5811), *P. vivax* (126793) and *P. berghei* (5823), we will fetch pairwise orthologs by keeping *P. falciparum* as constant species. We can recycle the code above as follows.
+
+```{r}
+#?getpairedOrthologs
+# listipdb()
+
+res <- lapply(c(126793,5811,5823), function(x){
+  getpairedOrthologs(from = 36329,
+                     to=x,
+                     db="ipdb",transform = TRUE)
+}) %>% setNames(c("Pvivax","Tgme49","Pb"))
+
+res[[1]] %>% head()
+
+```
+
+Combining the results across InParanoiDB, is not as straightforward as for OrthoMCL because of lack of unique Orthogroup ID. However, user can use Query Uniprot ID as anchor, combine the results, convert Uniprot IDs to gene IDs and then collapse rows since two or more Uniprot IDs might correspond to same gene IDs.
+
+# Session Info {.unnumbered}
+
+```{r}
+utils::sessionInfo()
+```
+
+# References {.unnumbered}

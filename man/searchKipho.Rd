@@ -8,11 +8,13 @@ searchKipho(org = "pf", type = "kinase")
 }
 \arguments{
 \item{org}{Abbreviation of organism of interest.
-Plasmodium Species:
-pb: Plasmodium berghii
-pv: Plasmodium vivax
-pf: Plasmodium falciparum
-pc: Plasmodium chabaudi}
+\itemize{
+\strong{Species:}
+\item pb: \emph{Plasmodium berghii}
+\item pv: \emph{Plasmodium vivax}
+\item pf: \emph{Plasmodium falciparum}
+\item pc: \emph{Plasmodium chabaudi}
+}}
 
 \item{type}{Type of protein class i.e. "kinase" or "phosphatase". Default: "kinase"}
 }

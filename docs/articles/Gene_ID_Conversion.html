@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">plasmoRUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +41,7 @@
     <li><a class="dropdown-item" href="../articles/Gene_ID_Conversion.html">Accessing component databases of VEuPathDB</a></li>
     <li><a class="dropdown-item" href="../articles/Miscellaneous_function.html">Other useful functions</a></li>
     <li><a class="dropdown-item" href="../articles/Need_for_reanalysis.html">RNASeq: Need for reanalysis?</a></li>
+    <li><a class="dropdown-item" href="../articles/retrieving_orthologs.html">Retrieving Orthologs</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -79,7 +80,7 @@ Arabia<br><h4 data-toc-skip class="author">Arnab
 Pain</h4>
             <address class="author_afil">
       King Abdullah University of Science &amp; Technology, Saudi
-Arabia<br><h4 data-toc-skip class="date">20 July, 2025</h4>
+Arabia<br><h4 data-toc-skip class="date">21 August, 2025</h4>
       
 
       <div class="d-none name"><code>Gene_ID_Conversion.Rmd</code></div>
@@ -161,11 +162,11 @@ section.</p>
 <span><span class="co">## Convert uniprot IDs back to gene IDs. It will also provide Product description and Gene Symbol</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/toGeneid.html">toGeneid</a></span><span class="op">(</span>inputid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Q8I1N6"</span>,<span class="st">"C6KT48"</span><span class="op">)</span>,from<span class="op">=</span><span class="st">"uniprot"</span>,to<span class="op">=</span><span class="st">"ensembl"</span> <span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 4</span></span></span>
-<span><span class="co">#&gt;   `Gene ID`     `Product Description`      `Gene Name or Symbol` `UniProt ID(s)`</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> PF3D7_0420300 AP2 domain transcription … ApiAP2                Q8I1N6         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> PF3D7_0621000 RNA polymerase subunit si… ApSigma               C6KT48</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
+<span><span class="co">#&gt;   `Gene ID`     `UniProt ID(s)`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> PF3D7_0420300 Q8I1N6         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> PF3D7_0621000 C6KT48</span></span>
 <span></span>
 <span></span>
 <span><span class="co">## Using customFields to get only columns of interest</span></span>
@@ -269,14 +270,14 @@ the usage of which has been shown below.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/getPreconfiguredTable.html">getPreconfiguredTable</a></span><span class="op">(</span>org <span class="op">=</span> <span class="st">"Plasmodium falciparum 3D7"</span>,db <span class="op">=</span> <span class="st">"plasmodb"</span>,customField <span class="op">=</span> <span class="st">"MetabolicPathwaysMPMP"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 4</span></span></span>
-<span><span class="co">#&gt;   `Gene ID`     pathway_id Pathway                                      Activity</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> PF3D7_0100100 lys_met    Peptides with confirmed methylated lysine r… erythro…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> PF3D7_0100100 virulence  Candidate genes related to virulence         erythro…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> PF3D7_0100100 Par_RBC    Protein-Protein Interactions between Human … erythro…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> PF3D7_0100100 PfEMP1     PfEMP1 domain architectures                  erythro…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> PF3D7_0100100 gene_lumef Gene expression affected by lumefantrine     erythro…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> PF3D7_0100100 PQS        P. falciparum genes harboring G-quadruplexes erythro…</span></span></code></pre></div>
+<span><span class="co">#&gt;   `Gene ID`     pathway_id          Pathway                             Activity</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> PF3D7_0100100 struc_telom         Structure of telomere and sub-telo… erythro…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> PF3D7_0100100 PfEMP1              PfEMP1 domain architectures         erythro…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> PF3D7_0100100 PQS                 P. falciparum genes harboring G-qu… erythro…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> PF3D7_0100100 cytoadherencescheme Interactions between modified host… erythro…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> PF3D7_0100100 gene_lumef          Gene expression affected by lumefa… erythro…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> PF3D7_0100100 virulence           Candidate genes related to virulen… erythro…</span></span></code></pre></div>
 <p>Please note that the MPMP pathway version provided by PlasmoDB is <a href="https://plasmodb.org/plasmo/app/record/dataset/DS_1e177b728b" class="external-link">outdated</a>
 (<code>03-2019</code>). Some pathways have been revised or removed in
 its entirety. If you wish to access the latest MPMP version, you can use
@@ -411,13 +412,13 @@ gene IDs.</p>
 <span><span class="co">#&gt; 4                201                        NA                            4U5A</span></span>
 <span><span class="co">#&gt; 5                201                        NA                            4U5A</span></span>
 <span><span class="co">#&gt; 6                201                        NA                            4U5A</span></span>
-<span><span class="co">#&gt;         Gene ID                       Product Description Gene Name or Symbol</span></span>
-<span><span class="co">#&gt; 1 PF3D7_1372300 Plasmodium exported protein (PHISTa-like)                 N/A</span></span>
-<span><span class="co">#&gt; 2 PF3D7_1372300 Plasmodium exported protein (PHISTa-like)                 N/A</span></span>
-<span><span class="co">#&gt; 3          &lt;NA&gt;                                      &lt;NA&gt;                &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 4          &lt;NA&gt;                                      &lt;NA&gt;                &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 5          &lt;NA&gt;                                      &lt;NA&gt;                &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 6          &lt;NA&gt;                                      &lt;NA&gt;                &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;         Gene ID</span></span>
+<span><span class="co">#&gt; 1 PF3D7_1372300</span></span>
+<span><span class="co">#&gt; 2 PF3D7_1372300</span></span>
+<span><span class="co">#&gt; 3          &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4          &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5          &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6          &lt;NA&gt;</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -444,7 +445,7 @@ gene IDs.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] plyr_1.8.9         dplyr_1.1.4        plasmoRUtils_1.0.0 rlang_1.1.6       </span></span>
+<span><span class="co">#&gt; [1] plyr_1.8.9         dplyr_1.1.4        plasmoRUtils_1.1.0 rlang_1.1.6       </span></span>
 <span><span class="co">#&gt; [5] readr_2.1.5        janitor_2.2.1      BiocStyle_2.32.1  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
@@ -466,7 +467,7 @@ gene IDs.</p>
 <span><span class="co">#&gt;  [31] pkgdown_2.1.3               Rsamtools_2.20.0           </span></span>
 <span><span class="co">#&gt;  [33] systemfonts_1.2.3           txdbmaker_1.0.1            </span></span>
 <span><span class="co">#&gt;  [35] AnnotationForge_1.46.0      dichromat_2.0-0.1          </span></span>
-<span><span class="co">#&gt;  [37] parallelly_1.45.0           limma_3.60.6               </span></span>
+<span><span class="co">#&gt;  [37] parallelly_1.45.1           limma_3.60.6               </span></span>
 <span><span class="co">#&gt;  [39] rstudioapi_0.17.1           impute_1.78.0              </span></span>
 <span><span class="co">#&gt;  [41] RSQLite_2.4.1               FNN_1.1.4.1                </span></span>
 <span><span class="co">#&gt;  [43] generics_0.1.4              BiocIO_1.14.0              </span></span>
@@ -482,86 +483,84 @@ gene IDs.</p>
 <span><span class="co">#&gt;  [63] grid_4.4.1                  blob_1.2.4                 </span></span>
 <span><span class="co">#&gt;  [65] promises_1.3.3              crayon_1.5.3               </span></span>
 <span><span class="co">#&gt;  [67] PSMatch_1.8.0               lattice_0.22-6             </span></span>
-<span><span class="co">#&gt;  [69] beachmat_2.20.0             echarts4r_0.4.5.9000       </span></span>
-<span><span class="co">#&gt;  [71] annotate_1.82.0             GenomicFeatures_1.56.0     </span></span>
-<span><span class="co">#&gt;  [73] chromote_0.5.1              mzR_2.38.0                 </span></span>
-<span><span class="co">#&gt;  [75] KEGGREST_1.44.1             pillar_1.11.0              </span></span>
-<span><span class="co">#&gt;  [77] knitr_1.50                  GenomicRanges_1.56.2       </span></span>
-<span><span class="co">#&gt;  [79] rjson_0.2.23                lpSolve_5.6.23             </span></span>
-<span><span class="co">#&gt;  [81] future.apply_1.20.0         codetools_0.2-20           </span></span>
-<span><span class="co">#&gt;  [83] mgsub_1.7.3                 glue_1.8.0                 </span></span>
-<span><span class="co">#&gt;  [85] pcaMethods_1.96.0           data.table_1.17.6          </span></span>
-<span><span class="co">#&gt;  [87] MultiAssayExperiment_1.30.3 vctrs_0.6.5                </span></span>
-<span><span class="co">#&gt;  [89] png_0.1-8                   gtable_0.3.6               </span></span>
-<span><span class="co">#&gt;  [91] kernlab_0.9-33              cachem_1.1.0               </span></span>
-<span><span class="co">#&gt;  [93] gower_1.0.2                 xfun_0.52                  </span></span>
-<span><span class="co">#&gt;  [95] prodlim_2025.04.28          S4Arrays_1.4.1             </span></span>
-<span><span class="co">#&gt;  [97] mime_0.13                   coda_0.19-4.1              </span></span>
-<span><span class="co">#&gt;  [99] survival_3.8-3              ncdf4_1.24                 </span></span>
-<span><span class="co">#&gt; [101] timeDate_4041.110           SingleCellExperiment_1.26.0</span></span>
-<span><span class="co">#&gt; [103] iterators_1.0.14            hardhat_1.4.1              </span></span>
-<span><span class="co">#&gt; [105] lava_1.8.1                  statmod_1.5.0              </span></span>
-<span><span class="co">#&gt; [107] MLInterfaces_1.84.0         ipred_0.9-15               </span></span>
-<span><span class="co">#&gt; [109] nlme_3.1-166                bit64_4.6.0-1              </span></span>
-<span><span class="co">#&gt; [111] progress_1.2.3              filelock_1.0.3             </span></span>
-<span><span class="co">#&gt; [113] LaplacesDemon_16.1.6        GenomeInfoDb_1.40.1        </span></span>
-<span><span class="co">#&gt; [115] bslib_0.9.0                 affyio_1.74.0              </span></span>
-<span><span class="co">#&gt; [117] irlba_2.3.5.1               rpart_4.1.23               </span></span>
-<span><span class="co">#&gt; [119] colorspace_2.1-1            BiocGenerics_0.50.0        </span></span>
-<span><span class="co">#&gt; [121] DBI_1.2.3                   nnet_7.3-19                </span></span>
-<span><span class="co">#&gt; [123] tidyselect_1.2.1            processx_3.8.6             </span></span>
-<span><span class="co">#&gt; [125] bit_4.6.0                   compiler_4.4.1             </span></span>
-<span><span class="co">#&gt; [127] curl_6.4.0                  rvest_1.0.4                </span></span>
-<span><span class="co">#&gt; [129] httr2_1.2.0                 graph_1.82.0               </span></span>
-<span><span class="co">#&gt; [131] SparseM_1.84-2              xml2_1.3.8                 </span></span>
-<span><span class="co">#&gt; [133] plotly_4.11.0               desc_1.4.3                 </span></span>
-<span><span class="co">#&gt; [135] DelayedArray_0.30.1         bookdown_0.43              </span></span>
-<span><span class="co">#&gt; [137] rtracklayer_1.64.0          scales_1.4.0               </span></span>
-<span><span class="co">#&gt; [139] hexbin_1.28.5               affy_1.82.0                </span></span>
-<span><span class="co">#&gt; [141] rappdirs_0.3.3              stringr_1.5.1              </span></span>
-<span><span class="co">#&gt; [143] digest_0.6.37               mixtools_2.0.0.1           </span></span>
-<span><span class="co">#&gt; [145] rmarkdown_2.29              XVector_0.44.0             </span></span>
-<span><span class="co">#&gt; [147] htmltools_0.5.8.1           pkgconfig_2.0.3            </span></span>
-<span><span class="co">#&gt; [149] SingleR_2.6.0               sparseMatrixStats_1.16.0   </span></span>
-<span><span class="co">#&gt; [151] MatrixGenerics_1.16.0       dbplyr_2.5.0               </span></span>
-<span><span class="co">#&gt; [153] fastmap_1.2.0               htmlwidgets_1.6.4          </span></span>
-<span><span class="co">#&gt; [155] UCSC.utils_1.0.0            shiny_1.11.1               </span></span>
-<span><span class="co">#&gt; [157] DelayedMatrixStats_1.26.0   farver_2.1.2               </span></span>
-<span><span class="co">#&gt; [159] jquerylib_0.1.4             jsonlite_2.0.0             </span></span>
-<span><span class="co">#&gt; [161] mclust_6.1.1                BiocParallel_1.38.0        </span></span>
-<span><span class="co">#&gt; [163] mzID_1.42.0                 ModelMetrics_1.2.2.2       </span></span>
-<span><span class="co">#&gt; [165] BiocSingular_1.20.0         RCurl_1.98-1.17            </span></span>
-<span><span class="co">#&gt; [167] magrittr_2.0.3              scuttle_1.14.0             </span></span>
-<span><span class="co">#&gt; [169] Formula_1.2-5               GenomeInfoDbData_1.2.12    </span></span>
-<span><span class="co">#&gt; [171] Rcpp_1.0.14                 viridis_0.6.5              </span></span>
-<span><span class="co">#&gt; [173] MsCoreUtils_1.16.1          vsn_3.72.0                 </span></span>
-<span><span class="co">#&gt; [175] pROC_1.18.5                 stringi_1.8.7              </span></span>
-<span><span class="co">#&gt; [177] zlibbioc_1.50.0             MASS_7.3-61                </span></span>
-<span><span class="co">#&gt; [179] listenv_0.9.1               parallel_4.4.1             </span></span>
-<span><span class="co">#&gt; [181] splines_4.4.1               Biostrings_2.72.1          </span></span>
-<span><span class="co">#&gt; [183] hms_1.1.3                   ps_1.9.1                   </span></span>
-<span><span class="co">#&gt; [185] igraph_2.1.4                ggpubr_0.6.1               </span></span>
-<span><span class="co">#&gt; [187] QFeatures_1.14.2            ggsignif_0.6.4             </span></span>
-<span><span class="co">#&gt; [189] reshape2_1.4.4              biomaRt_2.60.1             </span></span>
-<span><span class="co">#&gt; [191] stats4_4.4.1                ScaledMatrix_1.12.0        </span></span>
-<span><span class="co">#&gt; [193] XML_3.99-0.18               evaluate_1.0.4             </span></span>
-<span><span class="co">#&gt; [195] BiocManager_1.30.26         tzdb_0.5.0                 </span></span>
-<span><span class="co">#&gt; [197] foreach_1.5.2               httpuv_1.6.16              </span></span>
-<span><span class="co">#&gt; [199] tidyr_1.3.1                 purrr_1.0.4                </span></span>
-<span><span class="co">#&gt; [201] future_1.58.0               clue_0.3-66                </span></span>
-<span><span class="co">#&gt; [203] bio3d_2.4-5                 ggplot2_3.5.2              </span></span>
-<span><span class="co">#&gt; [205] rsvd_1.0.5                  broom_1.0.8                </span></span>
-<span><span class="co">#&gt; [207] xtable_1.8-4                restfulr_0.0.16            </span></span>
-<span><span class="co">#&gt; [209] AnnotationFilter_1.28.0     easyPubMed_2.13            </span></span>
-<span><span class="co">#&gt; [211] e1071_1.7-16                rstatix_0.7.2              </span></span>
-<span><span class="co">#&gt; [213] later_1.4.2                 class_7.3-22               </span></span>
-<span><span class="co">#&gt; [215] viridisLite_0.4.2           ragg_1.4.0                 </span></span>
-<span><span class="co">#&gt; [217] tibble_3.3.0                websocket_1.4.4            </span></span>
-<span><span class="co">#&gt; [219] memoise_2.0.1               AnnotationDbi_1.66.0       </span></span>
-<span><span class="co">#&gt; [221] GenomicAlignments_1.40.0    IRanges_2.38.1             </span></span>
-<span><span class="co">#&gt; [223] cluster_2.1.8               globals_0.18.0             </span></span>
-<span><span class="co">#&gt; [225] timechange_0.3.0            caret_7.0-1                </span></span>
-<span><span class="co">#&gt; [227] sampling_2.11</span></span></code></pre></div>
+<span><span class="co">#&gt;  [69] beachmat_2.20.0             annotate_1.82.0            </span></span>
+<span><span class="co">#&gt;  [71] GenomicFeatures_1.56.0      chromote_0.5.1             </span></span>
+<span><span class="co">#&gt;  [73] mzR_2.38.0                  KEGGREST_1.44.1            </span></span>
+<span><span class="co">#&gt;  [75] pillar_1.11.0               knitr_1.50                 </span></span>
+<span><span class="co">#&gt;  [77] GenomicRanges_1.56.2        rjson_0.2.23               </span></span>
+<span><span class="co">#&gt;  [79] lpSolve_5.6.23              future.apply_1.20.0        </span></span>
+<span><span class="co">#&gt;  [81] codetools_0.2-20            mgsub_1.7.3                </span></span>
+<span><span class="co">#&gt;  [83] glue_1.8.0                  pcaMethods_1.96.0          </span></span>
+<span><span class="co">#&gt;  [85] data.table_1.17.8           MultiAssayExperiment_1.30.3</span></span>
+<span><span class="co">#&gt;  [87] vctrs_0.6.5                 png_0.1-8                  </span></span>
+<span><span class="co">#&gt;  [89] gtable_0.3.6                kernlab_0.9-33             </span></span>
+<span><span class="co">#&gt;  [91] cachem_1.1.0                gower_1.0.2                </span></span>
+<span><span class="co">#&gt;  [93] xfun_0.52                   prodlim_2025.04.28         </span></span>
+<span><span class="co">#&gt;  [95] S4Arrays_1.4.1              polyglotr_1.7.0            </span></span>
+<span><span class="co">#&gt;  [97] coda_0.19-4.1               survival_3.8-3             </span></span>
+<span><span class="co">#&gt;  [99] ncdf4_1.24                  timeDate_4041.110          </span></span>
+<span><span class="co">#&gt; [101] SingleCellExperiment_1.26.0 iterators_1.0.14           </span></span>
+<span><span class="co">#&gt; [103] hardhat_1.4.1               lava_1.8.1                 </span></span>
+<span><span class="co">#&gt; [105] statmod_1.5.0               MLInterfaces_1.84.0        </span></span>
+<span><span class="co">#&gt; [107] ipred_0.9-15                nlme_3.1-166               </span></span>
+<span><span class="co">#&gt; [109] bit64_4.6.0-1               progress_1.2.3             </span></span>
+<span><span class="co">#&gt; [111] filelock_1.0.3              LaplacesDemon_16.1.6       </span></span>
+<span><span class="co">#&gt; [113] GenomeInfoDb_1.40.1         bslib_0.9.0                </span></span>
+<span><span class="co">#&gt; [115] affyio_1.74.0               irlba_2.3.5.1              </span></span>
+<span><span class="co">#&gt; [117] rpart_4.1.23                colorspace_2.1-1           </span></span>
+<span><span class="co">#&gt; [119] BiocGenerics_0.50.0         DBI_1.2.3                  </span></span>
+<span><span class="co">#&gt; [121] nnet_7.3-19                 tidyselect_1.2.1           </span></span>
+<span><span class="co">#&gt; [123] processx_3.8.6              bit_4.6.0                  </span></span>
+<span><span class="co">#&gt; [125] compiler_4.4.1              curl_6.4.0                 </span></span>
+<span><span class="co">#&gt; [127] rvest_1.0.4                 httr2_1.2.0                </span></span>
+<span><span class="co">#&gt; [129] graph_1.82.0                SparseM_1.84-2             </span></span>
+<span><span class="co">#&gt; [131] xml2_1.3.8                  desc_1.4.3                 </span></span>
+<span><span class="co">#&gt; [133] DelayedArray_0.30.1         plotly_4.11.0              </span></span>
+<span><span class="co">#&gt; [135] bookdown_0.43               rtracklayer_1.64.0         </span></span>
+<span><span class="co">#&gt; [137] scales_1.4.0                hexbin_1.28.5              </span></span>
+<span><span class="co">#&gt; [139] affy_1.82.0                 rappdirs_0.3.3             </span></span>
+<span><span class="co">#&gt; [141] stringr_1.5.1               digest_0.6.37              </span></span>
+<span><span class="co">#&gt; [143] mixtools_2.0.0.1            rmarkdown_2.29             </span></span>
+<span><span class="co">#&gt; [145] XVector_0.44.0              htmltools_0.5.8.1          </span></span>
+<span><span class="co">#&gt; [147] pkgconfig_2.0.3             SingleR_2.6.0              </span></span>
+<span><span class="co">#&gt; [149] sparseMatrixStats_1.16.0    MatrixGenerics_1.16.0      </span></span>
+<span><span class="co">#&gt; [151] dbplyr_2.5.0                fastmap_1.2.0              </span></span>
+<span><span class="co">#&gt; [153] htmlwidgets_1.6.4           UCSC.utils_1.0.0           </span></span>
+<span><span class="co">#&gt; [155] DelayedMatrixStats_1.26.0   farver_2.1.2               </span></span>
+<span><span class="co">#&gt; [157] jquerylib_0.1.4             jsonlite_2.0.0             </span></span>
+<span><span class="co">#&gt; [159] mclust_6.1.1                BiocParallel_1.38.0        </span></span>
+<span><span class="co">#&gt; [161] mzID_1.42.0                 ModelMetrics_1.2.2.2       </span></span>
+<span><span class="co">#&gt; [163] BiocSingular_1.20.0         RCurl_1.98-1.17            </span></span>
+<span><span class="co">#&gt; [165] magrittr_2.0.3              scuttle_1.14.0             </span></span>
+<span><span class="co">#&gt; [167] Formula_1.2-5               GenomeInfoDbData_1.2.12    </span></span>
+<span><span class="co">#&gt; [169] Rcpp_1.1.0                  viridis_0.6.5              </span></span>
+<span><span class="co">#&gt; [171] MsCoreUtils_1.16.1          vsn_3.72.0                 </span></span>
+<span><span class="co">#&gt; [173] pROC_1.18.5                 stringi_1.8.7              </span></span>
+<span><span class="co">#&gt; [175] zlibbioc_1.50.0             MASS_7.3-61                </span></span>
+<span><span class="co">#&gt; [177] listenv_0.9.1               parallel_4.4.1             </span></span>
+<span><span class="co">#&gt; [179] Biostrings_2.72.1           splines_4.4.1              </span></span>
+<span><span class="co">#&gt; [181] hms_1.1.3                   ps_1.9.1                   </span></span>
+<span><span class="co">#&gt; [183] igraph_2.1.4                ggpubr_0.6.1               </span></span>
+<span><span class="co">#&gt; [185] QFeatures_1.14.2            ggsignif_0.6.4             </span></span>
+<span><span class="co">#&gt; [187] reshape2_1.4.4              biomaRt_2.60.1             </span></span>
+<span><span class="co">#&gt; [189] stats4_4.4.1                ScaledMatrix_1.12.0        </span></span>
+<span><span class="co">#&gt; [191] XML_3.99-0.18               evaluate_1.0.4             </span></span>
+<span><span class="co">#&gt; [193] BiocManager_1.30.26         tzdb_0.5.0                 </span></span>
+<span><span class="co">#&gt; [195] foreach_1.5.2               tidyr_1.3.1                </span></span>
+<span><span class="co">#&gt; [197] purrr_1.1.0                 future_1.67.0              </span></span>
+<span><span class="co">#&gt; [199] clue_0.3-66                 bio3d_2.4-5                </span></span>
+<span><span class="co">#&gt; [201] ggplot2_3.5.2               rsvd_1.0.5                 </span></span>
+<span><span class="co">#&gt; [203] xtable_1.8-4                broom_1.0.8                </span></span>
+<span><span class="co">#&gt; [205] restfulr_0.0.16             AnnotationFilter_1.28.0    </span></span>
+<span><span class="co">#&gt; [207] easyPubMed_2.13             e1071_1.7-16               </span></span>
+<span><span class="co">#&gt; [209] rstatix_0.7.2               later_1.4.2                </span></span>
+<span><span class="co">#&gt; [211] class_7.3-22                viridisLite_0.4.2          </span></span>
+<span><span class="co">#&gt; [213] ragg_1.4.0                  tibble_3.3.0               </span></span>
+<span><span class="co">#&gt; [215] websocket_1.4.4             memoise_2.0.1              </span></span>
+<span><span class="co">#&gt; [217] AnnotationDbi_1.66.0        GenomicAlignments_1.40.0   </span></span>
+<span><span class="co">#&gt; [219] IRanges_2.38.1              cluster_2.1.8              </span></span>
+<span><span class="co">#&gt; [221] globals_0.18.0              timechange_0.3.0           </span></span>
+<span><span class="co">#&gt; [223] caret_7.0-1                 sampling_2.11</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

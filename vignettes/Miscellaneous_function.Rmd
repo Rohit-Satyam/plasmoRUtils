@@ -201,7 +201,7 @@ data_NOISEQ <- NOISeq::readData(data = counts,
 
 ### Check synchronization of Bulk RNASeq samples using `easyLabelTransfer()`
 
-`easyLabelTransfer` is a wrapper function written around `r Biocpkg("SingleR")` `SingleR()` function to quickly use count matrices from Bulk/ Single cell Reference data sets to check synchronization (time point and stage) of the Parasite Bulk RNASeq samples and can be used for QC purposes.
+`easyLabelTransfer()` is a wrapper function written around `r Biocpkg("SingleR")` `SingleR()` function to quickly use count matrices from Bulk/ Single cell Reference data sets to check synchronization (time point and stage) of the Parasite Bulk RNASeq samples and can be used for QC purposes.
 
 Here, for demonstration purpose, we will use single cell RNASeq data from Malaria Cell Atlas and use [@Subudhi2020] Bulk time-series dataset to transfer labels and see the distribution of the cells across different time points.
 
@@ -209,9 +209,10 @@ Other data sets provided with the package includes:
 
 -   Time course Microarray dataset from [@painter2018genome]: `data("painter2018")`
 -   Time course Bulk RNASeq (Single-end) from [@toenhake2018chromatin]: `data("toenhake2018")`
--   Reanalyzed scRNAseq of \*T. gondii\* data from [@lou2024single]: `data("gubbels2024")`
--   Reanalyzed scRNAseq of \*T. gondii\* data from [@xue2020single]: `data("boothroyd2020")`
--   Reanalyzed Bulk RNASeq (Paired -End) from [@Wichers2019]: `data("wichers2019")`
+-   Time course Bulk RNASeq (Paired-end) from [@Kucharski2020]: `data("kucharski2020")`
+-   Reanalyzed scRNAseq of *T. gondii* ME49 data from [@lou2024single]: `data("gubbels2024")`
+-   Reanalyzed scRNAseq of *T. gondii* ME49 data from [@xue2020single]: `data("boothroyd2020")`
+-   Reanalyzed Bulk RNASeq (Paired-end) from [@Wichers2019]: `data("wichers2019")`
 
 Next, Malaria cell atlas (MCA) is a database comprising of single cell data sets and can be accessed using the following functions.
 

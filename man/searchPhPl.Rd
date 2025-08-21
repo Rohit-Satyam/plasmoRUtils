@@ -12,12 +12,14 @@ searchPhPl(geneID = "", org = "pf", fetch = 1)
 \item{org}{Abbreviation of the organism. Default "pf"}
 
 \item{fetch}{Numeric. Use 1 to fetch the "Disruptability" table and 2 to fetch "Mutant phenotypes" table.
-Plasmodium Species:
-pb: Plasmodium berghii
-pk: Plasmodium knowlesi
-pf: Plasmodium falciparum
-pc: Plasmodium chabaudi
-py: Plasmodium yoelii}
+\itemize{
+\emph{Plasmodium Species:}
+\item pb: \emph{Plasmodium berghii}
+\item pk: \emph{Plasmodium knowlesi}
+\item pf: \emph{Plasmodium falciparum}
+\item pc: \emph{Plasmodium chabaudi}
+\item py: \emph{Plasmodium yoelii}
+}}
 }
 \value{
 A data frame.

@@ -26,18 +26,26 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://choosealicense.com/licenses/mit/)
 [![minimal R
 version](https://img.shields.io/badge/R%3E%3D-4-6666ff.svg)](https://cran.r-project.org/)
-[![packageversion](https://img.shields.io/badge/Package%20version-1.0.0-turquoise.svg?style=flat-square)](commits/master)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2025--06--30-yellowgreen.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-1.1.0-turquoise.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2025--08--21-yellowgreen.svg)](/commits/master)
 <!-- badges: end -->
 
 ## Installation
-Before downloading the package, install the following dependencies.
+
+The easiest way to download package is as follows
+
+```{r}
+pak::pkg_install("Rohit-Satyam/plasmoRUtils", dependencies = TRUE)
+```
+If the above method fails, try the following steps:
+
+1. Before downloading the package, install the following dependencies.
 
 ```{r}
 cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'ggsci', 'rvest',
 'easyPubMed', 'plyr', 'scales', 'ggplot2', 'glue', 'tidyr', 'tibble', 'data.table', 'plotly',
-'purrr', 'stringr', 'S4Vectors', 'echarts4r', 'magrittr', 'bio3d', 'httr', 'jsonlite',
-'ggpubr', 'gt', 'mgsub', 'reshape2','pathfindR')
+'purrr', 'stringr', 'S4Vectors', 'magrittr', 'bio3d', 'httr', 'jsonlite',
+'ggpubr', 'gt', 'mgsub', 'reshape2','pathfindR','polyglotr')
 
 install.packages(setdiff(cranpkgs, rownames(installed.packages())), dependencies = TRUE)
 
@@ -50,7 +58,7 @@ BiocManager::install(setdiff(biocpkgs, rownames(installed.packages())), dependen
 
 ```
 
-You can install the development version of `plasmoRUtils` using:
+2. You can install the development version of `plasmoRUtils` using:
 
 ```{r}
 devtools::install_github("Rohit-Satyam/plasmoRUtils")
@@ -73,16 +81,16 @@ install_dependencies()
 
 The documentation of this package is available at the following:
 
-1. [Introduction to plasmoRUtils](https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Introduction_to_plasmoRUtils.html)
-2. [Accessing component databases of VEuPathDB](https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Gene_ID_Conversion.html)
-3. [Other useful functions](https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Miscellaneous_function.html)
+1. [Introduction to plasmoRUtils](https://rohit-satyam.github.io/plasmoRUtils/articles/Introduction_to_plasmoRUtils.html)
+2. [Accessing component databases of VEuPathDB](https://rohit-satyam.github.io/plasmoRUtils/articles/Gene_ID_Conversion.html)
+3. [Other useful functions](https://rohit-satyam.github.io/plasmoRUtils/articles/Miscellaneous_function.html)
+4. [RNASeq: Importance of reanalysis](https://rohit-satyam.github.io/plasmoRUtils/articles/Need_for_reanalysis.html)
 
 ## To-do List
 
-1.  Provide a function to access Plasmobase.
-2.  Write a wrapper function, easypathFindR, to perform Pathway
+1.  Write a wrapper function, easypathFindR, to perform Pathway
 enrichment analysis quickly.
-3.  Write a function to make String PPI quickly.
+2.  Write a function to make String PPI quickly.
 
 ## Contributing
 

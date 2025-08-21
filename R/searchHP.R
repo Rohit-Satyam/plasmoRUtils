@@ -9,8 +9,8 @@
 #' @export
 #'
 #' @param geneID Single gene ID.
-#' @param taxid Taxon ID of the organism of interest. Default: 36329.
-#' @param uniprotToGID To convert Uniprot ID to gene ID. Set TRUE for Plasmodium geneIDs only.
+#' @param taxid Taxon ID of the organism of interest. Default: 36329. If taxon id of organism is not known set this to NULL.
+#' @param uniprotToGID To convert Uniprot ID to gene ID. Set TRUE for \emph{Plasmodium} geneIDs only.
 #'
 #' @return A data frame, containing 11 columns: "Interaction", "Interactor", "Name", "Experiments", "Category", "Method.Score", "Annotation.Score", "Interaction.Score", "Confidence", "QueryID", "ensembl_gene_id".
 #' @examples
@@ -23,7 +23,12 @@
 #'
 
 searchHP <- function(geneID, taxid="36329", uniprotToGID=TRUE) {
-  url <- glue::glue("http://www.hitpredict.org/proteins.php?Value={geneID}&Species={taxid}")
+  if(any(is.null(taxid) || taxid=="")){
+    url <- glue::glue("http://www.hitpredict.org/proteins.php?Value={geneID}&Species=0")
+  } else {
+    url <- glue::glue("http://www.hitpredict.org/proteins.php?Value={geneID}&Species={taxid}")  
+  }
+  
 
   webpage <- rvest::read_html(url)
 
@@ -42,20 +47,28 @@ searchHP <- function(geneID, taxid="36329", uniprotToGID=TRUE) {
       total_lines <- readr::read_lines(url) %>% length()
       nrows <- total_lines - skip_lines_start - skip_lines_end - 1
       message(glue::glue("\033[0;32mPPI found for: {geneID}\033[0m\n"))
-      data <- utils::read.table(url, header = TRUE, sep = "\t", skip = skip_lines_start, nrows = nrows) %>%
+      data <- utils::read.table(url, 
+                                header = TRUE, 
+                                sep = "\t", 
+                                skip = skip_lines_start, 
+                                nrows = nrows) %>%
         dplyr::mutate(QueryID = geneID)
     })
 
     data <- dplyr::bind_rows(alldf)
 
     if (uniprotToGID) {
-      pfa_ensembl <- biomaRt::useEnsemblGenomes(biomart = "protists_mart", dataset = "pfalciparum_eg_gene")
-      converted <- biomaRt::getBM(attributes = c("uniprotsptrembl", "ensembl_gene_id"),
-                         filters = "uniprotsptrembl",
-                         values = data$Interactor,
-                         mart = pfa_ensembl)
-
-      data <- S4Vectors::merge(data,converted, all.x=TRUE, by.x="Interactor", by.y="uniprotsptrembl")
+      # pfa_ensembl <- biomaRt::useEnsemblGenomes(biomart = "protists_mart", dataset = "pfalciparum_eg_gene")
+      # converted <- biomaRt::getBM(attributes = c("uniprotsptrembl", "ensembl_gene_id"),
+      #                    filters = "uniprotsptrembl",
+      #                    values = data$Interactor,
+      #                    mart = pfa_ensembl)
+      converted <- toGeneid(unique(data$Interactor),
+                            from = "uniprot","ensembl",
+                            org = "Plasmodium falciparum 3D7",
+                            db = "plasmodb",customFields=c("primary_key","uniprot_ids"))
+      data <- S4Vectors::merge(data,converted, all.x=TRUE,all.y=FALSE, 
+                               by.x="Interactor", by.y="UniProt ID(s)")
     }
 
     return(data)

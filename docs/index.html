@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">plasmoRUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,6 +44,7 @@
     <li><a class="dropdown-item" href="articles/Gene_ID_Conversion.html">Accessing component databases of VEuPathDB</a></li>
     <li><a class="dropdown-item" href="articles/Miscellaneous_function.html">Other useful functions</a></li>
     <li><a class="dropdown-item" href="articles/Need_for_reanalysis.html">RNASeq: Need for reanalysis?</a></li>
+    <li><a class="dropdown-item" href="articles/retrieving_orthologs.html">Retrieving Orthologs</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -71,23 +72,31 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Before downloading the package, install the following dependencies.</p>
+<p>The easiest way to download package is as follows</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"Rohit-Satyam/plasmoRUtils"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>If the above method fails, try the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Before downloading the package, install the following dependencies.</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cranpkgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'BiocManager'</span>,<span class="st">'randomcoloR'</span>, <span class="st">'janitor'</span>, <span class="st">'readr'</span>, <span class="st">'rlang'</span>, <span class="st">'dplyr'</span>, <span class="st">'ggsci'</span>, <span class="st">'rvest'</span>,</span>
 <span><span class="st">'easyPubMed'</span>, <span class="st">'plyr'</span>, <span class="st">'scales'</span>, <span class="st">'ggplot2'</span>, <span class="st">'glue'</span>, <span class="st">'tidyr'</span>, <span class="st">'tibble'</span>, <span class="st">'data.table'</span>, <span class="st">'plotly'</span>,</span>
-<span><span class="st">'purrr'</span>, <span class="st">'stringr'</span>, <span class="st">'S4Vectors'</span>, <span class="st">'echarts4r'</span>, <span class="st">'magrittr'</span>, <span class="st">'bio3d'</span>, <span class="st">'httr'</span>, <span class="st">'jsonlite'</span>,</span>
-<span><span class="st">'ggpubr'</span>, <span class="st">'gt'</span>, <span class="st">'mgsub'</span>, <span class="st">'reshape2'</span>,<span class="st">'pathfindR'</span><span class="op">)</span></span>
+<span><span class="st">'purrr'</span>, <span class="st">'stringr'</span>, <span class="st">'S4Vectors'</span>, <span class="st">'magrittr'</span>, <span class="st">'bio3d'</span>, <span class="st">'httr'</span>, <span class="st">'jsonlite'</span>,</span>
+<span><span class="st">'ggpubr'</span>, <span class="st">'gt'</span>, <span class="st">'mgsub'</span>, <span class="st">'reshape2'</span>,<span class="st">'pathfindR'</span>,<span class="st">'polyglotr'</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">cranpkgs</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">cranpkgs</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">biocpkgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rmarkdown"</span>,<span class="st">"pRoloc"</span>,<span class="st">"knitr"</span>,<span class="st">"BiocStyle"</span>,<span class="st">"DESeq2"</span>,<span class="st">"styler"</span>,<span class="st">"utils"</span>,<span class="st">"IRanges"</span>,</span>
 <span><span class="st">"BiocGenerics"</span>,<span class="st">"rtracklayer"</span>,<span class="st">"scuttle"</span>,<span class="st">"txdbmaker"</span>,<span class="st">"topGO"</span>,<span class="st">"drawProteins"</span>,<span class="st">"GenomicFeatures"</span>,</span>
 <span><span class="st">"biomaRt"</span>,<span class="st">"AnnotationForge"</span>,<span class="st">"Biostrings"</span>,<span class="st">"GenomeInfoDb"</span>,<span class="st">"SingleCellExperiment"</span>,</span>
 <span><span class="st">"SingleR"</span>,<span class="st">"NOISeq"</span>,<span class="st">"GenomicRanges"</span>,<span class="st">"BSgenome"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">biocpkgs</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>You can install the development version of <code>plasmoRUtils</code> using:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">biocpkgs</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>You can install the development version of <code>plasmoRUtils</code> using:</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Rohit-Satyam/plasmoRUtils"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'Rohit-Satyam/plasmoRUtils'</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -95,7 +104,7 @@
 <h2 id="check-installation">Check installation<a class="anchor" aria-label="anchor" href="#check-installation"></a>
 </h2>
 <p>Once dependencies are installed, the package can be loaded as follows:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Once installed load the library as</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rohit-satyam.github.io/plasmoRUtils/">plasmoRUtils</a></span><span class="op">)</span></span>
 <span></span>
@@ -105,19 +114,18 @@
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
-<p>The detailed vignettes are available at <code>plasmoRUtils</code> website. To visit, click <a href="https://rohit-satyam.github.io/plasmoRUtils/">here</a></p>
-<p>The documentation of this package is also available at the following:</p>
+<p>The documentation of this package is available at the following:</p>
 <ol style="list-style-type: decimal">
-<li><a href="https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Introduction_to_plasmoRUtils.html" class="external-link">Introduction to plasmoRUtils</a></li>
-<li><a href="https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Gene_ID_Conversion.html" class="external-link">Accessing component databases of VEuPathDB</a></li>
-<li><a href="https://htmlpreview.github.io/?https://github.com/Rohit-Satyam/plasmoRUtils/main/vignettes/Miscellaneous_function.html" class="external-link">Other useful functions</a></li>
+<li><a href="https://rohit-satyam.github.io/plasmoRUtils/articles/Introduction_to_plasmoRUtils.html">Introduction to plasmoRUtils</a></li>
+<li><a href="https://rohit-satyam.github.io/plasmoRUtils/articles/Gene_ID_Conversion.html">Accessing component databases of VEuPathDB</a></li>
+<li><a href="https://rohit-satyam.github.io/plasmoRUtils/articles/Miscellaneous_function.html">Other useful functions</a></li>
+<li><a href="https://rohit-satyam.github.io/plasmoRUtils/articles/Need_for_reanalysis.html">RNASeq: Importance of reanalysis</a></li>
 </ol>
 </div>
 <div class="section level2">
 <h2 id="to-do-list">To-do List<a class="anchor" aria-label="anchor" href="#to-do-list"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li>Provide a function to access Plasmobase.</li>
 <li>Write a wrapper function, easypathFindR, to perform Pathway enrichment analysis quickly.</li>
 <li>Write a function to make String PPI quickly.</li>
 </ol>
@@ -170,8 +178,8 @@
 <li><a href="https://codecov.io/gh/Rohit-Satyam/plasmoRUtils" class="external-link"><img src="https://codecov.io/gh/Rohit-Satyam/plasmoRUtils/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://choosealicense.com/licenses/mit/" class="external-link"><img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="license"></a></li>
 <li><a href="https://cran.r-project.org/" class="external-link"><img src="https://img.shields.io/badge/R%3E%3D-4-6666ff.svg" alt="minimal R version"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-1.0.0-turquoise.svg?style=flat-square" alt="packageversion"></a></li>
-<li><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2025--06--30-yellowgreen.svg" alt="Last-changedate"></a></li>
+<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-1.1.0-turquoise.svg?style=flat-square" alt="packageversion"></a></li>
+<li><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2025--08--21-yellowgreen.svg" alt="Last-changedate"></a></li>
 </ul>
 </div>
 

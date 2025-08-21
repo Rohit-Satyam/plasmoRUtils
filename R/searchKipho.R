@@ -7,11 +7,13 @@
 #' @export
 #'
 #' @param org Abbreviation of organism of interest.
-#' Plasmodium Species:
-#' pb: Plasmodium berghii
-#' pv: Plasmodium vivax
-#' pf: Plasmodium falciparum
-#' pc: Plasmodium chabaudi
+#' \itemize{
+#' \strong{Species:}
+#' \item pb: \emph{Plasmodium berghii}
+#' \item pv: \emph{Plasmodium vivax}
+#' \item pf: \emph{Plasmodium falciparum}
+#' \item pc: \emph{Plasmodium chabaudi}
+#' }
 #' @param type Type of protein class i.e. "kinase" or "phosphatase". Default: "kinase"
 #'
 #'
@@ -49,6 +51,7 @@ searchKipho <- function(org = "pf", type = "kinase") {
       dplyr::filter(!apply(., 1, function(row) all(row == ""))) %>%
       dplyr::filter(!stringr::str_detect(`Gene ID`, "Gene ID")) %>%
       dplyr::select(-tail(names(.), 5))
+    table$`Previous ID(s)` <- gsub("[\t, ]+", ";", table$`Previous ID(s)`)
 
     return(table)
   } else {

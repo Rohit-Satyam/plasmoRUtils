@@ -10,12 +10,14 @@
 #' @param geneID Character vector of Gene IDs.
 #' @param org Abbreviation of the organism. Default "pf"
 #' @param fetch Numeric. Use 1 to fetch the "Disruptability" table and 2 to fetch "Mutant phenotypes" table.
-#' Plasmodium Species:
-#' pb: Plasmodium berghii
-#' pk: Plasmodium knowlesi
-#' pf: Plasmodium falciparum
-#' pc: Plasmodium chabaudi
-#' py: Plasmodium yoelii
+#' \itemize{
+#' \emph{Plasmodium Species:}
+#' \item pb: \emph{Plasmodium berghii}
+#' \item pk: \emph{Plasmodium knowlesi}
+#' \item pf: \emph{Plasmodium falciparum}
+#' \item pc: \emph{Plasmodium chabaudi}
+#' \item py: \emph{Plasmodium yoelii}
+#' }
 #' @return A data frame.
 #' @examples
 #' \dontrun{

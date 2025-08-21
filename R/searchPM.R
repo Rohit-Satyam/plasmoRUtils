@@ -7,7 +7,7 @@
 #' @export
 #'
 #' @param geneID Character vector of Gene IDs.
-#' @param org Scientific name of the organism. Default "Plasmodium falciparum"
+#' @param org Scientific name of the organism. Default \emph{Plasmodium falciparum}
 #' @param query String of user defined custom queries. If you wish to pass your own combination od terms use this argument.
 #' @param from To define the start year for querying the articles.
 #' @param to To define the end year for querying the articles.

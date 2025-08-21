@@ -7,10 +7,10 @@
 searchMiip(geneID)
 }
 \arguments{
-\item{geneID}{A character vector of Gene IDs of Plasmodium falciparum or Plasmodium berghi.Remove version from the gene ids.}
+\item{geneID}{A character vector of Gene IDs of \emph{Plasmodium falciparum} or \emph{Plasmodium berghi}.Remove version from the gene ids.}
 }
 \value{
-A dataframe of Protein protein interaction provided by MIIP database.
+A data frame of Protein protein interaction provided by MIIP database.
 }
 \description{
 This function retrieves Protein-protein interaction data from \href{http://www.hpppi.iicb.res.in/pfnet/}{MIIP database}.
