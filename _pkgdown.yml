@@ -11,6 +11,11 @@ navbar:
     right:
       - search
       - github
+  components:
+    github:
+      icon: fab fa-github
+      text: ""               # keep just the icon
+      href: https://github.com/rohit-satyam/plasmoRUtils
 articles:
 - title: Vignettes
   navbar: ~
@@ -49,5 +54,8 @@ reference:
   contents:
   - pdb2uniprot
   - toGeneid
+news:
+  one_page: true
+  sidebar: true
 
 

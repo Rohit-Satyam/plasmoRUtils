@@ -85,3 +85,4 @@ LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 URL: https://rohit-satyam.github.io/plasmoRUtils/
+BugReports: https://github.com/Rohit-Satyam/plasmoRUtils/issues
