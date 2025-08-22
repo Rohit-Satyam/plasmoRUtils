@@ -1,6 +1,6 @@
-# plasmoRUtils (development version)
+# plasmoRUtils 1.1.0
 
-<<<<<<< HEAD
+
 ## Changes in version 1.1.0
 
 -   `searchGSC` function can now fetch articles for custom years of interest. Title translation to desired language provided. Users can choose how many pages to parse to match number of articles returned upon manual query in Google scholar.
@@ -9,8 +9,7 @@
 -   **New functions:** `getpairedOrthologs` , `listOrthomcl`, `listipdb` to get paired orthologs from OrthoMCL 7 and InParanoiDB.
 -   **Functions removed:** `searchMT` and `easyPie` were removed due to repeated failure given the database latency.
 -   `searchApicoTFdb` now fetches more specialised tables from the database. `searchIpDb` is not *Plasmodium* specific and can accept uniprot IDs of other organisms provided by InParanoiDB.
-=======
->>>>>>> main
+-   `searchPhPl` was unable to fetch phenotypes for some genes. This has been fixed.
 
 ## Changes in version 1.0.0
 

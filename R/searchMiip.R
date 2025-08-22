@@ -8,7 +8,7 @@
 #' @import purrr
 #' @export
 #'
-#' @param geneID A character vector of Gene IDs of \emph{Plasmodium falciparum} or \emph{Plasmodium berghi}.Remove version from the gene ids.
+#' @param geneID A character vector of Gene IDs of \emph{Plasmodium falciparum}.
 #'
 #' @return A data frame of Protein protein interaction provided by MIIP database.
 #' @examples
