@@ -209,16 +209,14 @@ Other data sets provided with the package includes:
 
 -   Time course Microarray dataset from [@painter2018genome]: `data("painter2018")`
 -   Time course Bulk RNASeq (Single-end) from [@toenhake2018chromatin]: `data("toenhake2018")`
-<<<<<<< HEAD
 -   Time course Bulk RNASeq (Paired-end) from [@Kucharski2020]: `data("kucharski2020")`
 -   Reanalyzed scRNAseq of *T. gondii* ME49 data from [@lou2024single]: `data("gubbels2024")`
 -   Reanalyzed scRNAseq of *T. gondii* ME49 data from [@xue2020single]: `data("boothroyd2020")`
 -   Reanalyzed Bulk RNASeq (Paired-end) from [@Wichers2019]: `data("wichers2019")`
-=======
 -   Reanalyzed scRNAseq of \*T. gondii\* data from [@lou2024single]: `data("gubbels2024")`
 -   Reanalyzed scRNAseq of \*T. gondii\* data from [@xue2020single]: `data("boothroyd2020")`
 -   Reanalyzed Bulk RNASeq (Paired -End) from [@Wichers2019]: `data("wichers2019")`
->>>>>>> main
+
 
 Next, Malaria cell atlas (MCA) is a database comprising of single cell data sets and can be accessed using the following functions.
 
