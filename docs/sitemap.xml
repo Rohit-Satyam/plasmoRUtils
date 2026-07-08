@@ -5,6 +5,7 @@
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/articles/index.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/articles/Introduction_to_plasmoRUtils.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/articles/Introduction_to_plasmoRUtils_files/jqueryui-1.13.2/index.html</loc></url>
+<url><loc>https://rohit-satyam.github.io/plasmoRUtils/articles/Microarray_reanalysis.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/articles/Miscellaneous_function.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/articles/Need_for_reanalysis.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/articles/plasmoRUtils.html</loc></url>
@@ -16,8 +17,12 @@
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/LICENSE.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/news/index.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/dot-clickable.html</loc></url>
+<url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/dot-escape_regex.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/dot-fast_ifelse2.html</loc></url>
+<url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/dot-make_flexible_regex.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/dot-nonclickable.html</loc></url>
+<url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/dot-rs_api_search_page.html</loc></url>
+<url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/dot-rs_article_text.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/dot-usetopGO.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/easyAF2Signal.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/easyExpPlot.html</loc></url>
@@ -35,6 +40,7 @@
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/getMpmp.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/getpairedOrthologs.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/getPreconfiguredTable.html</loc></url>
+<url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/getPreconfiguredTableOrthomcl.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/getTable.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/index.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/install_dependencies.html</loc></url>
@@ -59,6 +65,7 @@
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/searchMT.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/searchPhPl.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/searchPM.html</loc></url>
+<url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/searchRS.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/searchTedConsensus.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/toGeneid.html</loc></url>
 <url><loc>https://rohit-satyam.github.io/plasmoRUtils/reference/toPfid.html</loc></url>

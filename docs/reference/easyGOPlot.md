@@ -1,0 +1,69 @@
+# Quick ORA result plotting
+
+A convenience function to quickly plot the results of `easytopGO` or ORA
+results obtained from VEupathDB component databases.
+
+## Usage
+
+``` r
+easyGOPlot(
+  res,
+  title = "GO Biological processes",
+  limit = 20,
+  desc = "Term",
+  genecounts = "Annotated",
+  sortby = "ks"
+)
+```
+
+## Arguments
+
+- res:
+
+  Output of `easytopGO`.
+
+- title:
+
+  Title of the plot.
+
+- limit:
+
+  No of terms to plot.
+
+- desc:
+
+  Column name containing the GO description.If using VEuPathDB compnent
+  database, this would be "Name" column.
+
+- genecounts:
+
+  Column name containing number of query genes associated with GO
+  description. Used for bubble size. For VEupathDB this would be "Result
+  count" column.
+
+- sortby:
+
+  Name of the statistics column to sort the terms by and use for
+  plotting.
+
+## Value
+
+A publication ready ggplot2 object.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+## get enrichment results from easytopGO
+gores <- easytopGO(geneID = geneList, bkggset = background.gset, stats = "ks")
+baseurl <- "https://plasmodb.org/common/downloads/Current_Release/"
+url <- paste0(baseurl, "Pfalciparum3D7/gaf/PlasmoDB-68_Pfalciparum3D7_GO.gaf.gz")
+gores <- easytopGO(
+  geneID = geneList, useGAF = TRUE, useBiomart = FALSE, gaf = url,
+  bkggset = background.gset, category = "BP", stats = "ks"
+)
+
+## Then feed them to easyGOPlot
+plot <- easyGOPlot(gores, title = "GO Enrichment Biological Processes")
+} # }
+```
