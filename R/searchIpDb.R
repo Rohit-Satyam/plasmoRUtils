@@ -7,7 +7,6 @@
 #' @import dplyr purrr
 #' @importFrom tidyr separate_rows
 #' @importFrom readr read_csv
-#' @importFrom glue glue
 #' @export
 #'
 #' @param geneID Gene ID of \emph{Plasmodium falciparum} or VEupathDB enlisted organisms that are also covered by InParanoiDB. If providing uniprot ID, set idtype="uniprot" to prevent ID conversion.
@@ -34,7 +33,15 @@ searchIpDb <- function(geneID, ..., idtype = "ensembl") {
       dplyr::rename(inputid = `Gene ID`, uniprotid = `UniProt ID(s)`)
 
     failed <- dplyr::setdiff(geneID, converted$inputid)
-    if (length(failed) > 0) message(glue::glue("Following genes failed to convert to Uniprot ID: {failed}\n"))
+    if (length(failed) > 0) {
+      message(
+        paste0(
+          "Following genes failed to convert to Uniprot ID: ",
+          paste(failed, collapse = " "),
+          "\n"
+        )
+      )
+    }
 
     if (length(converted$inputid) == 0) {
       message("No matching input IDs found. Exiting function.")
@@ -45,7 +52,11 @@ searchIpDb <- function(geneID, ..., idtype = "ensembl") {
   }
 
   res.list <- purrr::map(converted$uniprotid, function(protid) {
-    url <- glue::glue("https://inparanoidb.sbc.su.se/download/proteinorthologs/{protid}&all&csv")
+    url <- paste0(
+      "https://inparanoidb.sbc.su.se/download/proteinorthologs/",
+      protid,
+      "&all&csv"
+    )
     webpage <- tryCatch(
       {
         readr::read_csv(url, progress = FALSE, show_col_types = FALSE)

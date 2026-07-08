@@ -1,4 +1,4 @@
-url: ~
+url: https://rohit-satyam.github.io/plasmoRUtils/
 template:
   bootstrap: 5
 navbar:
@@ -11,6 +11,11 @@ navbar:
     right:
       - search
       - github
+  components:
+    github:
+      icon: fab fa-github
+      text: ""               # keep just the icon
+      href: https://github.com/rohit-satyam/plasmoRUtils
 articles:
 - title: Vignettes
   navbar: ~
@@ -18,6 +23,9 @@ articles:
   - Introduction_to_plasmoRUtils
   - Gene_ID_Conversion
   - Miscellaneous_function
+  - Need_for_reanalysis
+  - retrieving_orthologs
+  - Microarray_reanalysis
 reference:
 - title: "Install dependencies"
   contents:
@@ -31,6 +39,7 @@ reference:
   desc: "These functions helps users fetch annotations and data in form of tables from various databases."
   contents:
   - starts_with("get")
+  - starts_with("list")
   - listMCA
   - listVeupathdb
 - title: "Plotting functions"
@@ -38,7 +47,7 @@ reference:
   contents:
   - starts_with("plot")
 - title: "Easy functions"
-  desc: "Perform ruting bioinfrmatic tasks on non-model organisms quick and easy."
+  desc: "Perform routine bioinfrmatic tasks on non-model organisms quick and easy."
   contents:
   - starts_with("easy")
 - title: "ID conversin"
@@ -46,3 +55,8 @@ reference:
   contents:
   - pdb2uniprot
   - toGeneid
+news:
+  one_page: true
+  sidebar: true
+
+

@@ -140,8 +140,11 @@ df_agg <- subdf %>%
 
 ###  Step 3
 # Coefficient of variation across releases
-cv <- cv <- apply(df_agg, 2, function(x) (sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)) * 100) %>%
+cv <- apply(df_agg, 2, function(x) (sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)) * 100) %>%
   sort(decreasing = TRUE)
+
+## How many genes have their effective exon length change >100 bp between versions 50 and 68
+t(df_agg) %>% .[,c(4,6)] %>% data.frame() %>% dplyr::mutate("diff"=`X68`-`X50` > 100) %>% dplyr::pull(diff) %>% table()
 
 ## Check for how many genes the effective length has changed
 table(cv>0) #4535 genes have their effective length changed
@@ -172,7 +175,7 @@ plot_grid(plts)
 
 ```
 
-From the exploration above, we see a 79% of gene models have been revised since release 50 and therefore inform us that any published RNASeq dataset using annotations older than Release 50 must be reanalysed since the read counts are destined to change for these genes.
+From the exploration above, we see a 79% of gene models have been revised since release 50 and 78% of total has >100 bp increment in exonic region (4437). Therefore any published RNASeq dataset using annotations older than Release 50 must be reanalysed since the read counts are destined to change for these genes.
 
 > If you are working on annotation of hypothetical genes, you should be cautious about which assembly you use since your gene might appear to be down regulated as per old annotation but this might change with change in the current annotation.
 
@@ -217,8 +220,11 @@ df_agg <- subdf %>%
 
 ###  Step 3
 # Coefficient of variation across releases
-cv <- cv <- apply(df_agg, 2, function(x) (sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)) * 100) %>%
+cv <- apply(df_agg, 2, function(x) (sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)) * 100) %>%
   sort(decreasing = TRUE)
+
+## How many genes have their effective exon length change >100 bp
+t(df_agg) %>% .[,c(5,6)] %>% data.frame() %>% dplyr::mutate("diff"=`X68`-`X60` > 100) %>% dplyr::pull(diff) %>% table()
 
 ## Check for how many genes the effective length has changed
 table(cv>0) #3390 genes have their effective length changed
@@ -249,11 +255,11 @@ plot_grid(plts)
 
 ```
 
-In this case 40% of the genes show change in effective length as compared to past releases and this change happened after release 60 (Release 66 to be precise but for brevity of vignette, we chose to use 60 and 68).
+In this case 40% of the genes show change in effective length with 1996 proteins (23%) having exonic region expanision >100 bp as compared to past releases and this change happened after release 60 (Release 66 to be precise but for brevity of vignette, we chose to use 60 and 68).
 
 # Discussion
 
-The scope of reannotation directly influences whether legacy datasets remain reliable or must be reprocessed; such technical choices inevitably affect downstream biological interpretations. We found that every major bulk transcriptomic study for *Plasmodium* in `PlasmoDB` relies on annotations predating release 51 and can benefit from reanalysis. Therefore, any analysis—be it correlation, co‐expression, or single‐cell mapping—should use reanalyzed data based on up‐to‐date GFFs. Given VEuPathDB’s constrained resources, the reanalysis responsibility falls to the end users to regenerate and share these reprocessed datasets whenever feasible.
+The scope of reannotation directly influences whether legacy datasets remain reliable or must be reprocessed; such technical choices inevitably affect downstream biological interpretations. We found that majority of bulk transcriptomic studies (27 out of 38 datasets) for *Plasmodium* in `PlasmoDB` relies on annotations predating release 51 and can benefit from reanalysis. Therefore, any analysis—be it correlation, co‐expression, or single‐cell mapping—should use reanalyzed data based on up‐to‐date GFFs. Given VEuPathDB’s constrained resources, the reanalysis responsibility falls to the end users to regenerate and share these reprocessed datasets whenever feasible.
 
 # Session {-}
 

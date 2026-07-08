@@ -3,7 +3,6 @@
 #' A convenience function to quickly convert the Uniprot or Entrez Ids to Ensembl gene IDs,  using VEuPathDB specialized databases.It also provides description and gene symbol for input Ids.
 #'
 #' @import dplyr tidyr
-#' @importFrom glue glue
 #' @export
 #'
 #' @param inputid A character vector of IDs. Can be Ensembl, Uniprot, Entrez or or old Pf ids.
@@ -35,7 +34,13 @@ toGeneid <- function (inputid, from = "", to = "", org="Plasmodium falciparum 3D
   check_failed <- function(ref, col_name) {
     failed <- unique(inputid[!inputid %in% ref[[col_name]]])
     if (length(failed) > 0) {
-      message(glue::glue("Following genes failed to convert: {paste(failed, collapse = ' ')}\n"))
+      message(
+        paste0(
+          "Following genes failed to convert: ",
+          paste(failed, collapse = " "),
+          "\n"
+        )
+      )
     }
     ref %>% dplyr::filter(.data[[col_name]] %in% inputid)
   }

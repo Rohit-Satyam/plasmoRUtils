@@ -9,7 +9,7 @@ searchPM(
   org = "Plasmodium falciparum",
   query = NULL,
   from = 2010,
-  to = 2025,
+  to = 2026,
   verbose = TRUE
 )
 }

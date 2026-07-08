@@ -4,7 +4,13 @@
 \alias{searchHP}
 \title{Fetch Protein-protein interaction for given gene IDs from Hit Predict database}
 \usage{
-searchHP(geneID, taxid = "36329", uniprotToGID = TRUE)
+searchHP(
+  geneID,
+  taxid = "36329",
+  uniprotToGID = TRUE,
+  timeout = 60,
+  max_tries = 3
+)
 }
 \arguments{
 \item{geneID}{Single gene ID.}
@@ -12,6 +18,10 @@ searchHP(geneID, taxid = "36329", uniprotToGID = TRUE)
 \item{taxid}{Taxon ID of the organism of interest. Default: 36329. If taxon id of organism is not known set this to NULL.}
 
 \item{uniprotToGID}{To convert Uniprot ID to gene ID. Set TRUE for \emph{Plasmodium} geneIDs only.}
+
+\item{timeout}{Seconds after which timeout must be considered.}
+
+\item{max_tries}{Maximum retries to access the database.}
 }
 \value{
 A data frame, containing 11 columns: "Interaction", "Interactor", "Name", "Experiments", "Category", "Method.Score", "Annotation.Score", "Interaction.Score", "Confidence", "QueryID", "ensembl_gene_id".
@@ -21,7 +31,7 @@ This function searches the Hitpredict database to retrieve the Experimental Prot
 }
 \examples{
 \dontrun{
-test <- searchHP("PF3D7_0418300")
+test <- searchHP("Q8I1Q4")
 
 ## To use it for other organism, turn off uniprotToGID and provide taxid of the organism
 test <- searchHP("BRCA1",taxid = "9606" , uniprotToGID = FALSE)

@@ -15,7 +15,7 @@
 #' @return A data frame, containing statistics about signal peptide and rest of the protein. Zero atomic or residue-residue contact is indicative of True positives while non-zero values are putative False Positives.
 #' @examples
 #' \dontrun{
-#' df <- easyAF2Signal("https://alphafold.ebi.ac.uk/files/AF-Q9TY95-F1-model_v4.pdb")
+#' df <- easyAF2Signal("https://alphafold.ebi.ac.uk/files/AF-A0A140KXW6-F1-model_v6.pdb")
 #' }
 #'
 easyAF2Signal <- function(pdb, cut_dist = 4, nsignal = 25, bfac_thresh = 90, nskip = 1) {
@@ -52,9 +52,14 @@ easyAF2Signal <- function(pdb, cut_dist = 4, nsignal = 25, bfac_thresh = 90, nsk
         return()
       }
 
+# Also need to add condition to fix borderline cases such as skipping if either residue has no atomic coordinates
       atoms_i <- atom_data[atom_data$resno == i1, c("x", "y", "z")]
       atoms_j <- atom_data[atom_data$resno == j1, c("x", "y", "z")]
-      distances <- as.matrix(dist(rbind(atoms_i, atoms_j)))[1:nrow(atoms_i), (nrow(atoms_i) + 1):ncol(distances)]
+      if (nrow(atoms_i) == 0 || nrow(atoms_j) == 0) return()
+      
+      dist_mat <- as.matrix(dist(rbind(atoms_i, atoms_j)))
+      distances <- dist_mat[1:nrow(atoms_i), (nrow(atoms_i) + 1):ncol(dist_mat)]
+      
       contacts <- sum(distances <= cut_dist)
       ncont_atm_sig_rest <<- ncont_atm_sig_rest + contacts
 

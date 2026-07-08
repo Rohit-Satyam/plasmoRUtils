@@ -207,16 +207,12 @@ Here, for demonstration purpose, we will use single cell RNASeq data from Malari
 
 Other data sets provided with the package includes:
 
--   Time course Microarray dataset from [@painter2018genome]: `data("painter2018")`
--   Time course Bulk RNASeq (Single-end) from [@toenhake2018chromatin]: `data("toenhake2018")`
--   Time course Bulk RNASeq (Paired-end) from [@Kucharski2020]: `data("kucharski2020")`
--   Reanalyzed scRNAseq of *T. gondii* ME49 data from [@lou2024single]: `data("gubbels2024")`
--   Reanalyzed scRNAseq of *T. gondii* ME49 data from [@xue2020single]: `data("boothroyd2020")`
--   Reanalyzed Bulk RNASeq (Paired-end) from [@Wichers2019]: `data("wichers2019")`
--   Reanalyzed scRNAseq of \*T. gondii\* data from [@lou2024single]: `data("gubbels2024")`
--   Reanalyzed scRNAseq of \*T. gondii\* data from [@xue2020single]: `data("boothroyd2020")`
--   Reanalyzed Bulk RNASeq (Paired -End) from [@Wichers2019]: `data("wichers2019")`
-
+- Time course Microarray dataset of *P. falciparum* 3D7 from [@painter2018genome]: `data("painter2018")`
+- Time course Bulk RNASeq (Single-end) of *P. falciparum* 3D7 from [@toenhake2018chromatin]: `data("toenhake2018")`
+- Time course Bulk RNASeq (Paired-end) of *P. falciparum* 3D7 from [@Kucharski2020]: `data("kucharski2020")`
+- Reanalyzed scRNAseq of *T. gondii* ME49 data from [@lou2024single]: `data("gubbels2024")`
+- Reanalyzed scRNAseq of *T. gondii* ME49 data from [@xue2020single]: `data("boothroyd2020")`
+- Reanalyzed Bulk RNASeq (Paired-end) of *P. falciparum* 3D7 from [@Wichers2019]: `data("wichers2019")`
 
 Next, Malaria cell atlas (MCA) is a database comprising of single cell data sets and can be accessed using the following functions.
 
@@ -322,7 +318,8 @@ We did this modification because, if all the signal peptide residues have low pL
 
 ```{r}
 
-easyAF2Signal("https://alphafold.ebi.ac.uk/files/AF-Q9TY95-F1-model_v4.pdb")
+easyAF2Signal("https://alphafold.ebi.ac.uk/files/AF-A0A140KXW6-F1-model_v6.pdb")
+
 
 ```
 

@@ -3,7 +3,6 @@
 #' This function provides ability to query InParanoiDB 9 and OrthoMCL 7 to get paired orthologs between two species of interest.
 #'
 #' @import dplyr
-#' @importFrom glue glue
 #' @import readr
 #' @importFrom jsonlite toJSON
 #' @importFrom tidyr separate_rows
@@ -42,7 +41,13 @@ getpairedOrthologs <- function(from, to, db = c("ipdb", "orthomcl"),
   }
   
   if (db == "ipdb") {
-    url <- glue::glue("https://inparanoidb.sbc.su.se/download/sqltable/{from}&{to}&prot")
+    url <- paste0(
+      "https://inparanoidb.sbc.su.se/download/sqltable/",
+      from,
+      "&",
+      to,
+      "&prot"
+    )
     df  <- readr::read_tsv(url, col_names = FALSE, show_col_types = FALSE, progress = FALSE)
     colnames(df) <- c("Group-id", "Bitscore", "Species", "Inparalog-score",
                       "Protein-name", "Seed-score")

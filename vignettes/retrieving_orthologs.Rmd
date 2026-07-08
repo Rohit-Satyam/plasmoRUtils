@@ -142,6 +142,26 @@ res[[1]] %>% head()
 
 Combining the results across InParanoiDB, is not as straightforward as for OrthoMCL because of lack of unique Orthogroup ID. However, user can use Query Uniprot ID as anchor, combine the results, convert Uniprot IDs to gene IDs and then collapse rows since two or more Uniprot IDs might correspond to same gene IDs.
 
+## Fetching Preconfigured tables from OrthoMCL-DB and map old OG IDs to new IDs
+
+OrthoMCL gets frequently updated and with every update come new Ortholog IDs. When using published dataset, its highly likely that users would want to map the old orthogroups to new orthogroups or assess which proteins changed the orthogroups and got clubbed, which orthogroup got split etc. `getPreconfiguredTableOrthomcl` can help you do this by accessing preconfigured table used by OrthoMCL to do that.
+```{r}
+## Fetching all OG IDs that maps to IDs of interest
+
+## New to old IDs. Old Ids are present in second and third column
+ids = c("OG7_0008348", "OG7_0003896")
+getPreconfiguredTableOrthomcl(ids,customField = "previousGroups")
+
+## Old Id. New IDs are present in first column
+getPreconfiguredTableOrthomcl("OG3_10277")
+```
+
+By changing `customField` arguments, you can also access other preconfigured tables from the database. Eg. if you want keyword frequencies and their associated orthogroups, this can be achieved using
+
+```{r}
+getPreconfiguredTableOrthomcl(customField = "DomainFrequency")
+```
+
 # Session Info {.unnumbered}
 
 ```{r}

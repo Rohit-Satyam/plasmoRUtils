@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Retrieving Orthologs">
 </head>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">plasmoRUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,7 @@
     <li><a class="dropdown-item" href="../articles/Miscellaneous_function.html">Other useful functions</a></li>
     <li><a class="dropdown-item" href="../articles/Need_for_reanalysis.html">RNASeq: Need for reanalysis?</a></li>
     <li><a class="dropdown-item" href="../articles/retrieving_orthologs.html">Retrieving Orthologs</a></li>
+    <li><a class="dropdown-item" href="../articles/Microarray_reanalysis.html">Microarray data reanalysis</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -81,7 +82,7 @@ Arabia<br><h4 data-toc-skip class="author">Arnab
 Pain</h4>
             <address class="author_afil">
       King Abdullah University of Science &amp; Technology, Saudi
-Arabia<br><h4 data-toc-skip class="date">22 August, 2025</h4>
+Arabia<br><h4 data-toc-skip class="date">08 July, 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Rohit-Satyam/plasmoRUtils/blob/HEAD/vignettes/retrieving_orthologs.Rmd" class="external-link"><code>vignettes/retrieving_orthologs.Rmd</code></a></small>
       <div class="d-none name"><code>retrieving_orthologs.Rmd</code></div>
@@ -106,7 +107,7 @@ Arabia<br><h4 data-toc-skip class="date">22 August, 2025</h4>
 <li><p>to assess phyletic profile of a set of genes and see if they have
 orthologs in other related organism or not.</p></li>
 <li><p>integrate datasets obtained from two different species. Often
-such datasets are scRNASeq (eg: <span class="citation">(<a href="#ref-Tebben2022">Tebben, Dia, and Serre 2022</a>)</span>)</p></li>
+such datasets are scRNASeq (eg: <span class="citation">(<a href="#ref-Tebben2022">Tebben et al. 2022</a>)</span>)</p></li>
 <li><p>borrow annotations such as localization for hypothesis
 generation.</p></li>
 <li>
@@ -132,13 +133,13 @@ or unique IDs that OrthoMCL uses to fetch paired orthologs.</p>
 <code class="sourceCode R"><span><span class="co">#?getpairedOrthologs</span></span>
 <span><span class="co"># listOrthomcl()</span></span>
 <span></span>
-<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1744988</span>,<span class="fl">1747281</span>,<span class="fl">1742951</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1744988</span>,<span class="fl">1747281</span>,<span class="fl">1742951</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/getpairedOrthologs.html">getpairedOrthologs</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1742855</span>,</span>
 <span>                     to<span class="op">=</span><span class="va">x</span>,</span>
 <span>                     db<span class="op">=</span><span class="st">"orthomcl"</span>,transform <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Pvivax"</span>,<span class="st">"Tgme49"</span>,<span class="st">"Pb"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">merged_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, by <span class="op">=</span> <span class="st">"Accession"</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="va">res</span><span class="op">)</span></span>
+<span><span class="va">merged_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, by <span class="op">=</span> <span class="st">"Accession"</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="va">res</span><span class="op">)</span></span>
 <span><span class="va">merged_df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            Accession</span></span>
 <span><span class="co">#&gt; 1 pfal|PF3D7_0100100</span></span>
@@ -173,13 +174,13 @@ or unique IDs that OrthoMCL uses to fetch paired orthologs.</p>
 <span><span class="va">strip_prefix</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^[^|]+\\|"</span>, <span class="st">""</span>, <span class="va">x</span><span class="op">)</span>     <span class="co"># per-token</span></span>
 <span><span class="va">clean_list</span>   <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">toks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">s</span>, <span class="st">","</span>, fixed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">toks</span>, <span class="va">strip_prefix</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">toks</span>, <span class="va">strip_prefix</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="va">merged_df</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">merged_df</span>, <span class="kw">function</span><span class="op">(</span><span class="va">col</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">col</span>, <span class="va">clean_list</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">merged_df</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">merged_df</span>, <span class="kw">function</span><span class="op">(</span><span class="va">col</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">col</span>, <span class="va">clean_list</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Changing column names</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">merged_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P falciparum 3D7"</span>,<span class="st">"P vivax Sal1"</span>,<span class="st">"T gondii ME49"</span>,<span class="st">"Plasmodium berghei ANKA"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">merged_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P falciparum 3D7"</span>,<span class="st">"P vivax Sal1"</span>,<span class="st">"T gondii ME49"</span>,<span class="st">"Plasmodium berghei ANKA"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">merged_df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   P falciparum 3D7</span></span>
@@ -221,7 +222,7 @@ all the organisms. The code snippet below demonstrate the same.</p>
 <span><span class="va">list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/listVeupathdb.html">listVeupathdb</a></span><span class="op">(</span>customFields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"primary_key"</span>,<span class="st">"project_id"</span>,<span class="st">"species"</span>,<span class="st">'species_ncbi_tax_id'</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Subset organisms I am interested in </span></span>
-<span><span class="va">dbs</span> <span class="op">&lt;-</span> <span class="va">list</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"3D7|ME49$|Sal-1"</span>, <span class="va">list</span><span class="op">$</span><span class="va">Organism</span><span class="op">)</span>,<span class="op">]</span></span>
+<span><span class="va">dbs</span> <span class="op">&lt;-</span> <span class="va">list</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"3D7|ME49$|Sal-1"</span>, <span class="va">list</span><span class="op">$</span><span class="va">Organism</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="va">dbs</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 4</span></span></span>
 <span><span class="co">#&gt;   Organism                  `VEuPathDB Project` Species   Species NCBI taxon I…¹</span></span>
@@ -230,18 +231,18 @@ all the organisms. The code snippet below demonstrate the same.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Plasmodium falciparum 3D7 PlasmoDB            Plasmodi…                   <span style="text-decoration: underline;">5</span>833</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Toxoplasma gondii ME49    ToxoDB              Toxoplas…                   <span style="text-decoration: underline;">5</span>811</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ abbreviated name: ¹​`Species NCBI taxon ID`</span></span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dbs</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dbs</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu">plasmoRUtils</span><span class="fu">::</span><span class="fu"><a href="../reference/getTable.html">getTable</a></span><span class="op">(</span>org<span class="op">=</span><span class="va">dbs</span><span class="op">[</span><span class="va">x</span>,<span class="op">]</span><span class="op">$</span><span class="va">Organism</span>, db<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="va">dbs</span><span class="op">[</span><span class="va">x</span>,<span class="op">]</span><span class="op">$</span><span class="va">`VEuPathDB Project`</span><span class="op">)</span>,customFields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"primary_key"</span> ,<span class="st">"gene_orthomcl_name"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Retain protein coding genes</span></span>
 <span></span>
-<span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">df</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">df</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">x</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"N/A"</span>,string <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">`Ortholog Group`</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Combine all the tables</span></span>
-<span><span class="va">merged_df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, by <span class="op">=</span> <span class="st">"Ortholog Group"</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="va">df2</span><span class="op">)</span></span>
+<span><span class="va">merged_df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, by <span class="op">=</span> <span class="st">"Ortholog Group"</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="va">df2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">merged_df2</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Ortholog Group  Gene ID.x     Gene ID.y       Gene ID</span></span>
@@ -259,10 +260,10 @@ all the organisms. The code snippet below demonstrate the same.</p>
 <span><span class="va">merged_df2</span> <span class="op">&lt;-</span> <span class="va">merged_df2</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span> <span class="va">`Ortholog Group`</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>, </span>
-<span>                                 <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
+<span>                                 <span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Changing column names</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">merged_df2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Orthogroup ID"</span>,<span class="st">"P vivax Sal1"</span>,<span class="st">"P falciparum 3D7"</span>,<span class="st">"T gondii ME49"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">merged_df2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Orthogroup ID"</span>,<span class="st">"P vivax Sal1"</span>,<span class="st">"P falciparum 3D7"</span>,<span class="st">"T gondii ME49"</span><span class="op">)</span></span>
 <span><span class="va">merged_df2</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 4</span></span></span>
 <span><span class="co">#&gt;    `Orthogroup ID` `P vivax Sal1`             `P falciparum 3D7` `T gondii ME49`</span></span>
@@ -290,7 +291,7 @@ recycle the code above as follows.</p>
 <code class="sourceCode R"><span><span class="co">#?getpairedOrthologs</span></span>
 <span><span class="co"># listipdb()</span></span>
 <span></span>
-<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">126793</span>,<span class="fl">5811</span>,<span class="fl">5823</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">126793</span>,<span class="fl">5811</span>,<span class="fl">5823</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/getpairedOrthologs.html">getpairedOrthologs</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">36329</span>,</span>
 <span>                     to<span class="op">=</span><span class="va">x</span>,</span>
 <span>                     db<span class="op">=</span><span class="st">"ipdb"</span>,transform <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -317,14 +318,63 @@ can use Query Uniprot ID as anchor, combine the results, convert Uniprot
 IDs to gene IDs and then collapse rows since two or more Uniprot IDs
 might correspond to same gene IDs.</p>
 </div>
+<div class="section level3">
+<h3 id="fetching-preconfigured-tables-from-orthomcl-db-and-map-old-og-ids-to-new-ids">Fetching Preconfigured tables from OrthoMCL-DB and map old OG IDs to
+new IDs<a class="anchor" aria-label="anchor" href="#fetching-preconfigured-tables-from-orthomcl-db-and-map-old-og-ids-to-new-ids"></a>
+</h3>
+<p>OrthoMCL gets frequently updated and with every update come new
+Ortholog IDs. When using published dataset, its highly likely that users
+would want to map the old orthogroups to new orthogroups or assess which
+proteins changed the orthogroups and got clubbed, which orthogroup got
+split etc. <code>getPreconfiguredTableOrthomcl</code> can help you do
+this by accessing preconfigured table used by OrthoMCL to do that.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Fetching all OG IDs that maps to IDs of interest</span></span>
+<span></span>
+<span><span class="co">## New to old IDs. Old Ids are present in second and third column</span></span>
+<span><span class="va">ids</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"OG7_0008348"</span>, <span class="st">"OG7_0003896"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/getPreconfiguredTableOrthomcl.html">getPreconfiguredTableOrthomcl</a></span><span class="op">(</span><span class="va">ids</span>,customField <span class="op">=</span> <span class="st">"previousGroups"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 3</span></span></span>
+<span><span class="co">#&gt;    `Ortholog Group...1` `Ortholog Group...2` `Previous Ortholog Groups`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> OG7_0003896          OG7_0003896          OG6_100490                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> OG7_0003896          OG7_0003896          OG3_10277                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> OG7_0003896          OG7_0003896          OG6_438394                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> OG7_0003896          OG7_0003896          OG4_24016                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> OG7_0003896          OG7_0003896          OG5_126769                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> OG7_0003896          OG7_0003896          OG6_442722                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> OG7_0008348          OG7_0008348          OG6_469006                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> OG7_0008348          OG7_0008348          OG6_155101                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> OG7_0008348          OG7_0008348          OG6_534558                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> OG7_0008348          OG7_0008348          OG6_100809</span></span>
+<span></span>
+<span><span class="co">## Old Id. New IDs are present in first column</span></span>
+<span><span class="fu"><a href="../reference/getPreconfiguredTableOrthomcl.html">getPreconfiguredTableOrthomcl</a></span><span class="op">(</span><span class="st">"OG3_10277"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 3</span></span></span>
+<span><span class="co">#&gt;   `Ortholog Group...1` `Ortholog Group...2` `Previous Ortholog Groups`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> OG7_0003895          OG7_0003895          OG3_10277                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> OG7_0003896          OG7_0003896          OG3_10277                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> OG7_0003899          OG7_0003899          OG3_10277                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> OG7_0003902          OG7_0003902          OG3_10277                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> OG7_0003903          OG7_0003903          OG3_10277</span></span></code></pre></div>
+<p>By changing <code>customField</code> arguments, you can also access
+other preconfigured tables from the database. Eg. if you want keyword
+frequencies and their associated orthogroups, this can be achieved
+using</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getPreconfiguredTableOrthomcl.html">getPreconfiguredTableOrthomcl</a></span><span class="op">(</span>customField <span class="op">=</span> <span class="st">"DomainFrequency"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 0 × 3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 variables: Ortholog Group &lt;chr&gt;, keyword &lt;chr&gt;, frequency &lt;chr&gt;</span></span></span></code></pre></div>
+</div>
 <div class="section level2">
 <h2 class="unnumbered" id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.4.1 (2024-06-14 ucrt)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-w64-mingw32/x64</span></span>
-<span><span class="co">#&gt; Running under: Windows 11 x64 (build 26100)</span></span>
+<span><span class="co">#&gt; Running under: Windows 11 x64 (build 26200)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -341,132 +391,127 @@ might correspond to same gene IDs.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] plyr_1.8.9         dplyr_1.1.4        plasmoRUtils_1.1.0 rlang_1.1.6       </span></span>
-<span><span class="co">#&gt; [5] readr_2.1.5        janitor_2.2.1      BiocStyle_2.32.1  </span></span>
+<span><span class="co">#&gt; [1] plyr_1.8.9         dplyr_1.2.1        plasmoRUtils_1.1.1 rlang_1.3.0       </span></span>
+<span><span class="co">#&gt; [5] readr_2.2.0        janitor_2.2.1      BiocStyle_2.32.1  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;   [1] segmented_2.1-4             fs_1.6.6                   </span></span>
+<span><span class="co">#&gt;   [1] segmented_2.2-1             fs_2.1.0                   </span></span>
 <span><span class="co">#&gt;   [3] ProtGenerics_1.36.0         matrixStats_1.5.0          </span></span>
-<span><span class="co">#&gt;   [5] bitops_1.0-9                lubridate_1.9.4            </span></span>
-<span><span class="co">#&gt;   [7] pRoloc_1.44.1               httr_1.4.7                 </span></span>
+<span><span class="co">#&gt;   [5] bitops_1.0-9                lubridate_1.9.5            </span></span>
+<span><span class="co">#&gt;   [7] pRoloc_1.44.1               httr_1.4.8                 </span></span>
 <span><span class="co">#&gt;   [9] RColorBrewer_1.1-3          doParallel_1.0.17          </span></span>
-<span><span class="co">#&gt;  [11] ggsci_3.2.0                 tools_4.4.1                </span></span>
-<span><span class="co">#&gt;  [13] MSnbase_2.30.1              backports_1.5.0            </span></span>
-<span><span class="co">#&gt;  [15] utf8_1.2.6                  R6_2.6.1                   </span></span>
-<span><span class="co">#&gt;  [17] lazyeval_0.2.2              withr_3.0.2                </span></span>
-<span><span class="co">#&gt;  [19] prettyunits_1.2.0           gridExtra_2.3              </span></span>
-<span><span class="co">#&gt;  [21] preprocessCore_1.66.0       cli_3.6.5                  </span></span>
-<span><span class="co">#&gt;  [23] Biobase_2.64.0              textshaping_1.0.1          </span></span>
-<span><span class="co">#&gt;  [25] gt_1.0.0                    sass_0.4.10                </span></span>
-<span><span class="co">#&gt;  [27] topGO_2.56.0                mvtnorm_1.3-3              </span></span>
-<span><span class="co">#&gt;  [29] randomForest_4.7-1.2        proxy_0.4-27               </span></span>
-<span><span class="co">#&gt;  [31] pkgdown_2.1.3               Rsamtools_2.20.0           </span></span>
-<span><span class="co">#&gt;  [33] systemfonts_1.2.3           txdbmaker_1.0.1            </span></span>
-<span><span class="co">#&gt;  [35] AnnotationForge_1.46.0      dichromat_2.0-0.1          </span></span>
-<span><span class="co">#&gt;  [37] parallelly_1.45.1           limma_3.60.6               </span></span>
-<span><span class="co">#&gt;  [39] rstudioapi_0.17.1           impute_1.78.0              </span></span>
-<span><span class="co">#&gt;  [41] RSQLite_2.4.1               FNN_1.1.4.1                </span></span>
-<span><span class="co">#&gt;  [43] generics_0.1.4              BiocIO_1.14.0              </span></span>
-<span><span class="co">#&gt;  [45] vroom_1.6.5                 gtools_3.9.5               </span></span>
-<span><span class="co">#&gt;  [47] car_3.1-3                   dendextend_1.19.1          </span></span>
-<span><span class="co">#&gt;  [49] GO.db_3.19.1                Matrix_1.7-1               </span></span>
-<span><span class="co">#&gt;  [51] MALDIquant_1.22.3           drawProteins_1.24.0        </span></span>
-<span><span class="co">#&gt;  [53] S4Vectors_0.42.1            abind_1.4-8                </span></span>
-<span><span class="co">#&gt;  [55] lifecycle_1.0.4             yaml_2.3.10                </span></span>
-<span><span class="co">#&gt;  [57] snakecase_0.11.1            carData_3.0-5              </span></span>
-<span><span class="co">#&gt;  [59] SummarizedExperiment_1.34.0 recipes_1.3.1              </span></span>
-<span><span class="co">#&gt;  [61] SparseArray_1.4.8           BiocFileCache_2.12.0       </span></span>
-<span><span class="co">#&gt;  [63] grid_4.4.1                  blob_1.2.4                 </span></span>
-<span><span class="co">#&gt;  [65] promises_1.3.3              crayon_1.5.3               </span></span>
-<span><span class="co">#&gt;  [67] PSMatch_1.8.0               lattice_0.22-6             </span></span>
-<span><span class="co">#&gt;  [69] beachmat_2.20.0             annotate_1.82.0            </span></span>
-<span><span class="co">#&gt;  [71] GenomicFeatures_1.56.0      chromote_0.5.1             </span></span>
-<span><span class="co">#&gt;  [73] mzR_2.38.0                  KEGGREST_1.44.1            </span></span>
-<span><span class="co">#&gt;  [75] pillar_1.11.0               knitr_1.50                 </span></span>
-<span><span class="co">#&gt;  [77] GenomicRanges_1.56.2        rjson_0.2.23               </span></span>
-<span><span class="co">#&gt;  [79] lpSolve_5.6.23              future.apply_1.20.0        </span></span>
-<span><span class="co">#&gt;  [81] codetools_0.2-20            mgsub_1.7.3                </span></span>
-<span><span class="co">#&gt;  [83] glue_1.8.0                  pcaMethods_1.96.0          </span></span>
-<span><span class="co">#&gt;  [85] data.table_1.17.8           MultiAssayExperiment_1.30.3</span></span>
-<span><span class="co">#&gt;  [87] vctrs_0.6.5                 png_0.1-8                  </span></span>
-<span><span class="co">#&gt;  [89] gtable_0.3.6                kernlab_0.9-33             </span></span>
-<span><span class="co">#&gt;  [91] cachem_1.1.0                gower_1.0.2                </span></span>
-<span><span class="co">#&gt;  [93] xfun_0.52                   prodlim_2025.04.28         </span></span>
-<span><span class="co">#&gt;  [95] S4Arrays_1.4.1              polyglotr_1.7.0            </span></span>
-<span><span class="co">#&gt;  [97] coda_0.19-4.1               survival_3.8-3             </span></span>
-<span><span class="co">#&gt;  [99] ncdf4_1.24                  timeDate_4041.110          </span></span>
-<span><span class="co">#&gt; [101] SingleCellExperiment_1.26.0 iterators_1.0.14           </span></span>
-<span><span class="co">#&gt; [103] hardhat_1.4.1               lava_1.8.1                 </span></span>
-<span><span class="co">#&gt; [105] statmod_1.5.0               MLInterfaces_1.84.0        </span></span>
-<span><span class="co">#&gt; [107] ipred_0.9-15                nlme_3.1-166               </span></span>
-<span><span class="co">#&gt; [109] bit64_4.6.0-1               progress_1.2.3             </span></span>
-<span><span class="co">#&gt; [111] filelock_1.0.3              LaplacesDemon_16.1.6       </span></span>
-<span><span class="co">#&gt; [113] GenomeInfoDb_1.40.1         bslib_0.9.0                </span></span>
-<span><span class="co">#&gt; [115] affyio_1.74.0               irlba_2.3.5.1              </span></span>
-<span><span class="co">#&gt; [117] rpart_4.1.23                colorspace_2.1-1           </span></span>
-<span><span class="co">#&gt; [119] BiocGenerics_0.50.0         DBI_1.2.3                  </span></span>
-<span><span class="co">#&gt; [121] nnet_7.3-19                 tidyselect_1.2.1           </span></span>
-<span><span class="co">#&gt; [123] processx_3.8.6              bit_4.6.0                  </span></span>
-<span><span class="co">#&gt; [125] compiler_4.4.1              curl_6.4.0                 </span></span>
-<span><span class="co">#&gt; [127] rvest_1.0.4                 httr2_1.2.0                </span></span>
-<span><span class="co">#&gt; [129] graph_1.82.0                SparseM_1.84-2             </span></span>
-<span><span class="co">#&gt; [131] xml2_1.3.8                  desc_1.4.3                 </span></span>
-<span><span class="co">#&gt; [133] DelayedArray_0.30.1         plotly_4.11.0              </span></span>
-<span><span class="co">#&gt; [135] bookdown_0.43               rtracklayer_1.64.0         </span></span>
-<span><span class="co">#&gt; [137] scales_1.4.0                hexbin_1.28.5              </span></span>
-<span><span class="co">#&gt; [139] affy_1.82.0                 rappdirs_0.3.3             </span></span>
-<span><span class="co">#&gt; [141] stringr_1.5.1               digest_0.6.37              </span></span>
-<span><span class="co">#&gt; [143] mixtools_2.0.0.1            rmarkdown_2.29             </span></span>
-<span><span class="co">#&gt; [145] XVector_0.44.0              htmltools_0.5.8.1          </span></span>
-<span><span class="co">#&gt; [147] pkgconfig_2.0.3             SingleR_2.6.0              </span></span>
-<span><span class="co">#&gt; [149] sparseMatrixStats_1.16.0    MatrixGenerics_1.16.0      </span></span>
-<span><span class="co">#&gt; [151] dbplyr_2.5.0                fastmap_1.2.0              </span></span>
-<span><span class="co">#&gt; [153] htmlwidgets_1.6.4           UCSC.utils_1.0.0           </span></span>
-<span><span class="co">#&gt; [155] DelayedMatrixStats_1.26.0   farver_2.1.2               </span></span>
-<span><span class="co">#&gt; [157] jquerylib_0.1.4             jsonlite_2.0.0             </span></span>
-<span><span class="co">#&gt; [159] mclust_6.1.1                BiocParallel_1.38.0        </span></span>
-<span><span class="co">#&gt; [161] mzID_1.42.0                 ModelMetrics_1.2.2.2       </span></span>
-<span><span class="co">#&gt; [163] BiocSingular_1.20.0         RCurl_1.98-1.17            </span></span>
-<span><span class="co">#&gt; [165] magrittr_2.0.3              scuttle_1.14.0             </span></span>
-<span><span class="co">#&gt; [167] Formula_1.2-5               GenomeInfoDbData_1.2.12    </span></span>
-<span><span class="co">#&gt; [169] Rcpp_1.1.0                  viridis_0.6.5              </span></span>
-<span><span class="co">#&gt; [171] MsCoreUtils_1.16.1          vsn_3.72.0                 </span></span>
-<span><span class="co">#&gt; [173] pROC_1.18.5                 stringi_1.8.7              </span></span>
-<span><span class="co">#&gt; [175] zlibbioc_1.50.0             MASS_7.3-61                </span></span>
-<span><span class="co">#&gt; [177] listenv_0.9.1               parallel_4.4.1             </span></span>
-<span><span class="co">#&gt; [179] Biostrings_2.72.1           splines_4.4.1              </span></span>
-<span><span class="co">#&gt; [181] hms_1.1.3                   ps_1.9.1                   </span></span>
-<span><span class="co">#&gt; [183] igraph_2.1.4                ggpubr_0.6.1               </span></span>
-<span><span class="co">#&gt; [185] QFeatures_1.14.2            ggsignif_0.6.4             </span></span>
-<span><span class="co">#&gt; [187] reshape2_1.4.4              biomaRt_2.60.1             </span></span>
-<span><span class="co">#&gt; [189] stats4_4.4.1                ScaledMatrix_1.12.0        </span></span>
-<span><span class="co">#&gt; [191] XML_3.99-0.18               evaluate_1.0.4             </span></span>
-<span><span class="co">#&gt; [193] BiocManager_1.30.26         tzdb_0.5.0                 </span></span>
-<span><span class="co">#&gt; [195] foreach_1.5.2               tidyr_1.3.1                </span></span>
-<span><span class="co">#&gt; [197] purrr_1.1.0                 future_1.67.0              </span></span>
-<span><span class="co">#&gt; [199] clue_0.3-66                 bio3d_2.4-5                </span></span>
-<span><span class="co">#&gt; [201] ggplot2_3.5.2               rsvd_1.0.5                 </span></span>
-<span><span class="co">#&gt; [203] xtable_1.8-4                broom_1.0.8                </span></span>
-<span><span class="co">#&gt; [205] restfulr_0.0.16             AnnotationFilter_1.28.0    </span></span>
-<span><span class="co">#&gt; [207] easyPubMed_2.13             e1071_1.7-16               </span></span>
-<span><span class="co">#&gt; [209] rstatix_0.7.2               later_1.4.2                </span></span>
-<span><span class="co">#&gt; [211] class_7.3-22                viridisLite_0.4.2          </span></span>
-<span><span class="co">#&gt; [213] ragg_1.4.0                  tibble_3.3.0               </span></span>
-<span><span class="co">#&gt; [215] websocket_1.4.4             memoise_2.0.1              </span></span>
-<span><span class="co">#&gt; [217] AnnotationDbi_1.66.0        GenomicAlignments_1.40.0   </span></span>
-<span><span class="co">#&gt; [219] IRanges_2.38.1              cluster_2.1.8              </span></span>
-<span><span class="co">#&gt; [221] globals_0.18.0              timechange_0.3.0           </span></span>
-<span><span class="co">#&gt; [223] caret_7.0-1                 sampling_2.11</span></span></code></pre></div>
+<span><span class="co">#&gt;  [11] tools_4.4.1                 MSnbase_2.30.1             </span></span>
+<span><span class="co">#&gt;  [13] utf8_1.2.6                  R6_2.6.1                   </span></span>
+<span><span class="co">#&gt;  [15] lazyeval_0.2.3              withr_3.0.3                </span></span>
+<span><span class="co">#&gt;  [17] prettyunits_1.2.0           gridExtra_2.3.1            </span></span>
+<span><span class="co">#&gt;  [19] preprocessCore_1.66.0       cli_3.6.6                  </span></span>
+<span><span class="co">#&gt;  [21] Biobase_2.64.0              textshaping_1.0.5          </span></span>
+<span><span class="co">#&gt;  [23] gt_1.3.0                    sass_0.4.10                </span></span>
+<span><span class="co">#&gt;  [25] topGO_2.56.0                mvtnorm_1.4-1              </span></span>
+<span><span class="co">#&gt;  [27] S7_0.2.2                    randomForest_4.7-1.2       </span></span>
+<span><span class="co">#&gt;  [29] proxy_0.4-29                pkgdown_2.2.0              </span></span>
+<span><span class="co">#&gt;  [31] Rsamtools_2.20.0            systemfonts_1.3.2          </span></span>
+<span><span class="co">#&gt;  [33] txdbmaker_1.0.1             AnnotationForge_1.46.0     </span></span>
+<span><span class="co">#&gt;  [35] dichromat_2.0-0.1           parallelly_1.48.0          </span></span>
+<span><span class="co">#&gt;  [37] limma_3.60.6                rstudioapi_0.19.0          </span></span>
+<span><span class="co">#&gt;  [39] impute_1.78.0               RSQLite_3.53.3             </span></span>
+<span><span class="co">#&gt;  [41] FNN_1.1.4.1                 generics_0.1.4             </span></span>
+<span><span class="co">#&gt;  [43] BiocIO_1.14.0               vroom_1.7.1                </span></span>
+<span><span class="co">#&gt;  [45] gtools_3.9.5                dendextend_1.19.1          </span></span>
+<span><span class="co">#&gt;  [47] GO.db_3.19.1                Matrix_1.7-5               </span></span>
+<span><span class="co">#&gt;  [49] MALDIquant_1.22.3           drawProteins_1.24.0        </span></span>
+<span><span class="co">#&gt;  [51] S4Vectors_0.42.1            abind_1.4-8                </span></span>
+<span><span class="co">#&gt;  [53] lifecycle_1.0.5             yaml_2.3.12                </span></span>
+<span><span class="co">#&gt;  [55] snakecase_0.11.1            SummarizedExperiment_1.34.0</span></span>
+<span><span class="co">#&gt;  [57] recipes_1.3.3               SparseArray_1.4.8          </span></span>
+<span><span class="co">#&gt;  [59] BiocFileCache_2.12.0        grid_4.4.1                 </span></span>
+<span><span class="co">#&gt;  [61] blob_1.3.0                  promises_1.5.0             </span></span>
+<span><span class="co">#&gt;  [63] crayon_1.5.3                PSMatch_1.8.0              </span></span>
+<span><span class="co">#&gt;  [65] lattice_0.22-9              beachmat_2.20.0            </span></span>
+<span><span class="co">#&gt;  [67] GenomicFeatures_1.56.0      annotate_1.82.0            </span></span>
+<span><span class="co">#&gt;  [69] chromote_0.5.1              mzR_2.38.0                 </span></span>
+<span><span class="co">#&gt;  [71] KEGGREST_1.44.1             pillar_1.11.1              </span></span>
+<span><span class="co">#&gt;  [73] knitr_1.51                  GenomicRanges_1.56.2       </span></span>
+<span><span class="co">#&gt;  [75] rjson_0.2.23                lpSolve_5.6.23             </span></span>
+<span><span class="co">#&gt;  [77] future.apply_1.20.2         codetools_0.2-20           </span></span>
+<span><span class="co">#&gt;  [79] mgsub_2.0.0                 glue_1.8.1                 </span></span>
+<span><span class="co">#&gt;  [81] pcaMethods_1.96.0           data.table_1.18.4          </span></span>
+<span><span class="co">#&gt;  [83] MultiAssayExperiment_1.30.3 vctrs_0.7.3                </span></span>
+<span><span class="co">#&gt;  [85] png_0.1-9                   gtable_0.3.6               </span></span>
+<span><span class="co">#&gt;  [87] kernlab_0.9-33              cachem_1.1.0               </span></span>
+<span><span class="co">#&gt;  [89] gower_1.0.2                 xfun_0.59                  </span></span>
+<span><span class="co">#&gt;  [91] prodlim_2026.03.11          S4Arrays_1.4.1             </span></span>
+<span><span class="co">#&gt;  [93] coda_0.19-4.1               survival_3.8-6             </span></span>
+<span><span class="co">#&gt;  [95] ncdf4_1.24                  timeDate_4052.112          </span></span>
+<span><span class="co">#&gt;  [97] SingleCellExperiment_1.26.0 iterators_1.0.14           </span></span>
+<span><span class="co">#&gt;  [99] hardhat_1.4.3               lava_1.9.2                 </span></span>
+<span><span class="co">#&gt; [101] statmod_1.5.2               MLInterfaces_1.84.0        </span></span>
+<span><span class="co">#&gt; [103] ipred_0.9-15                nlme_3.1-169               </span></span>
+<span><span class="co">#&gt; [105] bit64_4.8.2                 progress_1.2.3             </span></span>
+<span><span class="co">#&gt; [107] filelock_1.0.3              LaplacesDemon_16.1.8       </span></span>
+<span><span class="co">#&gt; [109] GenomeInfoDb_1.40.1         bslib_0.11.0               </span></span>
+<span><span class="co">#&gt; [111] affyio_1.74.0               irlba_2.3.7                </span></span>
+<span><span class="co">#&gt; [113] rpart_4.1.27                otel_0.2.0                 </span></span>
+<span><span class="co">#&gt; [115] colorspace_2.1-2            BiocGenerics_0.50.0        </span></span>
+<span><span class="co">#&gt; [117] DBI_1.3.0                   nnet_7.3-20                </span></span>
+<span><span class="co">#&gt; [119] tidyselect_1.2.1            processx_3.9.0             </span></span>
+<span><span class="co">#&gt; [121] bit_4.6.0                   compiler_4.4.1             </span></span>
+<span><span class="co">#&gt; [123] curl_7.1.0                  rvest_1.0.5                </span></span>
+<span><span class="co">#&gt; [125] httr2_1.2.3                 graph_1.82.0               </span></span>
+<span><span class="co">#&gt; [127] SparseM_1.84-2              xml2_1.6.0                 </span></span>
+<span><span class="co">#&gt; [129] desc_1.4.3                  DelayedArray_0.30.1        </span></span>
+<span><span class="co">#&gt; [131] plotly_4.12.0               bookdown_0.47              </span></span>
+<span><span class="co">#&gt; [133] rtracklayer_1.64.0          scales_1.4.0               </span></span>
+<span><span class="co">#&gt; [135] hexbin_1.28.5               affy_1.82.0                </span></span>
+<span><span class="co">#&gt; [137] rappdirs_0.3.4              stringr_1.6.0              </span></span>
+<span><span class="co">#&gt; [139] digest_0.6.39               mixtools_2.0.0.1           </span></span>
+<span><span class="co">#&gt; [141] rmarkdown_2.31              XVector_0.44.0             </span></span>
+<span><span class="co">#&gt; [143] htmltools_0.5.9             pkgconfig_2.0.3            </span></span>
+<span><span class="co">#&gt; [145] SingleR_2.6.0               sparseMatrixStats_1.16.0   </span></span>
+<span><span class="co">#&gt; [147] MatrixGenerics_1.16.0       dbplyr_2.6.0               </span></span>
+<span><span class="co">#&gt; [149] fastmap_1.2.0               htmlwidgets_1.6.4          </span></span>
+<span><span class="co">#&gt; [151] UCSC.utils_1.0.0            DelayedMatrixStats_1.26.0  </span></span>
+<span><span class="co">#&gt; [153] farver_2.1.2                jquerylib_0.1.4            </span></span>
+<span><span class="co">#&gt; [155] jsonlite_2.0.0              BiocParallel_1.38.0        </span></span>
+<span><span class="co">#&gt; [157] mclust_6.1.3                mzID_1.42.0                </span></span>
+<span><span class="co">#&gt; [159] ModelMetrics_1.2.2.2        BiocSingular_1.20.0        </span></span>
+<span><span class="co">#&gt; [161] RCurl_1.98-1.19             magrittr_2.0.5             </span></span>
+<span><span class="co">#&gt; [163] scuttle_1.14.0              GenomeInfoDbData_1.2.12    </span></span>
+<span><span class="co">#&gt; [165] Rcpp_1.1.2                  viridis_0.6.5              </span></span>
+<span><span class="co">#&gt; [167] MsCoreUtils_1.16.1          vsn_3.72.0                 </span></span>
+<span><span class="co">#&gt; [169] pROC_1.19.0.1               stringi_1.8.7              </span></span>
+<span><span class="co">#&gt; [171] zlibbioc_1.50.0             MASS_7.3-65                </span></span>
+<span><span class="co">#&gt; [173] listenv_1.0.0               parallel_4.4.1             </span></span>
+<span><span class="co">#&gt; [175] Biostrings_2.72.1           splines_4.4.1              </span></span>
+<span><span class="co">#&gt; [177] hms_1.1.4                   igraph_2.3.3               </span></span>
+<span><span class="co">#&gt; [179] QFeatures_1.14.2            reshape2_1.4.5             </span></span>
+<span><span class="co">#&gt; [181] biomaRt_2.60.1              stats4_4.4.1               </span></span>
+<span><span class="co">#&gt; [183] ScaledMatrix_1.12.0         XML_3.99-0.23              </span></span>
+<span><span class="co">#&gt; [185] evaluate_1.0.5              BiocManager_1.30.27        </span></span>
+<span><span class="co">#&gt; [187] tzdb_0.5.0                  foreach_1.5.2              </span></span>
+<span><span class="co">#&gt; [189] tidyr_1.3.2                 purrr_1.2.2                </span></span>
+<span><span class="co">#&gt; [191] future_1.70.0               clue_0.3-68                </span></span>
+<span><span class="co">#&gt; [193] bio3d_2.4-5                 ggplot2_4.0.3              </span></span>
+<span><span class="co">#&gt; [195] rsvd_1.0.5                  xtable_1.8-8               </span></span>
+<span><span class="co">#&gt; [197] restfulr_0.0.17             AnnotationFilter_1.28.0    </span></span>
+<span><span class="co">#&gt; [199] easyPubMed_3.1.6            e1071_1.7-17               </span></span>
+<span><span class="co">#&gt; [201] later_1.4.8                 viridisLite_0.4.3          </span></span>
+<span><span class="co">#&gt; [203] class_7.3-23                ragg_1.5.2                 </span></span>
+<span><span class="co">#&gt; [205] tibble_3.3.1                websocket_1.4.4            </span></span>
+<span><span class="co">#&gt; [207] memoise_2.0.1               AnnotationDbi_1.66.0       </span></span>
+<span><span class="co">#&gt; [209] GenomicAlignments_1.40.0    IRanges_2.38.1             </span></span>
+<span><span class="co">#&gt; [211] cluster_2.1.8.2             globals_0.19.1             </span></span>
+<span><span class="co">#&gt; [213] timechange_0.4.0            caret_7.0-1                </span></span>
+<span><span class="co">#&gt; [215] sampling_2.11</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Tebben2022" class="csl-entry">
 Tebben, Kieran, Aliou Dia, and David Serre. 2022. <span>“Determination
 of the Stage Composition of <span><em>Plasmodium</em></span> Infections
-from Bulk Gene Expression Data.”</span> Edited by Charles R. Langelier.
-<em>mSystems</em> 7 (4). <a href="https://doi.org/10.1128/msystems.00258-22" class="external-link">https://doi.org/10.1128/msystems.00258-22</a>.
+from Bulk Gene Expression Data.”</span> <em>mSystems</em> 7 (4). <a href="https://doi.org/10.1128/msystems.00258-22" class="external-link">https://doi.org/10.1128/msystems.00258-22</a>.
 </div>
 </div>
 </div>
@@ -481,7 +526,7 @@ from Bulk Gene Expression Data.”</span> Edited by Charles R. Langelier.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

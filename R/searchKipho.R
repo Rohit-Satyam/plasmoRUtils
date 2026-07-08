@@ -29,16 +29,16 @@ searchKipho <- function(org = "pf", type = "kinase") {
   baseurl <- "https://bioinfo.icgeb.res.in/kipho/"
   urls <- list(
     kinase = list(
-      pb = glue::glue("{baseurl}kinase_PBANKA.php"),
-      pv = glue::glue("{baseurl}kinase_PVX.php"),
-      pf = glue::glue("{baseurl}kinase_PF3D7.php"),
-      pc = glue::glue("{baseurl}kinase_PCHAS.php")
+      pb = paste0(baseurl, "kinase_PBANKA.php"),
+      pv = paste0(baseurl, "kinase_PVX.php"),
+      pf = paste0(baseurl, "kinase_PF3D7.php"),
+      pc = paste0(baseurl, "kinase_PCHAS.php")
     ),
     phosphatase = list(
-      pb = glue::glue("{baseurl}phosphatase_PBANKA.php"),
-      pv = glue::glue("{baseurl}phosphatase_PVX.php"),
-      pf = glue::glue("{baseurl}phosphatase_PF3D7.php"),
-      pc = glue::glue("{baseurl}phosphatase_PCHAS.php")
+      pb = paste0(baseurl, "phosphatase_PBANKA.php"),
+      pv = paste0(baseurl, "phosphatase_PVX.php"),
+      pf = paste0(baseurl, "phosphatase_PF3D7.php"),
+      pc = paste0(baseurl, "phosphatase_PCHAS.php")
     )
   )
 
