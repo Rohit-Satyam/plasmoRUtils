@@ -80,6 +80,15 @@ toGeneid(inputid = c("TGME49_304740","TGME49_208030"),
 
 This functionality proves particularly valuable for enhancing differential expression analysis results with comprehensive annotations, enabling complete workflow automation without leaving command-line interfaces on HPC systems.
 
+With `toGeneid()` function, one-to-many relationships are retained in long format by default, allowing all possible mappings to remain visible. The decision about how to handle such cases is therefore left to the user, rather than being imposed by the function. 
+
+For instance, the two protein IDs `Q8I0P6` and `A0A2P1JI60` correspond to `elongation factor 1-alpha`. Although the genes `PF3D7_1357100` and `PF3D7_1357000`  encode the same protein (thereby same uniprot ID `Q8I0P6`), they are located on opposite strands: `PF3D7_1357100` is on the forward strand, whereas `PF3D7_1357000` is on the reverse strand. They also differ in transcript length. In this example if the task is Uniprot to Gene ID mapping, users can group the results returned by `toGeneid()` function by Uniprot IDs and collapse rows thereby concatinating two gene IDs separated by semicolon or comma. An alternative is to randomly choose one lexicographically. Because there is no universally appropriate rule for resolving this type of ambiguity, we avoid making this choice for the end user. 
+
+```{r}
+toGeneid(c("Q8I0P6" ,"A0A2P1JI60"), from = "uniprot",to = "ensembl")
+```
+
+
 ## Accessing Preconfigured Data Tables from VEuPathDB's component sites
 
 Since VEuPathDB API documentation specifically encourages to use specific organism database as quoted below, we developed `getTable()` function to fetch fields of interests from each database separately.

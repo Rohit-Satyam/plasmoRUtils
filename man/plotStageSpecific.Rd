@@ -23,7 +23,7 @@ This function retrieves data from malaria.tools and generates expression value p
 \dontrun{
   geneID <- c("PBANKA_0100600", "PBANKA_0102900", "PF3D7_0102900")
   ## To get Plot similar to malaria.tools
-  res <- plotTissueSpecific(geneID = "PBANKA_0100600")
+  res <- plotStageSpecific(geneID = "PBANKA_0100600")
 }
 
 }

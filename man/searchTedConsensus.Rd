@@ -4,12 +4,21 @@
 \alias{searchTedConsensus}
 \title{Fetch protein domains from TED database}
 \usage{
-searchTedConsensus(uniprotid = "", returnCATHdesc = TRUE)
+searchTedConsensus(
+  uniprotid = "",
+  returnCATHdesc = TRUE,
+  timeout = 60,
+  max_tries = 3
+)
 }
 \arguments{
 \item{uniprotid}{A character vector of uniprot IDs.}
 
 \item{returnCATHdesc}{Logical. Set this on to get the description of the CATH ID from CATH database.}
+
+\item{timeout}{Timeout time in seconds}
+
+\item{max_tries}{Maximum retries allowed.}
 }
 \value{
 A data frame, domain boundaries and other information provided by TED. For details visit the TED database.

@@ -4,10 +4,14 @@
 \alias{pdb2uniprot}
 \title{Quick mapping of PDB IDs to Uiprot IDs}
 \usage{
-pdb2uniprot(pdbid)
+pdb2uniprot(pdbid, timeout = 60, max_tries = 3)
 }
 \arguments{
 \item{pdbid}{A single PDB Id.}
+
+\item{timeout}{Timeout time in seconds}
+
+\item{max_tries}{Maximum retries allowed.}
 }
 \value{
 A data frame, Uniprot IDs, Chain IDs and start and end coordinates of the chains.

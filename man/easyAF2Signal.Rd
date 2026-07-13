@@ -25,7 +25,7 @@ A convenience function to compute atomic contacts between a predicted signal pep
 }
 \examples{
 \dontrun{
-df <- easyAF2Signal("https://alphafold.ebi.ac.uk/files/AF-Q9TY95-F1-model_v4.pdb")
+df <- easyAF2Signal("https://alphafold.ebi.ac.uk/files/AF-A0A140KXW6-F1-model_v6.pdb")
 }
 
 }

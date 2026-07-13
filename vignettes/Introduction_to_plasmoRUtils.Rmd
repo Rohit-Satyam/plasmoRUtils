@@ -44,7 +44,7 @@ Before downloading the package, install the following dependencies.
 
 pak::pkg_install("Rohit-Satyam/plasmoRUtils", dependencies = TRUE)
 
-cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'ggsci', 'rvest', 'easyPubMed', 'plyr', 'scales', 'ggplot2', 'glue', 'tidyr', 'tibble', 'data.table', 'plotly', 'purrr', 'stringr', 'S4Vectors', 'echarts4r', 'magrittr', 'bio3d', 'httr', 'jsonlite', 'ggpubr', 'gt', 'mgsub', 'reshape2','pathfindR')
+cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'rvest', 'easyPubMed', 'plyr', 'scales', 'ggplot2', 'tidyr', 'tibble', 'data.table', 'plotly', 'purrr', 'stringr', 'S4Vectors', 'echarts4r', 'magrittr', 'bio3d', 'httr2', 'jsonlite', 'gt', 'mgsub', 'reshape2','pathfindR')
 
 install.packages(setdiff(cranpkgs, rownames(installed.packages())), dependencies = TRUE)
 
@@ -81,8 +81,7 @@ Databases covered includes:
 4.  Malaria Parasite Metabolic Pathways ([MPMP](https://mpmp.huji.ac.il/)) database
 5.  Malaria Important Interacting Proteins ([MIIP](http://www.hpppi.iicb.res.in/pfnet/stage-map.html))
 6.  [Phenoplasm](https://phenoplasm.org/)
-7.  [Uniprot](https://www.uniprot.org/)
-8.  [Malaria Cell Atlas](https://www.malariacellatlas.org/), etc. For exhaustive list, see subsections below.
+7.  [Malaria Cell Atlas](https://www.malariacellatlas.org/), etc. For exhaustive list, see subsections below.
 
 ```{r setup}
 # Load package and some other useful packages by using
@@ -100,7 +99,7 @@ suppressPackageStartupMessages(
 | Function                   | Database Access                        |
 |----------------------------|----------------------------------------|
 | **`searchApicoTFdb()`**    | ApicoTFdb                              |
-| **`searchGSC()`**          | Google Scholar                         |
+| **`searchRS()`**           | Research Square                        |
 | **`searchHP()`**           | Hit Predict                            |
 | **`searchIpDb()`**         | InParanoiDb                            |
 | **`searchKipho()`**        | KiPho Database                         |
@@ -145,22 +144,31 @@ searchApicoTFdb(org="tg49") %>% head()
 searchApicoTFdb(fetch = "exptfs") %>% head()
 ```
 
-## **`searchGSC()`**
+## **`searchRS()`**
 
-Sometimes, it is difficult to keep track of the corpus while you are working on your gene of interest and you might want to keep up with your competing groups across the globe. `searchGSC()` function can help you collect all the necessary literature where your gene ID of interest has been mentioned and return the results in form of a data frame.
+Sometimes, it is difficult to keep track of the corpus while you are working on your gene of interest and you might want to keep up with your competing groups across the globe. `searchRS()` function can help you screen preprint corpus available at Research Square where your gene ID of interest has been mentioned and return the results in form of a data frame.
 
-Since Google Scholar searches are not restricted to the Article abstracts but extends till supplementary section, this function can be very helpful to capture articles that mentions your gene ID of interest and are otherwise missed by normal Google search. Besides, since most of the pre-print literature is indexed at Google Scholar, you can also find papers by your competing groups that are yet to be peer-reviewed.
-
-> Note: We would like to warn users that this function is experimental and have been seen to get your IP blocked temporarily for 24 hrs if used more than 20 times. For large array of genes, we encourage users to use more specialized APIs.
 
 ```{r}
-## Fetch all the papers between year 2018 and 2021
-searchGSC(
-  geneIDs=c("PF3D7_0420300 OR MAL4P1.192 OR Q8I1N6 OR PFD0985w","PF3D7_0621000",
-            "PF3D7_0420300OR"),
-  translate = "en",  ## to translate the non-english titles
-  year_start = 2018, 
-  year_end   = 2021, max_pages = 2)
+hits <- searchRS(
+ geneID = "PfAP2-I",
+ org = "Plasmodium falciparum",
+ gene_aliases = c(
+   "Pf AP2-I",
+   "pfap2-i",
+   "PF3D7_1007700",
+   "Apetala 2 Invasion",
+   "AP2-I transcription factor"
+ ),
+ org_aliases = c(
+   "P. falciparum",
+   "3D7",
+   "malaria parasite"
+ ),
+ max_pages = 10
+ )
+
+hits
 ```
 
 ## **`searchHP()`**
@@ -310,7 +318,7 @@ Some visualization functions have been developed to produce similar visualizatio
 
 - `plotAllCondition()`: This function lets you create publication ready plots of TPM normalized expression values across multiple stages of parasite using bulk-RNAseq data from malaria.tools.
 
-```{r}
+```{r, eval=FALSE}
 # TPM plot (non-interactive)
 plotAllCondition(geneID = "PBANKA_0100600")
 plotAllCondition(geneID = "PBANKA_0100600",plotify = TRUE) ## interactive
@@ -321,7 +329,7 @@ plotAllCondition(geneID = "PBANKA_0100600",returnData = TRUE) %>% head()
 
 Users can also plot stage specific average TPMs as well similar to the plots rendered in malaria.tools using `plotStageSpecific()` function.
 
-```{r}
+```{r, eval=FALSE}
 plotStageSpecific(geneID = "PBANKA_0100600",plotify = TRUE)
 ```
 

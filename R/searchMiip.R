@@ -30,7 +30,7 @@ searchMiip <- function(geneID) {
 
   ## Recursively accessing multiple pages of MIIP to get the PPI data and their stages
   t2 <- purrr::map(stages, function(x) {
-    webpage <- rvest::read_html(glue::glue(baseurl, x, ".html"))
+    webpage <- rvest::read_html(paste0(baseurl, x, ".html"))
     table <- webpage %>%
       rvest::html_nodes("table") %>%
       rvest::html_table(fill = TRUE) %>%

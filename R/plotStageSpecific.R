@@ -2,12 +2,10 @@
 #'
 #' This function retrieves data from malaria.tools and generates expression value plots (in TPM) similar to those produced by the website. Use this function to create publication-ready plots.
 #'
-#' @importFrom ggsci scale_fill_nejm
 #' @importFrom plotly ggplotly
 #' @import dplyr
 #' @import stringr
 #' @import ggplot2
-#' @importFrom glue glue
 #' @import rvest
 #' @export
 #'
@@ -20,7 +18,7 @@
 #' \dontrun{
 #'   geneID <- c("PBANKA_0100600", "PBANKA_0102900", "PF3D7_0102900")
 #'   ## To get Plot similar to malaria.tools
-#'   res <- plotTissueSpecific(geneID = "PBANKA_0100600")
+#'   res <- plotStageSpecific(geneID = "PBANKA_0100600")
 #' }
 #'
 plotStageSpecific <- function(geneID, returnData = FALSE, plotify = FALSE) {
@@ -30,9 +28,8 @@ plotStageSpecific <- function(geneID, returnData = FALSE, plotify = FALSE) {
     dplyr::pull(2)
 
   url <- ifelse(grepl("PF3D7", geneID),
-                glue::glue("https://malaria.sbs.ntu.edu.sg/profile/download/plot/{index}/2"),
-                glue::glue("https://malaria.sbs.ntu.edu.sg/profile/download/plot/{index}/1")
-  )
+                paste0("https://malaria.sbs.ntu.edu.sg/profile/download/plot/",index,"/2"),
+  paste0("https://malaria.sbs.ntu.edu.sg/profile/download/plot/",index,"/1"))
 
   line <- readLines(url, warn = FALSE) %>%
     stringr::str_replace_all("Gametocyte \\(male\\)", "Gametocyte(male)") %>%
@@ -62,7 +59,18 @@ plotStageSpecific <- function(geneID, returnData = FALSE, plotify = FALSE) {
       panel.grid.minor.x = ggplot2::element_blank(),
       legend.position = "none"
     ) +
-    ggsci::scale_fill_nejm()
+    ggplot2::scale_fill_manual(
+      values = c(
+        "#BC3C29FF",
+        "#0072B5FF",
+        "#E18727FF",
+        "#20854EFF",
+        "#7876B1FF",
+        "#6F99ADFF",
+        "#FFDC91FF",
+        "#EE4C97FF"
+      )
+    )
 
   if (plotify) {
     return(plotly::ggplotly(plot))

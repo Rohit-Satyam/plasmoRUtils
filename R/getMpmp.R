@@ -4,7 +4,6 @@
 #'
 #' @import dplyr
 #' @import rvest
-#' @import glue
 #' @export
 #'
 #' @param url URL of the pathway of interest.

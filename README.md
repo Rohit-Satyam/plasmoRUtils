@@ -6,19 +6,21 @@
 `plasmoRUtils` enables users to connect to several *Plasmodium* and
 other apicomplexan databases via R interface and provides simple
 functions to carry out other bioinformatics tasks which are non-trival
-for parasite informatic analysis. For further details, we recommend you
-read our preprint.
+for parasite bioinformatic analysis. For further details, we recommend
+you read our
+[preprint](https://www.biorxiv.org/content/10.1101/2025.07.30.667718v1).
 
 <!-- badges: start -->
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![codecov](https://codecov.io/gh/Rohit-Satyam/plasmoRUtils/branch/master/graph/badge.svg)](https://codecov.io/gh/Rohit-Satyam/plasmoRUtils)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://choosealicense.com/licenses/mit/)
+[![license:
+MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://choosealicense.com/licenses/mit/)
 [![minimal R
 version](https://img.shields.io/badge/R%3E%3D-4-6666ff.svg)](https://cran.r-project.org/)
-[![packageversion](https://img.shields.io/badge/Package%20version-1.1.0-turquoise.svg?style=flat-square)](commits/master)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2025--08--21-yellowgreen.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-1.1.1-turquoise.svg?style=flat-square)](https://github.com/Rohit-Satyam/plasmoRUtils/releases/tag/v1.1.1)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2026--07--08-yellowgreen.svg)](https://github.com/Rohit-Satyam/plasmoRUtils/commits/main)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 ## Installation
@@ -34,10 +36,9 @@ If the above method fails, try the following steps:
 1.  Before downloading the package, install the following dependencies.
 
 ``` r
-cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'ggsci', 'rvest',
-'easyPubMed', 'plyr', 'scales', 'ggplot2', 'glue', 'tidyr', 'tibble', 'data.table', 'plotly',
-'purrr', 'stringr', 'S4Vectors', 'magrittr', 'bio3d', 'httr', 'jsonlite',
-'ggpubr', 'gt', 'mgsub', 'reshape2','pathfindR','polyglotr')
+cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'rvest',
+'easyPubMed', 'plyr', 'scales', 'ggplot2', 'tidyr', 'tibble', 'data.table', 'plotly',
+'purrr', 'stringr', 'S4Vectors', 'magrittr', 'bio3d', 'httr2', 'jsonlite', 'gt', 'mgsub', 'reshape2','pathfindR')
 
 install.packages(setdiff(cranpkgs, rownames(installed.packages())), dependencies = TRUE)
 
@@ -80,6 +81,8 @@ The documentation of this package is available at the following:
     functions](https://rohit-satyam.github.io/plasmoRUtils/articles/Miscellaneous_function.html)
 4.  [RNASeq: Importance of
     reanalysis](https://rohit-satyam.github.io/plasmoRUtils/articles/Need_for_reanalysis.html)
+5.  [Microarray data
+    reanalysis](https://rohit-satyam.github.io/plasmoRUtils/articles/Microarray_reanalysis.html)
 
 ## To-do List
 

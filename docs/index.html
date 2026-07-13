@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A one-stop R Package for Plasmodium and other Apicomplexan parasite-related Bioinformatics analysis">
 <meta name="description" content="plasmoRUtils package provides ability to access several specialized databases majorly for Plasmodium and several other apicomplexans, carry out gene ID conversions and fetch annotation for provided gene IDs. In addition, it also provides functions to quickly carry out enrichment analysis of gene expression data.">
@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">plasmoRUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
     <li><a class="dropdown-item" href="articles/Miscellaneous_function.html">Other useful functions</a></li>
     <li><a class="dropdown-item" href="articles/Need_for_reanalysis.html">RNASeq: Need for reanalysis?</a></li>
     <li><a class="dropdown-item" href="articles/retrieving_orthologs.html">Retrieving Orthologs</a></li>
+    <li><a class="dropdown-item" href="articles/Microarray_reanalysis.html">Microarray data reanalysis</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -67,7 +68,7 @@
 <img src="logo.png" class="logo" alt=""><h1 id="plasmorutils-">plasmoRUtils <a class="anchor" aria-label="anchor" href="#plasmorutils-"></a>
 </h1>
 </div>
-<p><code>plasmoRUtils</code> enables users to connect to several <em>Plasmodium</em> and other apicomplexan databases via R interface and provides simple functions to carry out other bioinformatics tasks which are non-trival for parasite informatic analysis. For further details, we recommend you read our preprint.</p>
+<p><code>plasmoRUtils</code> enables users to connect to several <em>Plasmodium</em> and other apicomplexan databases via R interface and provides simple functions to carry out other bioinformatics tasks which are non-trival for parasite bioinformatic analysis. For further details, we recommend you read our <a href="https://www.biorxiv.org/content/10.1101/2025.07.30.667718v1" class="external-link">preprint</a>.</p>
 <!-- badges: start -->
 
 <div class="section level2">
@@ -81,10 +82,9 @@
 <li>Before downloading the package, install the following dependencies.</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cranpkgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'BiocManager'</span>,<span class="st">'randomcoloR'</span>, <span class="st">'janitor'</span>, <span class="st">'readr'</span>, <span class="st">'rlang'</span>, <span class="st">'dplyr'</span>, <span class="st">'ggsci'</span>, <span class="st">'rvest'</span>,</span>
-<span><span class="st">'easyPubMed'</span>, <span class="st">'plyr'</span>, <span class="st">'scales'</span>, <span class="st">'ggplot2'</span>, <span class="st">'glue'</span>, <span class="st">'tidyr'</span>, <span class="st">'tibble'</span>, <span class="st">'data.table'</span>, <span class="st">'plotly'</span>,</span>
-<span><span class="st">'purrr'</span>, <span class="st">'stringr'</span>, <span class="st">'S4Vectors'</span>, <span class="st">'magrittr'</span>, <span class="st">'bio3d'</span>, <span class="st">'httr'</span>, <span class="st">'jsonlite'</span>,</span>
-<span><span class="st">'ggpubr'</span>, <span class="st">'gt'</span>, <span class="st">'mgsub'</span>, <span class="st">'reshape2'</span>,<span class="st">'pathfindR'</span>,<span class="st">'polyglotr'</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">cranpkgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'BiocManager'</span>,<span class="st">'randomcoloR'</span>, <span class="st">'janitor'</span>, <span class="st">'readr'</span>, <span class="st">'rlang'</span>, <span class="st">'dplyr'</span>, <span class="st">'rvest'</span>,</span>
+<span><span class="st">'easyPubMed'</span>, <span class="st">'plyr'</span>, <span class="st">'scales'</span>, <span class="st">'ggplot2'</span>, <span class="st">'tidyr'</span>, <span class="st">'tibble'</span>, <span class="st">'data.table'</span>, <span class="st">'plotly'</span>,</span>
+<span><span class="st">'purrr'</span>, <span class="st">'stringr'</span>, <span class="st">'S4Vectors'</span>, <span class="st">'magrittr'</span>, <span class="st">'bio3d'</span>, <span class="st">'httr2'</span>, <span class="st">'jsonlite'</span>, <span class="st">'gt'</span>, <span class="st">'mgsub'</span>, <span class="st">'reshape2'</span>,<span class="st">'pathfindR'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">cranpkgs</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -98,7 +98,7 @@
 <li>You can install the development version of <code>plasmoRUtils</code> using:</li>
 </ol>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Rohit-Satyam/plasmoRUtils"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Rohit-Satyam/plasmoRUtils"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'Rohit-Satyam/plasmoRUtils'</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -121,6 +121,7 @@
 <li><a href="https://rohit-satyam.github.io/plasmoRUtils/articles/Gene_ID_Conversion.html">Accessing component databases of VEuPathDB</a></li>
 <li><a href="https://rohit-satyam.github.io/plasmoRUtils/articles/Miscellaneous_function.html">Other useful functions</a></li>
 <li><a href="https://rohit-satyam.github.io/plasmoRUtils/articles/Need_for_reanalysis.html">RNASeq: Importance of reanalysis</a></li>
+<li><a href="https://rohit-satyam.github.io/plasmoRUtils/articles/Microarray_reanalysis.html">Microarray data reanalysis</a></li>
 </ol>
 </div>
 <div class="section level2">
@@ -183,12 +184,12 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://codecov.io/gh/Rohit-Satyam/plasmoRUtils" class="external-link"><img src="https://codecov.io/gh/Rohit-Satyam/plasmoRUtils/branch/master/graph/badge.svg" alt="codecov"></a></li>
-<li><a href="https://choosealicense.com/licenses/mit/" class="external-link"><img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="license"></a></li>
+<li><a href="https://choosealicense.com/licenses/mit/" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="license: MIT"></a></li>
 <li><a href="https://cran.r-project.org/" class="external-link"><img src="https://img.shields.io/badge/R%3E%3D-4-6666ff.svg" alt="minimal R version"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-1.1.0-turquoise.svg?style=flat-square" alt="packageversion"></a></li>
-<li><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2025--08--21-yellowgreen.svg" alt="Last-changedate"></a></li>
+<li><a href="https://github.com/Rohit-Satyam/plasmoRUtils/releases/tag/v1.1.1" class="external-link"><img src="https://img.shields.io/badge/Package%20version-1.1.1-turquoise.svg?style=flat-square" alt="packageversion"></a></li>
+<li><a href="https://github.com/Rohit-Satyam/plasmoRUtils/commits/main" class="external-link"><img src="https://img.shields.io/badge/last%20change-2026--07--08-yellowgreen.svg" alt="Last-changedate"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 </ul>
 </div>
 
@@ -201,7 +202,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

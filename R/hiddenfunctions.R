@@ -2,7 +2,7 @@
 #'
 #' Hidden function to fetch the expandable tables from MPMP database
 #'
-#' @import glue rvest
+#' @import rvest
 #' @param url MPMP url.
 #' @keywords internal
 
@@ -12,9 +12,9 @@
     rvest::html_table()
 
   if (length(df) == 0) {
-    message(glue::glue("No table found for the given URL: {url}\n"))
+    message(paste0("No table found for the given URL: ", url, "\n"))
   } else {
-    message(glue::glue("\033[0;32mfetched successfully: {url}\033[0m\n"))
+    message(paste0("\033[0;32mfetched successfully: ", url, "\033[0m\n"))
     return(df[[1]])
   }
 }
@@ -32,7 +32,7 @@
   df <- rvest::read_html(url) %>% rvest::html_elements("tr") %>%
     rvest::html_text2() %>% as.data.frame() %>% dplyr::pull(1)
   if (length(df) < 2) {
-    message(glue::glue("No table found for the given URL: {url}\n"))
+    message(paste0("No table found for the given URL: ", url, "\n"))
   }
   else {
     pattern <- "PF3D7.*|^MAL*|PF.*|.pre-tRNA-|RNAzID|U5RNA|ORF|Surf|.*t000.*|.*m000.*|PF.*|3D7surf.*|Pf[0-9]+|[0-9]+\\.t00[0-9]+|1396.pre-trna-gly-1|1981.m00174|MaL13P1.80|pf14_0741"
@@ -54,7 +54,7 @@
     ##remove longer strings:
     df <- df[!(nchar(df) >= 25)]
     #colnames(df) <- c("PfID", "Annotation")
-    message(glue::glue("\033[0;32mfetched successfully: {url}\033[0m\n"))
+    message(paste0("\033[0;32mfetched successfully: ", url, "\033[0m\n"))
     return(unique(df))
   }
 }
@@ -126,3 +126,117 @@ convert_last_letter <- function(str) {
 }
 
 utils::globalVariables(".")
+
+#' plasmoRUtils
+#'
+#' Hidden function for searchRS
+#'
+#' @import httr2 jsonlite
+#'
+#' @keywords internal
+.rs_api_search_page <- function(query,
+                                offset = 0,
+                                article_type = "Research Article",
+                                status = "all") {
+  resp <- httr2::request("https://www.researchsquare.com/api/search") |>
+    httr2::req_url_query(
+      articleType = article_type,
+      offset = offset,
+      status = status,
+      unified = query
+    ) |>
+    httr2::req_user_agent("plasmoRUtils searchRS") |>
+    httr2::req_timeout(60) |>
+    httr2::req_retry(
+      max_tries = 3,
+      retry_on_failure = TRUE,
+      is_transient = function(resp) {
+        httr2::resp_status(resp) %in% c(408, 429, 500, 502, 503, 504)
+      }
+    ) |>
+    httr2::req_perform()
+  
+  txt <- httr2::resp_body_string(resp)
+  out <- jsonlite::fromJSON(txt, simplifyVector = TRUE)
+  out$result
+}
+
+#' plasmoRUtils
+#'
+#' Hidden function for searchRS 
+#'
+#'
+#' @keywords internal
+.escape_regex <- function(x) {
+  vapply(strsplit(x, "", fixed = TRUE), function(chars) {
+    meta <- chars %in% c(
+      "\\", ".", "|", "(", ")", "[", "]", "{", "}",
+      "^", "$", "*", "+", "?"
+    )
+    
+    paste0(ifelse(meta, paste0("\\", chars), chars), collapse = "")
+  }, character(1))
+}
+
+
+#' plasmoRUtils
+#'
+#' Hidden function for searchRS
+#'
+#' @import purrr
+#'
+#' @keywords internal
+.make_flexible_regex <- function(terms) {
+  terms <- unique(terms[!is.na(terms) & nzchar(terms)])
+  
+  if (length(terms) == 0) {
+    return("(?!)")
+  }
+  
+  term_regex <- purrr::map_chr(terms, function(x) {
+    parts <- unlist(strsplit(x, "[-_[:space:]]+"))
+    parts <- .escape_regex(parts)
+    
+    paste(parts, collapse = "[-_[:space:]]*")
+  })
+  
+  paste0(
+    "(?i)(?<![A-Za-z0-9])(?:",
+    paste(term_regex, collapse = "|"),
+    ")(?![A-Za-z0-9])"
+  )
+}
+
+#' plasmoRUtils
+#'
+#' Hidden function for searchRS
+#'
+#' @import stringr httr2 rvest
+#'
+#' @keywords internal
+.rs_article_text <- function(url_path) {
+  url <- ifelse(
+    stringr::str_starts(url_path, "https?://"),
+    url_path,
+    paste0("https://www.researchsquare.com", url_path)
+  )
+  
+  resp <- httr2::request(url) |>
+    httr2::req_user_agent("plasmoRUtils searchRS") |>
+    httr2::req_timeout(60) |>
+    httr2::req_retry(
+      max_tries = 3,
+      retry_on_failure = TRUE,
+      is_transient = function(resp) {
+        httr2::resp_status(resp) %in% c(408, 429, 500, 502, 503, 504)
+      }
+    ) |>
+    httr2::req_perform()
+  
+  txt <- httr2::resp_body_string(resp)
+  
+  html <- rvest::read_html(txt)
+  body <- rvest::html_element(html, "body")
+  
+  rvest::html_text2(body)
+}

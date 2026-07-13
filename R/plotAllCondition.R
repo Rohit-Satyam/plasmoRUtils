@@ -2,12 +2,10 @@
 #'
 #' This function retrieves data from malaria.tools and generates expression value plots (in TPM) similar to those produced by the website. Use this function to create publication-ready plots.
 #'
-#' @importFrom ggsci scale_fill_nejm
 #' @importFrom plotly ggplotly
 #' @import dplyr
 #' @import stringr
 #' @import ggplot2
-#' @importFrom glue glue
 #' @import rvest
 #' @export
 #'
@@ -29,7 +27,10 @@ plotAllCondition <- function(geneID, returnData = FALSE, plotify = FALSE) {
     dplyr::filter(gene %in% geneID) %>%
     dplyr::pull(2)
 
-  url <- glue::glue("https://malaria.sbs.ntu.edu.sg/profile/download/plot/{index}")
+  url <- paste0(
+    "https://malaria.sbs.ntu.edu.sg/profile/download/plot/",
+    index
+  )
 
   df <- read.table(url, sep = "\t", header = TRUE) %>%
     mutate(group = stringr::str_split(condition, pattern = "[ :,]", n = 2, simplify = TRUE)[, 1])
@@ -51,7 +52,18 @@ plotAllCondition <- function(geneID, returnData = FALSE, plotify = FALSE) {
       panel.grid.minor.x = element_blank(),
       legend.position = "none"
     ) +
-    ggsci::scale_fill_nejm()
+    ggplot2::scale_fill_manual(
+      values = c(
+        "#BC3C29FF",
+        "#0072B5FF",
+        "#E18727FF",
+        "#20854EFF",
+        "#7876B1FF",
+        "#6F99ADFF",
+        "#FFDC91FF",
+        "#EE4C97FF"
+      )
+    )
 
   if (plotify) {
     return(plotly::ggplotly(plot))

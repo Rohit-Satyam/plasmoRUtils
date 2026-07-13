@@ -4,7 +4,6 @@
 #'
 #' @import dplyr
 #' @import biomaRt
-#' @importFrom glue glue glue_collapse
 #' @import drawProteins
 #' @export
 #'
@@ -38,9 +37,17 @@ plotDomain <- function(geneID, mart = "protists_mart", gset = "pfalciparum_eg_ge
 
   ## track the failed ID
   failed <- setdiff(geneID, converted$inputid)
-  if (length(failed) > 0) message(glue::glue("Following genes failed to convert to Uniprot ID and will not be plotted: {failed}\n"))
+  if (length(failed) > 0) {
+    message(
+      paste0(
+        "Following genes failed to convert to Uniprot ID and will not be plotted: ",
+        paste(failed, collapse = " "),
+        "\n"
+      )
+    )
+  }
 
-  plotdata <- drawProteins::get_features(glue::glue_collapse(converted$uniprotid, sep = " ")) %>%
+  plotdata <- drawProteins::get_features(paste(converted$uniprotid, collapse = " ")) %>%
     drawProteins::feature_to_dataframe() %>%
     dplyr::mutate(entryName = converted$inputid[match(accession, converted$uniprotid)])
 

@@ -1,6 +1,6 @@
 Package: plasmoRUtils
 Title: A one-stop R Package for Plasmodium and other Apicomplexan parasite-related Bioinformatics analysis
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
     person("Rohit", "Satyam", , "rohit.satyam@kaust.edu.sa", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9311-4992")),
@@ -29,11 +29,8 @@ Imports:
     easyPubMed,
     echarts4r,
     ggplot2,
-    ggpubr,
-    ggsci,
-    glue,
     gt,
-    httr,
+    httr2,
     jsonlite,
     magrittr,
     mgsub,
@@ -64,7 +61,6 @@ Suggests:
     knitr,
     NOISeq,
     pathfindR,
-    polyglotr,
     pRoloc,
     rmarkdown,
     rtracklayer,
@@ -73,9 +69,11 @@ Suggests:
     SingleCellExperiment,
     SingleR,
     styler,
+    testthat (>= 3.0.0),
     topGO,
     txdbmaker,
-    utils
+    utils,
+    vcr (>= 0.6.0)
 VignetteBuilder: 
     knitr
 biocViews:
@@ -83,6 +81,7 @@ Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
 URL: https://rohit-satyam.github.io/plasmoRUtils/
 BugReports: https://github.com/Rohit-Satyam/plasmoRUtils/issues
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

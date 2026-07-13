@@ -3,7 +3,6 @@
 #' A convenience function to quickly fetch preconfigured table of Signal Peptide ranges, Pathways, Pubmed entries related to genes, Annotations and etc from database of your choice such as PlasmoDB, ToxoDB, PiroplasmaDB among other VEuPathDB pathogen databases.
 #'
 #' @import dplyr tidyr
-#' @importFrom glue glue
 #' @export
 #'
 #' @param org Full name of organism of interest as specified in VEuPathDB. To find the exact name of the organism, use `listVeupathdb` function.
