@@ -3,7 +3,7 @@
 #' This function provides effective length (sum of lengths of exons) of the genes for calculating TPM values.
 #'
 #' @import dplyr
-#' @import GenomicFeatures
+#' @import GenomicFeatures txdbmaker
 #' @importFrom BiocGenerics width
 #' @importFrom IRanges reduce
 #' @export
@@ -23,7 +23,7 @@
 #' getEffLen("/data/PlasmoDB-67_Pfalciparum3D7.gtf")
 #' }
 getEffLen <- function(gtf = NULL, format = "gff3") {
-  txdb <- GenomicFeatures::makeTxDbFromGFF(gtf, format = format)
+  txdb <- txdbmaker::makeTxDbFromGFF(gtf, format = format)
   exonic <- GenomicFeatures::exonsBy(txdb, by = "gene")
   red_exonic <- IRanges::reduce(exonic)
 
