@@ -1,4 +1,6 @@
 
+> Note (21-08-2026): The functions associated with VEuPathDB databases have become dysfunctional due to migration from Oracle to PostgreSQL and API has become private, requiring API Keys. We are looking into this and will update the functions soon.
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # plasmoRUtils <img  src="man/figures/logo.png" align="right" geight="139"/>
