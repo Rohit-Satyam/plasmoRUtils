@@ -21,7 +21,7 @@ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://choosealicens
 [![minimal R
 version](https://img.shields.io/badge/R%3E%3D-4-6666ff.svg)](https://cran.r-project.org/)
 [![packageversion](https://img.shields.io/badge/Package%20version-1.1.2-turquoise.svg?style=flat-square)](https://github.com/Rohit-Satyam/plasmoRUtils/releases/tag/v1.1.2)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2026--08--22-yellowgreen.svg)]([https://github.com/Rohit-Satyam/plasmoRUtils/commits/main](https://github.com/Rohit-Satyam/plasmoRUtils/commits/release/1.1.2/))
+[![Last-changedate](https://img.shields.io/badge/last%20change-2026--08--22-yellowgreen.svg)](%5Bhttps://github.com/Rohit-Satyam/plasmoRUtils/commits/main%5D(https://github.com/Rohit-Satyam/plasmoRUtils/commits/release/1.1.2/))
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
