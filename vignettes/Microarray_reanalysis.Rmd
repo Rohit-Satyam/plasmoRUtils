@@ -1,0 +1,249 @@
+---
+title: "Microarray data reanalysis"
+
+author:
+- name: "Rohit Satyam, Alberto Maillo, David Gomez-Cabrero, Arnab Pain"
+  affiliation: "King Abdullah University of Science & Technology, Saudi Arabia"
+abstract: >
+  This section covers examplary code on how one can reanalyze microarray data of Apicomplexans (here Plasmodium as an example).
+date: "`r format(Sys.Date(), '%d %B, %Y')`"
+package: plasmoRUtils
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+    toc: true
+    number_sections: true
+vignette: |
+  %\VignetteIndexEntry{Microarray data reanalysis}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{BiocStyle}
+  %\VignettePackage{plasmoRUtils}
+  %\VignetteEngine{knitr::rmarkdown}
+bibliography: references.bib
+link-citations: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,cache = TRUE, warning = FALSE,message = FALSE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+This vignette covers the example on how users can reanalyze the Microarray data sets by updating the annotations from VEuPathDB partially using `toGeneid()` and other R packages. It is important to do reanalysis before deciding to reuse such dataset as annotations evolve since it will affect the outcome of the analysis.
+
+With release 71 of VEuPathDB, only users with subscription and API key can access the database programmatically. Use `usethis::edit_r_environ(scope = "user")` to add VEuPathDB API using `VEUPATHDB_API_KEY` variable. By default, all the functions look for `VEUPATHDB_API_KEY` variable for API key. Should you store your key using any other variable, supply it using `api_key` argument in VEuPathDB asscoiated functions.
+
+# Importing the dataset
+
+```{r}
+## Loading necessary libraries
+library(GEOquery)      # Querying the dataset from GEO
+library(plasmoRUtils)  # For gene ID conversion
+library(Biostrings)    # For sequence alignment
+library(GenomicRanges) # For handling genomic coordinates
+library(dplyr)         # For data wrangling
+library(GeneStructureTools) # to remove the gene/transcript versions
+```
+
+For demonstration purpose, we will use `GSE66669` from [@painter2018genome]. This is a time-series dataset that is often used by *Plasmodium* community to annotate single cell atlas and deconvolution tasks.
+
+The `getGEO` function retrieves the Microarray dataset as *ExpressionSet* object from GEO database. We will make a new column by combining the Old Ids and the probe sequence since we know that there can be multiple sequence for one probe ID and same probe ID for multiple genes.
+
+```{r}
+gse <- getGEO("GSE66669")
+gse <- gse$GSE66669_series_matrix.txt.gz
+class(gse)
+dim(gse) ## 14499 rows and 144 samples
+featureNames(gse) %>% head() ## The features are ID number.
+## probe information is stored in 
+probedf <- fData(gse)
+head(probedf)
+
+## There are 29 rows for which ORF entry is missing 
+table(probedf$ACCESSION_STRING==probedf$ORF)
+probedf$ACCESSION_STRING[probedf$ACCESSION_STRING!=probedf$ORF]
+probedf$ORF[probedf$ACCESSION_STRING!=probedf$ORF]
+
+## Let's make unique identifiers by combining the Accession_string and sequence for those probes for which toGeneid function will fail
+gse@featureData@data$unique <- paste0(gse@featureData@data$SEQUENCE,":",gse@featureData@data$ACCESSION_STRING)
+probedf <- fData(gse)
+```
+
+The row names matches the ID column. We can see that the old "PFL" ids are present in the `ACCESSION_STRING` or `ORF` columns while the probe sequences are present in `SEQUENCE` column. Some 29 rows contains some *Plasmodium* ncRNAs (RNAzID), followed by several control probes (see table below).
+
+| Probe ID | What it Is | Purpose |
+|------------------------|------------------------|------------------------|
+| **RNAzID:1537, 1678, 1743, 1876, 2132, 3370, 3967** | Predicted non-coding RNAs in the *Plasmodium* genome (identified by the RNAz algorithm) | To assay expression (or absence thereof) of structured ncRNAs—often used to explore regulatory RNAs or as negative controls when comparing to mRNA signals. |
+| **U5RNA** | U5 small nuclear RNA | A core spliceosomal snRNA—serves as a housekeeping control for RNA integrity and normalization. |
+| **S1-type_28S:rRNA** | A segment of 28S ribosomal RNA | Ribosomal RNA control for overall RNA loading and quality. |
+| **ScGlucanSynthase** | *Saccharomyces cerevisiae* glucan synthase transcript | Spike-in control from yeastto: monitor labeling efficiency and hybridization consistency. |
+| **ScCD** | *S. cerevisiae* cytosine deaminase | Another yeast spike-in for normalization across arrays. |
+| **ScUPRT** | *S. cerevisiae* uracil phosphoribosyltransferase | Yeast spike-in control for detection sensitivity. |
+| **tetR** | Bacterial tetracycline repressor | Exogenous control to check for cross-hybridization and labeling. |
+| **Rluciferase** | Renilla luciferase | Reporter gene spike-in: assesses labeling and detection linearity. |
+
+```{r}
+## Let's use toGeneid function to map most of the old gene IDs to new IDs
+new <- toGeneid(inputid = unique(probedf$ACCESSION_STRING),from = "old",to = "ensembl") %>% 
+  unique()
+
+## Some old IDs might map to two or more new PF3D7 Ids. In such case we will remove them from new df and add them to unmapped IDs to resolve them using probe sequence pattern search
+multimap <- table(new$`Previous ID(s)`)[table(new$`Previous ID(s)`)>1] %>% names() %>% unique()
+new <- subset(new, !(`Previous ID(s)` %in% multimap))
+
+## Check which IDs failed to map
+unmappedids <- setdiff(probedf$ACCESSION_STRING,new$`Previous ID(s)`) %>% unique()
+unmappedprobes_df <- subset(probedf, ACCESSION_STRING %in% unmappedids) %>% 
+  .[,c("ACCESSION_STRING" ,"SEQUENCE","unique")] %>%
+  unique()
+
+## Merge the new Ids df with probedf
+probedf <- S4Vectors::merge(probedf, new, all.x=TRUE, all.y=FALSE, by.x="ACCESSION_STRING", by.y="Previous ID(s)", sort=FALSE)
+
+```
+
+Now, we observe that 130 probes failed to map using `toGeneid` function. This would now require us to map the probe sequence to mRNA sequences to figure out which gene the probes belongs to. Since these probe sequences are short and 60 bp long, we can perform pattern search using `Biostrings::vmatchPattern()`. Below we will use `max.mismatch=0` in order to identify exact sequence and avoid false positives. However, you can increase the mismatches if a lot sequences fails to map.
+
+```{r}
+## retriving mRNA from plasmoDB
+readVEuPathFasta <- function(
+    url,
+    api_key = Sys.getenv("VEUPATHDB_API_KEY"),
+    timeout = 60
+) {
+  
+  tmp <- tempfile(fileext = ".fasta")
+  on.exit(unlink(tmp), add = TRUE)
+  
+  resp <- httr2::request(url) |>
+    httr2::req_auth_bearer_token(api_key) |>
+    httr2::req_timeout(timeout) |>
+    httr2::req_perform()
+  
+  httr2::resp_body_raw(resp) |>
+    writeBin(tmp)
+  
+  Biostrings::readDNAStringSet(tmp)
+}
+
+mrna_fasta <- readVEuPathFasta(
+    paste0(
+        "https://plasmodb.org/a/service/raw-files/release-71/",
+        "Pfalciparum3D7/fasta/data/",
+        "PlasmoDB-71_Pfalciparum3D7_AnnotatedTranscripts.fasta"
+    )
+)
+
+## Simplifying the transcript IDs by removing descriptions
+names(mrna_fasta) <- stringr::str_split(names(mrna_fasta), pattern = "[ ]", n = 2, simplify = T)[, 1]
+
+## we will use sequences to name the list because there are cases where the gene such as PFC0590c have more than two probes but they map to transcripts from different genes
+probe_matches_zero <- lapply(unmappedprobes_df$SEQUENCE, function(seq) {
+  vmatchPattern(seq, mrna_fasta, max.mismatch = 0) 
+}) %>% setNames(unmappedprobes_df$unique)
+
+## Checking if the unique column strings are actually unique or not
+unique(unmappedprobes_df$unique) %>% length()
+
+## The function above will return empty IRanges for those transcripts for which there was no match found
+## So let's filter them
+
+zero <- sapply(probe_matches_zero, function(x) names(mrna_fasta)[lengths(x) > 0])
+
+## Removing the versions from transcript IDs to convert them to gene IDs. This df will be smaller than unmappedprobes_df because some sequence match will not return any hits
+zero <- sapply(zero, function(x) unique(removeVersion(x))) %>% 
+  plyr::ldply(.,.fun = rbind) %>% ## Convert list to df 
+  unique()
+
+zero %>% head()
+
+## Sanity check if ID column has any duplicates
+table(zero$.id)[table(zero$.id)>1]
+
+## Combine these results with probedf
+probedf <- S4Vectors::merge(probedf, zero[,c(1,2)], all.x=TRUE, all.y=FALSE, by.x="unique", by.y=".id", sort=FALSE)
+probedf$`Gene ID`[is.na(probedf$`Gene ID`)] <- probedf$`1`[is.na(probedf$`Gene ID`)]
+probedf <- probedf %>% select(-`1`, -unique)
+
+## The sequences that failed to map are either control genes or genes that have been removed from the annotations
+probedf$ACCESSION_STRING[is.na(probedf$`Gene ID`)] %>% unique()
+
+## We will replace the missing Gene IDs with their previous accessions.
+gse@featureData@data$`Gene ID`[is.na(gse@featureData@data$`Gene ID`)] <- gse@featureData@data$ACCESSION_STRING[is.na(gse@featureData@data$`Gene ID`)] 
+rownames(probedf) <- probedf$ID
+
+```
+
+Since we used zero mismatches, ideally the probe sequence should match with only one gene IDs (even if it maps to multiple transcripts of same gene me remove the version from transcript IDs so we have 1 probe to 1 gene mapping). However, there could be causes where the probe sequence maps without any mismatch to multiple locations. Such ids will have hits in column `2` and `3`. One such probe is `Pfa_snoR_42a` which confidently maps with `PF3D7_0601800`, `PF3D7_0115050` and `PF3D7_0800650`. We confirm this with BlastN as well in PlasmoDB. All these three genes codes for small nucleolar RNA but are present on `6`, `1` and `8` chromosome respectively. Since chromosomal information is absent from `probedf`, we can't say for sure which gene this probe represents. So we will use first hit and assign it to `PF3D7_0115050`
+
+# Updating the feature data in the Expression set
+
+We will now use limma's `avereps` function to get the average values per gene ID.
+
+```{r}
+gse@featureData@data  <- probedf[rownames(gse@featureData@data),]
+
+## retriving the intensity matrix
+matrix <- assayData(gse)$exprs
+library(limma)
+probes2genes <- fData(gse)$`Gene ID` %>% setNames(fData(gse)$ID)
+
+gene.mat <- avereps(matrix, ID=probes2genes, method="median")
+
+gene.mat %>% head() %>% .[,1:5]
+```
+
+# Checking correlation between samples of time series data
+
+This GSE series contains 3 time-series condition:
+
+1.  Total RNA reflects the combined pool of transcripts in the cell at each timepoint, ( similar to standard RNA-seq.)
+
+2.  Labeled (transcribed) captures only nascent RNA from the 10 min 4-TU pulse (a snapshot of transcription rate). For some reason Malaria Cell Atlas people use this.
+
+3.  Unlabeled (stabilized) captures the pre-existing pool not labeled during the pulse (a proxy for RNA stability/turnover).
+
+For more details read [Nascent in vivo mRNA labeling and capture throughout the IDC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6037754/#Sec12) section of the paper.
+
+```{r}
+temp <- gse[,gse$characteristics_ch1.2=="sample type: Total RNA"]
+matrix <- assayData(temp)$exprs
+gene.mat <- avereps(matrix, ID=probes2genes, method="mean")
+gene.mat <- gene.mat[!(is.na(rownames(gene.mat))),] ## Some rows names have NA i don't know why!!
+## Remove control genes
+gene.mat <- gene.mat[grepl("PF3D7",rownames(gene.mat)),]
+colnames(gene.mat) <- temp$`time (hours post invasion):ch1`
+
+gene.mat <- log2(normalizeQuantiles(gene.mat) + 1)
+
+boxplot(gene.mat)
+coormat <- cor(gene.mat)
+pheatmap::pheatmap(coormat, cluster_rows = F, cluster_cols = F, border_color = NA)
+```
+
+For labeled data
+
+```{r}
+temp <- gse[,gse$characteristics_ch1.2=="sample type: 4-TU Labeled RNA"]
+matrix <- assayData(temp)$exprs
+gene.mat <- avereps(matrix, ID=probes2genes, method="mean")
+gene.mat <- gene.mat[!(is.na(rownames(gene.mat))),] ## Some rows names have NA i don't know why!!
+gene.mat <- gene.mat[grepl("PF3D7",rownames(gene.mat)),]
+colnames(gene.mat) <- temp$`time (hours post invasion):ch1`
+gene.mat <- log2(normalizeQuantiles(gene.mat) + 1)
+boxplot(gene.mat)
+coormat <- cor(gene.mat)
+pheatmap::pheatmap(coormat, cluster_rows = F, cluster_cols = F, border_color = NA)
+
+```
+
+# Session Info {.unnumbered}
+
+```{r}
+utils::sessionInfo()
+```
+
+# References {.unnumbered}

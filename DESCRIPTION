@@ -1,0 +1,87 @@
+Package: plasmoRUtils
+Title: A one-stop R Package for Plasmodium and other Apicomplexan parasite-related Bioinformatics analysis
+Version: 1.1.2
+Authors@R: c(
+    person("Rohit", "Satyam", , "rohit.satyam@kaust.edu.sa", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-9311-4992")),
+    person("Alberto", "Maillo", , "alberto.ruizdeinfante@kaust.edu.sa", role = c("aut", "ctb")),
+    person("David", "Gomez-Cabrero", , "david.gomezcabrero@kaust.edu.sa", role = "aut"),
+    person("Arnab", "Pain", , "arnab.pain@kaust.edu.sa", role = "aut")
+  )
+Maintainer: Rohit Satyam <rohit.satyam@kaust.edu.sa>
+Description: plasmoRUtils package provides ability to access several
+    specialized databases majorly for Plasmodium and several other
+    apicomplexans, carry out gene ID conversions and fetch annotation for
+    provided gene IDs. In addition, it also provides functions to quickly
+    carry out enrichment analysis of gene expression data.
+License: MIT + file LICENSE
+Depends: 
+    janitor,
+    methods,
+    R (>= 4.0),
+    readr,
+    rlang
+Imports: 
+    bio3d,
+    bookdown,
+    data.table,
+    dplyr,
+    easyPubMed,
+    echarts4r,
+    ggplot2,
+    gt,
+    httr2,
+    jsonlite,
+    magrittr,
+    mgsub,
+    plotly,
+    plyr,
+    purrr,
+    randomcoloR,
+    renv,
+    reshape2,
+    rvest,
+    S4Vectors,
+    scales,
+    stats,
+    stringr,
+    tibble,
+    tidyr
+Suggests: 
+    AnnotationForge,
+    BiocGenerics,
+    BiocStyle,
+    biomaRt,
+    Biostrings,
+    DESeq2,
+    drawProteins,
+    GenomeInfoDb,
+    GenomicFeatures,
+    IRanges,
+    knitr,
+    NOISeq,
+    pathfindR,
+    pRoloc,
+    rmarkdown,
+    rtracklayer,
+    scuttle,
+    Seurat,
+    SingleCellExperiment,
+    SingleR,
+    styler,
+    testthat (>= 3.0.0),
+    topGO,
+    txdbmaker,
+    utils,
+    vcr (>= 0.6.0)
+VignetteBuilder: 
+    knitr
+biocViews:
+Encoding: UTF-8
+LazyData: true
+LazyDataCompression: xz
+Roxygen: list(markdown = TRUE)
+URL: https://rohit-satyam.github.io/plasmoRUtils/
+BugReports: https://github.com/Rohit-Satyam/plasmoRUtils/issues
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

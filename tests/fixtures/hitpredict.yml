@@ -1,0 +1,82 @@
+http_interactions:
+- request:
+    method: GET
+    uri: https://www.hitpredict.org/proteins.php?Value=Q8I1Q4&Species=36329
+  response:
+    status: 200
+    headers:
+      Date: Mon, 06 Jul 2026 20:25:52 GMT
+      Server: Apache/2.4.29 (Ubuntu)
+      Vary: Accept-Encoding
+      Content-Encoding: gzip
+      Content-Length: '1332'
+      Content-Type: text/html; charset=UTF-8
+    body:
+      string: "<!doctype html>\r\n<html lang=\"en\">\r\n  <head>\r\n    <meta charset=\"utf-8\">\r\n
+        \   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\r\n
+        \   <title>HitPredict - High confidence protein-protein interactions</title>\r\n
+        \   <!--Gloabl site tage (gtag.js) - Google Analytics -->\r\n    <script async
+        src=\"https://www.googletagmanager.com/gtag/js?id=UA-138563868-3\"></script>\r\n
+        \   <script>\r\n    window.dataLayer = window.dataLayer || [];\r\n    function
+        gtag(){dataLayer.push(arguments);}\r\n    gtag('js', new Date());\r\n    gtag('config',
+        'UA-138563868-3');\r\n    </script>\r\n    <script src=\"./bootstrap-5.3.3-dist/js/bootstrap.min.js\"></script>\r\n
+        \   <script src=\"./bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js\"></script>\r\n
+        \   <link href=\"./bootstrap-5.3.3-dist/css/bootstrap.min.css\" rel=\"stylesheet\">\r\n
+        \ </head>\r\n  <body>\r\n\t<header>\r\n\t\t<div class=\"px-3 py-2 text-bg-dark
+        border-bottom\">\r\n\t\t\t<div class=\"container\">\r\n\t\t\t<div class=\"d-flex
+        flex-wrap align-items-center justify-content-center justify-content-lg-start\">\t\t\t\t\r\n\t\t\t\t<a
+        href=\"/\" class=\"d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white
+        text-decoration-none\">\r\n\t\t\t\t\t<img align=center border=0 height=75px
+        src=\"./images/HitPredict20.jpg\">&nbsp;&nbsp;<h1>HitPredict</h1>\r\n\t\t\t\t</a>\r\n\t\r\n\t\t\t\t<ul
+        class=\"nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small\">\r\n\t\t\t\t\t<li>\r\n\t\t\t\t\t\t<a
+        href=\"./index.html\" class=\"nav-link text-white\">\r\n\t\t\t\t\t\tHome\r\n\t\t\t\t\t\t</a>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t\t<li>\r\n\t\t\t\t\t\t<a
+        href=\"./stats.html\" class=\"nav-link text-white\">\r\n\t\t\t\t\t\tStatistics\r\n\t\t\t\t\t\t</a>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t\t<li>\r\n\t\t\t\t\t\t<a
+        href=\"./help.html\" class=\"nav-link text-white\">\r\n\t\t\t\t\t\tHelp\r\n\t\t\t\t\t\t</a>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t\t<li>\r\n\t\t\t\t\t\t<a
+        href=\"./about.html\" class=\"nav-link text-white\">\r\n\t\t\t\t\t\tAbout\r\n\t\t\t\t\t\t</a>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t</header>\r\n
+        \ <div class=\"container mt-5\">\r\n\t\t <p><u>Results from HitPredict v15
+        (11Aug2025 release)</u></p>\r\n\t\t<div class=\"row justify-content-center\">\r\n\t\t\t<div
+        class=\"col-12\">\r\n      1 protein(s) found for your query: <b>Q8I1Q4</b><br><br>
+        Click on the Protein below to view its interactions.\r\n\t\t\t</div>\r\n\t
+        \t</div>\r\n\t</div>\r\n\r\n  <div class=\"container mt-5\">\r\n\t\t<div class=\"row
+        justify-content-center\">\r\n\t\t\t<div class=\"col-12\">\r\n        <table
+        class=\"table table-sm table-striped table-bordered\">\r\n          <thead>\r\n
+        \           <tr>\r\n              <th>Protein</th>\r\n              <th>Species</th>\r\n
+        \             <th>Name</th>\r\n              <th>Description</th>\r\n              <th>Interactions</th>\r\n
+        \           </tr>\r\n          </thead>\r\n          <tbody>\r\n                      <tr>\r\n
+        \             <td align=\"left\"><p>\r\n              <a class=tdblue href=\"./htp_int.php?Value=18139\"
+        title=\"Protein Information\">Q8I1Q4</a></p></td>\r\n              <td align=\"left\"
+        class=tdnormal> Plasmodium falciparum 3D7</td>\r\n              <td align=\"left\"
+        class=\"tdnormal\"> Q8I1Q4, PF3D7_0418300</td>                  \r\n              <td
+        align=\"left\" class=\"tdnormal\"> Uncharacterized protein </td>\t    \r\n
+        \             <td align=\"left\" class=\"tdnormal\"><p class=\"prot\">\r\n
+        \             <a class=tdblue href=\"./htp_int.php?Value=18139\" title=\"Total
+        number of interactions\">17</a></p></td>\r\n            </tr>\r\n                    </tbody>\r\n
+        \       </table>\r\n\t\t\t</div>\r\n\t \t</div>\r\n\t</div>\r\n  <div class=\"container\">\r\n
+        \       <div class=\"row justify-content-center\">\r\n          <div class=\"col-12\">\r\n
+        \           <hr class=\"hr-small\"/>\r\n          </div>\r\n        </div>\r\n
+        \    </div>\r\n\r\n\t <div class=\"container\">\r\n\t\t<div class=\"row justify-content-center\">\r\n\t\t\t<div
+        class=\"col-12\">\r\n\t\t\t\t<p class=\"h6 text-center\">Service provided
+        by <a href=\"https://www.combinatics.com\" class=\"tdblue\" target=\"_blank\">Combinatics,
+        Japan</a></p>\r\n\t\t\t\t<p class=\"small text-center\">Last updated: 11Aug2025</p>\r\n\t\t\t</div>\r\n\t
+        \t</div>\r\n\t </div>\r\n\r\n  </body>\r\n</html>\r\n\r\n"
+  recorded_at: 2026-07-06 20:25:52
+- request:
+    method: GET
+    uri: https://www.hitpredict.org/htp_int_txt.php?Value=18139
+  response:
+    status: 200
+    headers:
+      Date: Mon, 06 Jul 2026 20:25:53 GMT
+      Server: Apache/2.4.29 (Ubuntu)
+      Content-Disposition: attachment; filename=htp_prot18139.txt
+      Vary: Accept-Encoding
+      Content-Encoding: gzip
+      Content-Length: '440'
+      Content-Type: text/plain;charset=UTF-8
+    body:
+      string: "*************Generated from HitPredict database (11Aug2025)*************\nList
+        of interactions for Q8I1Q4|Q8I1Q4|Plasmodium falciparum 3D7|Interactions:17\n************************************************************************\nInteraction\tInteractor\tName\tExperiments\tCategory\tMethod
+        Score\tAnnotation Score\tInteraction Score\tConfidence\n1301310\tQ8I398\tQ8I398\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301311\tQ8I3J7\tQ8I3J7\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301312\tQ8I5D2\tMSP9\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301313\tQ8IAM0\tQ8IAM0\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301314\tQ8IB88\tQ8IB88\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301315\tQ8IEM0\tQ8IEM0\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301316\tQ8IET8\tQ8IET8\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301317\tQ8III3\tQ8III3\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301318\tQ8IIP2\tQ8IIP2\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301319\tQ8IJG6\tQ8IJG6\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n1301320\tQ8IKF6\tQ8IKF6\t1\tHigh-throughput\t0.49\t0.16\t0.282\tHigh\n86712\tC0H4E0\tC0H4E0\t1\tHigh-throughput\t0.39\t0.16\t0.251\tLow\n86784\tC0H4U4\tC0H4U4\t1\tHigh-throughput\t0.39\t0.16\t0.251\tLow\n86859\tC0H586\tC0H586\t1\tHigh-throughput\t0.39\t0.16\t0.251\tLow\n86921\tC0H5G3\tC0H5G3\t1\tHigh-throughput\t0.39\t0.16\t0.251\tLow\n47066\tA0A5K1K7X4\tA0A5K1K7X4\t1\tHigh-throughput\t0.35\t0.16\t0.238\tLow\n1301321\tQ9U0N1\tQ9U0N1\t1\tHigh-throughput\t0.35\t0.16\t0.238\tLow\n*************Service
+        provided by Combinatics****************************\n"
+  recorded_at: 2026-07-06 20:25:53
+recorded_with: VCR-vcr/2.1.0

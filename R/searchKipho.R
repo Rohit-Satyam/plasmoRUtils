@@ -1,0 +1,60 @@
+#' Fetch Kinases and Phosphatases from Kipho Database
+#'
+#' This function provides ability to query your gene IDs to KiPho Database.
+#'
+#' @import dplyr
+#' @import rvest
+#' @export
+#'
+#' @param org Abbreviation of organism of interest.
+#' \itemize{
+#' \strong{Species:}
+#' \item pb: \emph{Plasmodium berghii}
+#' \item pv: \emph{Plasmodium vivax}
+#' \item pf: \emph{Plasmodium falciparum}
+#' \item pc: \emph{Plasmodium chabaudi}
+#' }
+#' @param type Type of protein class i.e. "kinase" or "phosphatase". Default: "kinase"
+#'
+#'
+#' @return df This function returns a dataframe of kinases/phosphatases in Plasmodium species.
+#' @examples
+#' \dontrun{
+#' test <- searchKipho(org="pf")
+#' }
+#'
+
+
+searchKipho <- function(org = "pf", type = "kinase") {
+  baseurl <- "https://bioinfo.icgeb.res.in/kipho/"
+  urls <- list(
+    kinase = list(
+      pb = paste0(baseurl, "kinase_PBANKA.php"),
+      pv = paste0(baseurl, "kinase_PVX.php"),
+      pf = paste0(baseurl, "kinase_PF3D7.php"),
+      pc = paste0(baseurl, "kinase_PCHAS.php")
+    ),
+    phosphatase = list(
+      pb = paste0(baseurl, "phosphatase_PBANKA.php"),
+      pv = paste0(baseurl, "phosphatase_PVX.php"),
+      pf = paste0(baseurl, "phosphatase_PF3D7.php"),
+      pc = paste0(baseurl, "phosphatase_PCHAS.php")
+    )
+  )
+
+  if (type %in% c("kinase", "phosphatase")) {
+    url <- urls[[type]][[org]]
+    table <- rvest::read_html(url) %>%
+      rvest::html_nodes("table") %>%
+      rvest::html_table(fill = TRUE) %>%
+      .[[1]] %>%
+      dplyr::filter(!apply(., 1, function(row) all(row == ""))) %>%
+      dplyr::filter(!stringr::str_detect(`Gene ID`, "Gene ID")) %>%
+      dplyr::select(-tail(names(.), 5))
+    table$`Previous ID(s)` <- gsub("[\t, ]+", ";", table$`Previous ID(s)`)
+
+    return(table)
+  } else {
+    message("Invalid type argument. Use type = 'kinase' or type = 'phosphatase'.")
+  }
+}
