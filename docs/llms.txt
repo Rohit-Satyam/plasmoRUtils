@@ -1,0 +1,214 @@
+# plasmoRUtils
+
+`plasmoRUtils` enables users to connect to several *Plasmodium* and
+other apicomplexan databases via R interface and provides simple
+functions to carry out other bioinformatics tasks which are non-trival
+for parasite bioinformatic analysis. For further details, we recommend
+you read our
+[preprint](https://www.biorxiv.org/content/10.1101/2025.07.30.667718v1).
+
+## Installation
+
+The easiest way to download package is as follows
+
+``` r
+
+pak::pkg_install("Rohit-Satyam/plasmoRUtils", dependencies = TRUE)
+```
+
+If the above method fails, try the following steps:
+
+1.  Before downloading the package, install the following dependencies.
+
+``` r
+
+cranpkgs <- c('BiocManager','randomcoloR', 'janitor', 'readr', 'rlang', 'dplyr', 'rvest',
+'easyPubMed', 'plyr', 'scales', 'ggplot2', 'tidyr', 'tibble', 'data.table', 'plotly',
+'purrr', 'stringr', 'S4Vectors', 'magrittr', 'bio3d', 'httr2', 'jsonlite', 'gt', 'mgsub', 'reshape2','pathfindR')
+
+install.packages(setdiff(cranpkgs, rownames(installed.packages())), dependencies = TRUE)
+
+biocpkgs <- c("rmarkdown","pRoloc","knitr","BiocStyle","DESeq2","styler","utils","IRanges",
+"BiocGenerics","rtracklayer","scuttle","txdbmaker","topGO","drawProteins","GenomicFeatures",
+"biomaRt","AnnotationForge","Biostrings","GenomeInfoDb","SingleCellExperiment",
+"SingleR","NOISeq","GenomicRanges","BSgenome")
+
+BiocManager::install(setdiff(biocpkgs, rownames(installed.packages())), dependencies = TRUE)
+```
+
+2.  You can install the development version of `plasmoRUtils` using:
+
+``` r
+
+devtools::install_github("Rohit-Satyam/plasmoRUtils")
+remotes::install_github('Rohit-Satyam/plasmoRUtils')
+```
+
+## Check installation
+
+Once dependencies are installed, the package can be loaded as follows:
+
+``` r
+
+# Once installed load the library as
+library(plasmoRUtils)
+
+## To re-check if all the dependencies that are required by plasmoRUtils are installed
+install_dependencies()
+```
+
+## Documentation
+
+The documentation of this package is available at the following:
+
+1.  [Introduction to
+    plasmoRUtils](https://rohit-satyam.github.io/plasmoRUtils/articles/Introduction_to_plasmoRUtils.html)
+2.  [Accessing component databases of
+    VEuPathDB](https://rohit-satyam.github.io/plasmoRUtils/articles/Gene_ID_Conversion.html)
+3.  [Other useful
+    functions](https://rohit-satyam.github.io/plasmoRUtils/articles/Miscellaneous_function.html)
+4.  [RNASeq: Importance of
+    reanalysis](https://rohit-satyam.github.io/plasmoRUtils/articles/Need_for_reanalysis.html)
+5.  [Microarray data
+    reanalysis](https://rohit-satyam.github.io/plasmoRUtils/articles/Microarray_reanalysis.html)
+
+## To-do List
+
+1.  Write a wrapper function, easypathFindR, to perform Pathway
+    enrichment analysis quickly.
+2.  Write a function to make String PPI quickly.
+
+## Contributing
+
+We’re excited to have you contribute to this package! If you’d like to
+help out, try to follow the same style and conventions used in the
+current functions - where it makes sense, of course. If you have any
+ideas or suggestions, don’t hesitate to reach out—opening a GitHub issue
+is usually the best way to start the conversation.
+
+> Just a heads up: this project has a Contributor Code of Conduct, so by
+> getting involved, you’re agreeing to play by those rules. Thanks for
+> helping make this project better!
+
+# Package index
+
+## Install dependencies
+
+- [`install_dependencies()`](https://rohit-satyam.github.io/plasmoRUtils/reference/install_dependencies.md)
+  : Install package dependencies
+
+## Search functions
+
+These functions provides CLI access to various databases
+
+- [`searchApicoTFdb()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchApicoTFdb.md)
+  : Fetch data from ApicoTFdb
+- [`searchHP()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchHP.md)
+  : Fetch Protein-protein interaction for given gene IDs from Hit
+  Predict database
+- [`searchIpDb()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchIpDb.md)
+  : Fetch orthologs from InParanoiDb
+- [`searchKipho()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchKipho.md)
+  : Fetch Kinases and Phosphatases from Kipho Database
+- [`searchMidb()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchMidb.md)
+  : Fetch Minor intron tables from MiDB
+- [`searchMiip()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchMiip.md)
+  : Fetch Protein-Protein interactions from MIIP database
+- [`searchPhPl()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchPhPl.md)
+  : Fetch data tables from PhenoPlasm database
+- [`searchPM()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchPM.md)
+  : Fetch articles from PubMed database
+- [`searchRS()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchRS.md)
+  : Fetch articles from Research Square database
+- [`searchTedConsensus()`](https://rohit-satyam.github.io/plasmoRUtils/reference/searchTedConsensus.md)
+  : Fetch protein domains from TED database
+
+## Fetching tables from databases
+
+These functions helps users fetch annotations and data in form of tables
+from various databases.
+
+- [`getEffLen()`](https://rohit-satyam.github.io/plasmoRUtils/reference/getEffLen.md)
+  : Get effective gene lengths form TPM calculation
+- [`getMpmp()`](https://rohit-satyam.github.io/plasmoRUtils/reference/getMpmp.md)
+  : Quickly fetch data from MPMP database
+- [`getpairedOrthologs()`](https://rohit-satyam.github.io/plasmoRUtils/reference/getpairedOrthologs.md)
+  : Fetch paired orthologs
+- [`getPreconfiguredTable()`](https://rohit-satyam.github.io/plasmoRUtils/reference/getPreconfiguredTable.md)
+  : Get pre-configured tables
+- [`getPreconfiguredTableOrthomcl()`](https://rohit-satyam.github.io/plasmoRUtils/reference/getPreconfiguredTableOrthomcl.md)
+  : Get pre-configured tables from OrthoMCL-DB
+- [`getTable()`](https://rohit-satyam.github.io/plasmoRUtils/reference/getTable.md)
+  : Get tables with custom fields
+- [`listipdb()`](https://rohit-satyam.github.io/plasmoRUtils/reference/listipdb.md)
+  : List species metadata present in InparanoiDB 9
+- [`listMCA()`](https://rohit-satyam.github.io/plasmoRUtils/reference/listMCA.md)
+  : List data sets in MCA
+- [`listOrthomcl()`](https://rohit-satyam.github.io/plasmoRUtils/reference/listOrthomcl.md)
+  : List species metadata present in OrthoMCL
+- [`listVeupathdb()`](https://rohit-satyam.github.io/plasmoRUtils/reference/listVeupathdb.md)
+  : List genomes and metadata in VEuPathDB
+
+## Plotting functions
+
+These functions helps users make publication ready plots quickly.
+
+- [`plotAllCondition()`](https://rohit-satyam.github.io/plasmoRUtils/reference/plotAllCondition.md)
+  : Making plots similar to malaria.tools
+- [`plotDomain()`](https://rohit-satyam.github.io/plasmoRUtils/reference/plotDomain.md)
+  : Plotting domains on protein body
+- [`plotStageSpecific()`](https://rohit-satyam.github.io/plasmoRUtils/reference/plotStageSpecific.md)
+  : Making plots similar to malaria.tools
+
+## Easy functions
+
+Perform ruting bioinfrmatic tasks on non-model organisms quick and easy.
+
+- [`easyAF2Signal()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easyAF2Signal.md)
+  : Check Signal peptide fidelity
+- [`easyExpPlot()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easyExpPlot.md)
+  : Plot Normalised expression quickly
+- [`easyGOPlot()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easyGOPlot.md)
+  : Quick ORA result plotting
+- [`easyLabelTransfer()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easyLabelTransfer.md)
+  : Easy label transfer from reference data
+- [`easymakeOrgdb()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easymakeOrgdb.md)
+  : Create Org.db package quickly
+- [`easyMCA()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easyMCA.md)
+  : Fetch data from Malaria Cell Atlas
+- [`easyNOISeqAnnot()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easyNOISeqAnnot.md)
+  : Get NOISeq::readData ready annotations
+- [`easyPhplplottbl()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easyPhplplottbl.md)
+  : Quickly plot PhenoPlasm summary tables
+- [`easytopGO()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easytopGO.md)
+  : Performing quick ORA analysis
+- [`easyTPM()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easyTPM.md)
+  : Calculate TPM values from count data
+- [`easyTxDbmaker()`](https://rohit-satyam.github.io/plasmoRUtils/reference/easyTxDbmaker.md)
+  : Quickly make TxDb object
+
+## ID conversin
+
+Convert one ID type to another
+
+- [`pdb2uniprot()`](https://rohit-satyam.github.io/plasmoRUtils/reference/pdb2uniprot.md)
+  : Quick mapping of PDB IDs to Uiprot IDs
+- [`toGeneid()`](https://rohit-satyam.github.io/plasmoRUtils/reference/toGeneid.md)
+  : Convert Other IDs to Ensembl gene IDs
+
+# Articles
+
+### Vignettes
+
+- [Introduction to
+  plasmoRUtils](https://rohit-satyam.github.io/plasmoRUtils/articles/Introduction_to_plasmoRUtils.md):
+- [Accessing component databases of
+  VEuPathDB](https://rohit-satyam.github.io/plasmoRUtils/articles/Gene_ID_Conversion.md):
+- [Other useful
+  functions](https://rohit-satyam.github.io/plasmoRUtils/articles/Miscellaneous_function.md):
+- [RNASeq: Need for
+  reanalysis?](https://rohit-satyam.github.io/plasmoRUtils/articles/Need_for_reanalysis.md):
+- [Retrieving
+  Orthologs](https://rohit-satyam.github.io/plasmoRUtils/articles/retrieving_orthologs.md):
+- [Microarray data
+  reanalysis](https://rohit-satyam.github.io/plasmoRUtils/articles/Microarray_reanalysis.md):

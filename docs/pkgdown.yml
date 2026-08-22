@@ -1,0 +1,14 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  Gene_ID_Conversion: Gene_ID_Conversion.html
+  Introduction_to_plasmoRUtils: Introduction_to_plasmoRUtils.html
+  Microarray_reanalysis: Microarray_reanalysis.html
+  Miscellaneous_function: Miscellaneous_function.html
+  Need_for_reanalysis: Need_for_reanalysis.html
+  retrieving_orthologs: retrieving_orthologs.html
+last_built: 2026-08-22T00:35Z
+urls:
+  reference: https://rohit-satyam.github.io/plasmoRUtils/reference
+  article: https://rohit-satyam.github.io/plasmoRUtils/articles
