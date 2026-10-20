@@ -1,0 +1,478 @@
+---
+title: "Other useful functions"
+
+author:
+- name: "Rohit Satyam, Alberto Maillo, David Gomez-Cabrero, Arnab Pain"
+  affiliation: "King Abdullah University of Science & Technology, Saudi Arabia"
+abstract: >
+  This section covers the capability of plasmoRUtils to carry out other mundane bioinformatics tasks. 
+clean: false
+date: "`r format(Sys.Date(), '%d %B, %Y')`"
+package: plasmoRUtils
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Miscellaneous functions}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{BiocStyle} 
+  %\VignettePackage{plasmoRUtils}
+  %\VignetteEngine{knitr::rmarkdown}
+bibliography: references.bib
+link-citations: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, cache = TRUE, eval = TRUE, warning = FALSE, message = FALSE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+Other than search functions, the `r Rpackage("plasmoRUtils")` package offers various other functions that are routinely needed when performing bioinformatics analysis. Their usage is discussed below.
+
+With release 71 of VEuPathDB, only users with subscription and API key can access the database programmatically. Use `usethis::edit_r_environ(scope = "user")` to add VEuPathDB API using `VEUPATHDB_API_KEY` variable. By default, all the functions look for `VEUPATHDB_API_KEY` variable for API key. Should you store your key using any other variable, supply it using `api_key` argument in VEuPathDB associated functions.
+
+```{r}
+# Load package and some other useful packages by using
+suppressPackageStartupMessages(
+  suppressWarnings({
+    library(plasmoRUtils)
+    library(dplyr)
+    library(tibble)}))
+```
+
+## Making OrgDb and TxDb objects
+
+For a non-model organism, functions such as `clusterProfiler::enrichGO()` require an appropriate OrgDb annotation package. Unfortunately, this requires ability to understand and use `r Biocpkg("AnnotationDbi")` package. To make development of such packages quickly, we wrote a wrapper function that instantly creates a TAR file that can be used and shared by the user in no time.
+
+```{r, eval=FALSE}
+## List organism you are interested in making org.db package from VEuPathDB.
+## Use the links from PlasmoDB directly or provide locally saved GFF and GAF files.
+
+## Get the taxonomy ID using listVeupathdb(customFields = c("primary_key", "ncbi_tax_id"))
+
+# easymakeOrgdb() itself supports authenticated HTTPS URLs.
+# No extra temporary-file downloader is necessary.
+archive <- easymakeOrgdb( 
+  gff = "https://plasmodb.org/a/service/raw-files/release-71/Pfalciparum3D7/gff/data/PlasmoDB-71_Pfalciparum3D7.gff",
+  gaf = "https://plasmodb.org/a/service/raw-files/release-71/Pfalciparum3D7/gaf/PlasmoDB-71_Pfalciparum3D7_GO.gaf",
+  out.dir = "./annotation", taxid = 36329,
+  genus = "Plasmodium", sp = "falciparum3D7", version = "0.1.0",
+  maintainer = "Jane Doe <jane@example.org>",
+  api_key = Sys.getenv("VEUPATHDB_API_KEY"),
+  overwrite = TRUE
+)
+install.packages(archive, repos = NULL, type = "source")
+
+## Once the package is ready, one can use clusterProfiler as follows
+
+library(clusterProfiler)
+library(org.Pfalciparum3D7.eg.db)
+
+
+genes <- c("PF3D7_0102200", "PF3D7_0207400")
+bkg_genes <- AnnotationDbi::keys(org.Pfalciparum3D7.eg.db, keytype = "GID") # replace with all genes eligible in your assay
+ego <- enrichGO(gene          = genes,
+                universe      = bkg_genes,
+                OrgDb         = org.Pfalciparum3D7.eg.db,
+                keyType = "GID",
+                ont           = "BP",
+                minGSSize=3,
+                pAdjustMethod = "BH",
+                pvalueCutoff  = 0.05,
+                qvalueCutoff  = 0.05,
+        readable      = FALSE)
+```
+
+The function above will create an org.db tar file which can be installed and loaded to be used with `r Biocpkg("clusterProfiler")`.
+
+Similarly, if users want to make TxDb object in R to use other R packages such as `r Biocpkg("gDNAx")` used to access the genomic DNA contamination, they can do so easily using `easyTxDbmaker()` function.
+
+```{r, eval=FALSE}
+txdb <- easyTxDbmaker(
+ gff="ToxoDB-71_TgondiiME49.gff",
+ fasta="ToxoDB-71_TgondiiME49_Genome.fasta",
+ abbr="TgondiiME49",
+ taxid=508771,org = "Toxoplasma gondii ME49",
+ db = "ToxoDB release 68")
+
+```
+
+## Other easy functions
+
+Users are also provided with easy functions which are wrapper functions around routinely used to analyze bioinformatics data.
+
+### TPM normalization and visualization
+
+In this section we will see how we can calculate effective gene lengths from a GFF file followed by TPM normalization and visualize the resulting normalized matrix. These functions are provided since most of the RNASeq data present on VEuPathDb is TPM normalized and therefore make it easy to plot the database procured values alongside your own samples.
+
+```{r}
+
+# To calculate the effective length of the genes you can use the following function. Adding extra layer 
+# of code to fetch the GFF directly from database
+getEffLenVEuPath <- function(
+    url,
+    api_key = Sys.getenv("VEUPATHDB_API_KEY"),
+    timeout = 60
+) {
+
+  if (!nzchar(api_key)) {
+    stop(
+      "VEuPathDB API key is missing.",
+      call. = FALSE
+    )
+  }
+
+  tmp <- tempfile(fileext = ".gff")
+  on.exit(unlink(tmp), add = TRUE)
+
+  httr2::request(url) |>
+    httr2::req_auth_bearer_token(api_key) |>
+    httr2::req_timeout(timeout) |>
+    httr2::req_perform(path = tmp)
+
+  getEffLen(tmp)
+}
+
+getEffLenVEuPath(
+  "https://plasmodb.org/a/service/raw-files/release-71/Pfalciparum3D7/gff/data/PlasmoDB-71_Pfalciparum3D7.gff"
+) |>
+  head()
+```
+
+The above function returns a dataframe which can be fed to the `easyTPM()` function alongside the count matrix. The output retains matched gene lengths as its final column. TPM cannot be converted back to the original raw counts from TPM and gene length alone because the original library scaling factor is not retained. This is also helpful since the exon-intron boundaries are always evolving as the new data-sets become available.
+
+```{r}
+library(ggplot2)
+## Generating dummy effective length for a local demonstration
+gene_info <- data.frame(GeneID = c("PF3D7_0100100", "PF3D7_0100200", "PF3D7_0100300"), Length = c(6492, 996, 3984))
+
+## Making a dummy count matrix
+count_matrix <- matrix(c(10, 20, 30, 40, 50, 60),
+                       nrow = 3, ncol = 2,
+                       dimnames = list(c("PF3D7_0100100", "PF3D7_0100200", "PF3D7_0100300"), c("sample1", "sample2"))
+                       )
+
+## TPM normalization
+test <- easyTPM(count_matrix, gene_info) %>% rownames_to_column(var = "GeneID")
+
+## TPM visualization as a bubble plot
+df <- reshape2::melt(test[, -ncol(test)], id.vars = "GeneID", na.rm = TRUE) 
+easyExpPlot(df,x="variable",y="GeneID",value="value", type = "bubble")+labs(x="Samples",y="Gene IDs")
+```
+
+You can also plot normalized expression data as line plot if you have cluster of genes with similar pattern of expression. To demonstrate this we will use a subset of genes from [@Subudhi2020] time series dataset. We will perform TPM normalization, followed by log transformation and eventually use the Z-scores for visualization.
+
+```{r}
+
+data("subudhi2020")
+count_matrix <- SummarizedExperiment::assay(subudhi2020, "counts") %>% as.matrix()
+gene_info <- getEffLenVEuPath(
+  "https://plasmodb.org/a/service/raw-files/release-71/Pfalciparum3D7/gff/data/PlasmoDB-71_Pfalciparum3D7.gff"
+)
+
+# easyTPM() requires a length for every row.
+missing_lengths <- setdiff(rownames(count_matrix), gene_info$GeneID)
+if (length(missing_lengths)) stop("Missing exon-union lengths for ", length(missing_lengths),
+                                  " count-matrix genes; reconcile the annotation release.")
+normalised <- easyTPM(count_matrix, gene_info) 
+
+## Since normalized matrix have effective gene length column at the end
+logTransformed <- log2(as.matrix(normalised[, -ncol(normalised), drop = FALSE]) + 1)
+
+## Get z-scores
+# invariant genes have undefined standardized scores; retain NA for these rows.
+z.mat <- t(scale(t(logTransformed), scale = TRUE, center = TRUE)) %>% # per-gene Z-scores
+  as.data.frame() %>% tibble::rownames_to_column(var = "GeneID") 
+
+## Subsetting few genes of interest
+gois <- c("PF3D7_1476300","PF3D7_0220800","PF3D7_0936200","PF3D7_0402200","PF3D7_1401600","PF3D7_0831600","PF3D7_0204100","PF3D7_1458300","PF3D7_0935800","PF3D7_0929400","PF3D7_1439000","PF3D7_0905400","PF3D7_1334600","PF3D7_1121300","PF3D7_0302500","PF3D7_1232800","PF3D7_0310400","PF3D7_1001600")
+
+## Transforming data frame for visualisation
+df <- z.mat %>% 
+  subset(.,GeneID %in% gois) %>% 
+  reshape2::melt(., id.vars = "GeneID", na.rm = TRUE)
+
+easyExpPlot(df,x="variable",y="value",value="GeneID")+
+  labs(y="Z-scores",x="Samples")
+```
+
+`easyExpPlot()` can be used to plot expression values obtained from any kind of applied normalization and transformation.
+
+### Support for NOISeq `readData` function for non-model organism
+
+When using `r Biocpkg("NOISeq")` for QC, users are often required to provide various information alongside count matrices. These information includes biotype, chromosome, gc content, length of the features etc. These arguments are listed as optional but are required by `r Biocpkg("NOISeq")` package for making QC plots. To enable users to get these information from the same reference FASTA file and GFF file used by user for alignment, we wrote `easyNOISeqAnnot()` function that enable users to quickly get this information from GTF/GFF file and FASTA file and return a data frame. These can be provided as a URL or as locally stored files.
+
+```{r, eval=FALSE}
+gene_info <- easyNOISeqAnnot(
+ gff="ToxoDB-71_EpraecoxHoughton.gff",
+ fasta = "ToxoDB-71_EpraecoxHoughton_Genome.fasta",
+ name = "EpraecoxHoughton")
+
+gene_info %>% head()
+
+```
+
+You can now pass the data frame contents to `NOISeq::readData()` function as follows.
+
+```{r, eval=FALSE}
+data_NOISEQ <- NOISeq::readData(data = counts,
+                        length=setNames(gene_info$length, gene_info$gene_id),
+                        gc=setNames(gene_info$gc, gene_info$gene_id),
+                        biotype=setNames(gene_info$gene_biotype, gene_info$gene_id),
+                        chromosome = gene_info[,c("chr","starts","ends")],
+                        factors = meta)
+
+```
+
+### Check synchronization of Bulk RNASeq samples using `easyLabelTransfer()`
+
+`easyLabelTransfer()` is a wrapper function written around `r Biocpkg("SingleR")` `SingleR()` function to quickly use count matrices from Bulk/ Single cell Reference data sets to check synchronization (time point and stage) of the Parasite Bulk RNASeq samples and can be used for QC purposes.
+
+Here, for demonstration purpose, we will use single cell RNASeq data from Malaria Cell Atlas and use [@Subudhi2020] Bulk time-series dataset to transfer labels and see the distribution of the cells across different time points.
+
+Other data sets provided with the package includes:
+
+- Reanalyzed time course asexual Microarray dataset of *P. falciparum* 3D7 from [@painter2018genome]: `data("painter2018")`
+- Reanalyzed time course asexual Bulk RNASeq (Single-end) of *P. falciparum* 3D7 from [@toenhake2018chromatin]: `data("toenhake2018")`
+- Reanalyzed time course asexual Bulk RNASeq (Paired-end) of *P. falciparum* 3D7 from [@Kucharski2020]: `data("kucharski2020")`
+- Reanalyzed scRNAseq of *T. gondii* ME49 data from [@lou2024single]: `data("gubbels2024")`
+- Reanalyzed scRNAseq of *T. gondii* ME49 data from [@xue2020single]: `data("boothroyd2020")`
+- Reanalyzed asexual Bulk RNASeq (Paired-end) of *P. falciparum* 3D7 from [@Wichers2019]: `data("wichers2019")`
+- Reanalyzed time course gametocytes Bulk RNASeq (Paired-end) of *P. falciparum* 3D7 from [@jeninga2023]: `data("petter2023")`
+
+Next, Malaria cell atlas (MCA) is a database comprising of single cell data sets and can be accessed using the following functions.
+
+1.  `listMCA()` function enables you to filter and list scRNASeq data sets for which data download links are available. User can use this function to view a table to metadata about the dataset or download these datasets recursively rather than manually downloading single dataset at a time.
+2.  `easyMCA()` enables users to import the count matrix and metadata directly in the R environment directly. Written mainly for pipeline development.
+
+Now, lets use the function enlisted above alongside `easyLabelTransfer()` as shown below.
+
+> **Note:** `easyLabelTransfer()` returns a SingleR results object (typically a `DFrame`), which can be used with SingleR plotting functions.
+
+```{r}
+library(SingleR)
+set.seed(12458)
+## Fetching the URL
+mcalist <- listMCA()
+data("subudhi2020") ## reference dataset
+subudhi2020 <- subudhi2020[,1:42] ## Skipping samples after 43 Hpi since they highly correlate with 43hpi itself.
+
+## Using this reference set
+url <- "https://www.malariacellatlas.org/downloads/pf-ch10x-set4-biorxiv.zip"
+
+raw_counts <- easyMCA(url,type = "raw")
+rownames(raw_counts) <- gsub("-","_",rownames(raw_counts))
+meta <- easyMCA(url,type="data")
+
+## Retaining only Asexual stage cells and Lab isolates.
+meta <- subset(meta, meta$STAGE_LR %in% c("ring","trophozoite","schizont") & DAY != "Field")
+stopifnot(all(rownames(meta) %in% colnames(raw_counts))) 
+raw_counts <- as.matrix(raw_counts[, rownames(meta), drop = FALSE]) 
+storage.mode(raw_counts) <- "numeric" 
+
+## Filtering away field isolates and sexual stage cells
+
+labels <- easyLabelTransfer(queryCounts = raw_counts,
+                            refCounts = SummarizedExperiment::assay(subudhi2020, "counts"), 
+                            referenceMeta = as.data.frame(SummarizedExperiment::colData(subudhi2020)),
+                            labelCol = "timetag", 
+                            isrefBulk = TRUE, 
+                            de.n=200,
+                            fine.tune=TRUE) 
+
+table(labels$pruned.labels)
+
+df <- as.data.frame(table(labels$labels), stringsAsFactors = FALSE) 
+names(df) <- c("Timepoint", "Freq") 
+levels_order <- unique(as.character(subudhi2020$timetag)) 
+df$Timepoint <- factor(df$Timepoint, levels = levels_order) 
+
+ggplot2::ggplot(df, ggplot2::aes(x = Timepoint, y = Freq)) +
+  ggplot2::geom_col(fill = "#2595be") +
+  ggplot2::geom_text(ggplot2::aes(label = Freq), vjust = -0.2) +
+  ggplot2::labs(x = "Time points", y = "Number of cells") +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5))
+
+SingleR::plotScoreHeatmap(labels, show_colnames = FALSE,
+                           show.pruned = FALSE, cluster_cols = FALSE,
+                           cluster_rows = FALSE, rows.order = levels_order)
+```
+
+You can see that cells from some time points are underrepresented in our Malaria Cell Atlas.
+
+### GO Enrichment using `easytopGO()`
+
+VEuPathDB constituent database allow users to perform GO Enrichment analysis. However, there is no option to set the background genes and by default all the genes in the are used. This is not an ideal approach. Moreover, since Gene Ontologies are curated using different pipelines by different enrichment providers, the results might differ just based on source of Ontologies. Similarly the Ontology data might not be available in other databases such as BioMart and you would like to use custom GAF file.
+
+Users of parasite domain might wish to use GAF files provided by VEuPathDB constituent database and of specific genome assembly as per their hypothesis. To enable users to do that, GO enrichment analysis can be performed easily and quickly using our `easytopGO()` wrapper function. For Fisher testing, supply a uniquely named numeric vector of gene-level p-values (or adjusted p-values) for the selected genes, with gene IDs as names. The full eligible-gene universe **must** be supplied through `bkggset`. For KS testing, supply genuine gene-level p-values for **every** background gene. `weight01` remains the package default; choose `algo = "classic"` for conventional, ShinyGO-style Fisher ORA. Finally users can use `gaf` argument to supply .gaf file obtained from VEuPathDBs constituent database of interest.
+
+For well known organisms, Biomart Ontologies can also be used. In such case user has to provide `mart` argument and figure out key for Ensembl gene IDs . However, many times the parasite assemblies used as reference by Ensembl might not match with parasite assembly used by VEuPathDB. In such cases there might be mismatches between gene IDs (see one such issue [here](https://github.com/Huber-group-EMBL/biomaRt/issues/110)).
+
+You can also change `category` argument to specify which GO category you want to test enrichment for. Since for most of the parasites, sub-cellular localization and Molecular function information is sparingly available, "BP" has been set as the default.
+
+Results already generated by another enrichment tool are not valid `geneID` input to `easytopGO()`: supply gene-level scores for the selected genes and an explicit eligible-gene universe instead.
+
+```{r}
+library(topGO)
+# Making a named numeric vector of adjusted gene-level p-values (selected genes only).
+gois <- c("PF3D7_0102200","PF3D7_0207400","PF3D7_0207500","PF3D7_0207600","PF3D7_0207700","PF3D7_0207800","PF3D7_0207900","PF3D7_0208000","PF3D7_0404700","PF3D7_0501500","PF3D7_0502400","PF3D7_0618000","PF3D7_0731800","PF3D7_0930300","PF3D7_1116000","PF3D7_1247800","PF3D7_1334700")
+
+
+p_values <- c(1.767929e-49,3.886063e-148,6.459285e-269,0.000000e+00,6.842121e-132,
+5.282318e-178,1.140221e-224,1.625665e-100,6.177129e-08,1.484155e-03,2.789648e-10,2.300720e-12,7.450697e-30,3.417972e-89,4.846689e-73,1.207966e-11,4.173777e-51)
+names(p_values) <- gois
+
+## Using all genes captured as a background
+
+background.gset <- rownames(SummarizedExperiment::assay(subudhi2020, "counts"))
+stopifnot(all(names(p_values) %in% background.gset)) #selected genes must belong to the background
+
+easytopGOVEuPath <- function(
+    gaf,
+    api_key = Sys.getenv("VEUPATHDB_API_KEY"),
+    timeout = 60,
+    ...
+) {
+  if (!nzchar(api_key)) stop("VEuPathDB API key is missing.") 
+  gaf_tmp <- tempfile(fileext = ".gaf")
+
+  # Clean up after function finishes
+  on.exit(
+    unlink(c(gaf_tmp)),
+    add = TRUE
+  )
+
+  # Download GAF
+  httr2::request(gaf) |>
+    httr2::req_auth_bearer_token(api_key) |>
+    httr2::req_timeout(timeout) |>
+    httr2::req_perform(path = gaf_tmp)
+
+  # Pass the locally downloaded GAF to easytopGO()
+  easytopGO(geneID = p_values,
+            useGAF = TRUE,
+            useBiomart = FALSE,
+            gaf=gaf_tmp,
+            bkggset = background.gset, 
+            category = "BP", stats = "fisher",
+            algo = "classic", fdr = TRUE, correction = "BH", ...) 
+}
+
+
+## Performing ORA
+gores<- easytopGOVEuPath(gaf = "https://plasmodb.org/a/service/raw-files/release-71/Pfalciparum3D7/gaf/PlasmoDB-71_Pfalciparum3D7_GO.gaf")
+
+## Plotting the results. 
+goplt <- easyGOPlot(gores, title = "GO Biological processes", limit = 20, sortby = "padj")
+goplt
+
+## Making circular plot
+goplt + ggplot2::theme_minimal() + ggplot2::coord_polar() + ggplot2::ylab("") 
+
+```
+
+`easyGOPlot()` is an adapted and modified version of what has been provided by [Kevin Blighe](https://www.biostars.org/p/471549/) on Biostars. You can use `limit` argument to limit number of terms to be plotted.`easytopGO()` also enables users to use Org.db package if available for your organism of interest. An examplary code is given below
+
+```{r, eval=FALSE}
+library(org.Pfalciparum3D7.eg.db)
+pfdb <- org.Pfalciparum3D7.eg.db
+
+## res is the result obtained from DESeq2
+res <- ggVolcano::add_regulate(res, log2FC_name = "log2FoldChange",
+             fdr_name = "padj",log2FC = 1, fdr = 0.05)
+res <- res[!duplicated(res$`Gene ID`),] ## ensuring only one entry of gene duplicates is retained
+
+
+ok <- !is.na(res$padj) & !is.na(res$`Gene ID`)
+background.gset <- res$`Gene ID`[ok]
+down <- ok & !is.na(res$log2FoldChange) &
+  res$regulate == "Up"
+geneList <- stats::setNames(res$padj[down], res$`Gene ID`[down]) 
+
+gores.fisher <- easytopGO(
+  geneID = geneList, 
+  bkggset = background.gset,
+  algo = "classic",
+  OrgDb = pfdb, orgdb_keytype = "GID", 
+  useBiomart = FALSE, useGAF = FALSE,
+  stats = "fisher", category = "BP", 
+  fdr = TRUE, correction = "BH"
+)
+
+```
+
+> When using Fisher (perform on Upregs and Downregs separately), you answer the following question: "Is the proportion of significant genes (up or down regulated genes) inside this specific GO term significantly higher than the proportion of significant genes across the rest of the genome?"
+
+> When using KS, you answer the following question: "Do the genes belonging to this specific GO term lay toward the very top of my p-value ranking compared to a random distribution?". However, if you split the genes into categories such as genesets with positive fold change and negative foldchange, your question would be "Which GO terms have stronger differential-expression signals among positively/negatively changing genes?"
+
+```{r, eval=FALSE}
+## Examplary code to use KS
+
+# Retain eligible genes with positive fold changes
+# Exclude missing adjusted p-values
+ok.up <- !is.na(res$`Gene ID`) &
+  nzchar(as.character(res$`Gene ID`)) &
+  !is.na(res$log2FoldChange) &
+  res$log2FoldChange > 0 &
+  !is.na(res$padj) &
+  !is.na(res$pvalue) &
+  is.finite(res$pvalue) &
+  res$pvalue >= 0 &
+  res$pvalue <= 1
+
+up_universe <- res[ok.up, , drop = FALSE]
+
+# Using genuine raw p-values as continuous KS scores because we are using a continuous ranking statistic. BH-adjusted p-values can also be used, but adjustment may introduce extra ties and change the ranking.
+up_ks_vector <- stats::setNames(
+  up_universe$pvalue,
+  as.character(up_universe$`Gene ID`)
+)
+
+# Use exactly the same genes as the KS background
+up_background <- names(up_ks_vector)
+
+# Perform KS enrichment
+gores.ks.up <- easytopGO(
+  geneID = up_ks_vector,
+  bkggset = up_background,
+  algo = "classic",
+  gaf = "PlasmoDB-71_Pfalciparum3D7_GO.gaf",
+  useBiomart = FALSE,
+  useGAF = TRUE,
+  stats = "ks",
+  category = "BP",
+  fdr = TRUE,
+  correction = "BH"
+) # Which GO terms have stronger differential-expression signals among positively/negatively changing genes
+
+
+```
+
+### Screening the Signal Peptides from PDBs
+
+We also offer a convenient function, `easyAF2Signal()`, to diagnose potential false-positive signal peptides using SignalP predictions from the VEuPathDB database and AlphaFold2 structures, based on an observational study conducted by [@Sanaboyana2024]. The authors found that putative N-terminal signal-peptide regions (often approximately 20–30 amino acids) are typically disengaged from the protein body and lack atomic contacts, and AlphaFold2 attempts to model them in a similar way.
+
+`easyAF2Signal()` is an R equivalent with slight modifications to the Fortran code provided by the authors, which reports additional information, such as the number of residues remaining after pLDDT filtering.
+
+We did this modification because, if all the signal peptide residues have low pLDDT scores and are filtered out, no residues will remain to calculate contacts with the protein body, resulting in zero contacts. This could give a false impression that the first 25 amino acids are signal peptides, but it cannot be confirmed, as the zero-contact observed is due to no residues remaining after filtering, not because the signal peptide was disengaged from the protein body.
+
+```{r}
+easyAF2Signal("https://alphafold.ebi.ac.uk/files/AF-A0A140KXW6-F1-model_v6.pdb")
+```
+
+In the example above, we see that signal peptide has low mean pLDDT score and therefore there are no residues left post filtering of bad quality residues leading to zero residue-residue counts `res_res_conts`. Thus a zero-contact result caused by filtering out all residues is inconclusive, not evidence of a signal peptide.
+
+# Session Info {.unnumbered}
+
+```{r, eval=TRUE}
+utils::sessionInfo()
+```
+
+# References {.unnumbered}

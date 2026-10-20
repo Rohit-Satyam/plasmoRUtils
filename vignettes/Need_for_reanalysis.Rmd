@@ -1,0 +1,274 @@
+---
+title: "RNASeq: Need for reanalysis?"
+
+author:
+- name: "Rohit Satyam, Alberto Maillo, David Gomez-Cabrero, Arnab Pain"
+  affiliation: "King Abdullah University of Science & Technology, Saudi Arabia"
+abstract: >
+  This section examines how annotations evolve across successive VEuPathDB releases. As exon–intron boundaries are continually refined with incoming sequencing data, tracking shifts in effective gene length enables users to decide whether existing published datasets warrant reanalysis based on the magnitude of those changes.  
+clean: false
+date: "`r format(Sys.Date(), '%d %B, %Y')`"
+package: plasmoRUtils
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{RNASeq: Need for reanalysis?}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{BiocStyle} 
+  %\VignettePackage{plasmoRUtils}
+  %\VignetteEngine{knitr::rmarkdown}
+bibliography: references.bib
+link-citations: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, cache = TRUE, eval = TRUE, warning = FALSE, message = FALSE, 
+  comment = "#>"
+)
+```
+
+# Introduction
+
+In the bioinformatics community, it is common to reuse published RNA-seq count or normalized count data without reprocessing, often overlooking important technical differences such as the version of genome annotation. Assembly updates typically include revisions to:
+
+-   **GFF files**, where gene models and exon‐intron structures are updated, UTRs redefined etc.
+-   **GAF files**, where GO terms are revised based on newly published evidence
+
+For RNA-seq, these updates can substantially affect downstream analyses (e.g., over-representation or pathway enrichment). These changes are often documented in the **NEWS** sections of VEuPathDB.
+
+For instance, in *Plasmodium* and *Toxoplasma*, two key assembly updates were:
+
+-   [Release 51 (16 Mar 2021)](https://plasmodb.org/plasmo/app/static-content/PlasmoDB/news.html#PlasmoDB51Released) for **PlasmoDB**
+-   [Release 66 (28 Nov 2023)](https://toxodb.org/toxo/app/static-content/ToxoDB/news.html#ToxoDB66Released) for **ToxoDB**, which included extensive gene‐model revisions
+
+For RNA-seq, we focus on two annotation features that can affect quantification and downstream biological interpretation. These include changes in:
+
+1.  **Number of Genes**
+2.  **Exon–intron boundaries:** Measured here using the **union of annotated exons per gene**. This is an exon-union length, not an RNA-seq fragment-adjusted effective transcript length.
+
+In the example below, we will use *Plasmodium* and *Toxoplasma* releases and the `r Rpackage("plasmoRUtils")` function `getEffLen()` to track how effective gene lengths shift across versions.
+
+With release 71 of VEuPathDB, only users with subscription and API key can access the database programmatically. Use `usethis::edit_r_environ(scope = "user")` to add VEuPathDB API using `VEUPATHDB_API_KEY` variable. By default, all the functions look for `VEUPATHDB_API_KEY` variable for API key. Should you store your key using any other variable, supply it using `api_key` argument in VEuPathDB associated functions.
+
+# Assessing Changes in Gene Number
+
+We will compare seven releases (`24, 30, 40, 50, 60, 68, and 71`) for both *Plasmodium* and *Toxoplasma*. From the NEWS section, we know that in *Plasmodium*, several loci initially annotated as rRNAs, lncRNAs, or coding genes were later removed, and the mitochondrial genome of PF3D7 was revised in [2019](https://pubmed.ncbi.nlm.nih.gov/31080894/). Similarly, *Toxoplasma* TGME49 gene models underwent extensive updates in release 66.
+
+```{r}
+library(plasmoRUtils)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(ggpubr) 
+
+releases <- c(24, 30, 40, 50, 60, 68, 71) 
+
+getEffLenVEuPath <- function(
+    url,
+    api_key = Sys.getenv("VEUPATHDB_API_KEY"),
+    timeout = 120
+) {
+
+  if (!nzchar(api_key)) {
+    stop(
+      "VEuPathDB API key is missing.",
+      call. = FALSE
+    )
+  }
+
+  tmp <- tempfile(fileext = ".gff")
+  on.exit(unlink(tmp), add = TRUE)
+
+  httr2::request(url) |>
+    httr2::req_auth_bearer_token(api_key) |>
+    httr2::req_timeout(timeout) |>
+    httr2::req_perform(path = tmp)
+
+  getEffLen(tmp)
+}
+
+
+## Fetching GFFs from PlasmoDB and calculating effective lengths
+pf3d7.gffs <- lapply(releases, function(x){
+ paste0("https://plasmodb.org/a/service/raw-files/release-",x,"/Pfalciparum3D7/gff/data/PlasmoDB-",x,"_Pfalciparum3D7.gff") %>% getEffLenVEuPath() 
+}) %>% setNames(releases) 
+
+## Fetching GFFs from ToxoDB and calculating effective lengths
+tgme49.gffs <- lapply(releases, function(x){
+  Sys.sleep(20) ## because VEuPathDB gives timeout if too many files are fetched
+  paste0("https://toxodb.org/a/service/raw-files/release-",x,"/TgondiiME49/gff/data/ToxoDB-",x,"_TgondiiME49.gff") %>% getEffLenVEuPath()
+}) %>% setNames(releases)
+
+## Let's plot changes in number of genes 
+pf3d7.ngenes<- lapply(pf3d7.gffs, nrow)  %>% setNames(releases) %>% plyr::ldply()
+tgme49.ngenes<- lapply(tgme49.gffs, nrow)  %>% setNames(releases) %>% plyr::ldply()
+
+ggpubr::ggline(pf3d7.ngenes,x=".id",y="V1", label = TRUE, color = "#2595be", fill = "#2595be")+labs(x="Releases",y="No. of Genes")+theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+
+ggpubr::ggline(tgme49.ngenes,x=".id",y="V1", label = TRUE, color = "#2595be", fill = "#2595be")+labs(x="Releases",y="No. of Genes")+theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+The plotted values describe the number of annotated gene IDs with computable exon-union lengths in each selected release. These counts should not be interpreted as a direct count of genes gained or lost without matching gene identifiers across releases.
+
+# Assessing the difference in Effective gene lengths
+
+To compare relative variation in exon-union length across releases, we calculate the coefficient of variation:
+
+`CV (%) = 100 × standard deviation / mean`
+
+A gene with unchanged exon-union length across releases has CV = 0. Higher CV indicates greater relative variability; for example, a 100-bp difference matters more for a 200-bp feature than for a 5,000-bp feature.
+
+We will calculate CV using following steps:
+
+1.  Because gene IDs may vary across releases, we will first convert unambiguous legacy gene IDs to current IDs using `toGeneid()` and retain genes represented in all selected releases.
+2.  In old annotations like release 24, some genes coding for multiple transcripts are present as separate gene entries each coding for 1 transcripts often denoted by versions before them such as `PF3D7_0618900.1,PF3D7_0618900.2`. This issue has been fixed in latest releases. To handle this we will remove the versions from gene IDs and average the exon-union lengths for duplicate legacy gene rows for descriptive comparison; this does not replace transcript-aware quantification.
+3.  Calculate CV for genes with complete release coverage and identify those with CV greater than zero.
+
+```{r}
+# map only unambiguous legacy IDs to a current gene ID.
+map_legacy_ids <- function(df, annotation, organism, database) {
+  legacy <- setdiff(unique(df$GeneID), unique(annotation$`Gene ID`))
+  if (!length(legacy)) return(df)
+  map <- toGeneid(legacy, from = "old", to = "ensembl") %>%
+    dplyr::select(`Input ID`, `Gene ID`) %>%
+    dplyr::distinct() %>%
+    dplyr::group_by(`Input ID`) %>%
+    dplyr::filter(dplyr::n_distinct(`Gene ID`) == 1L) %>%
+    dplyr::ungroup()
+  ix <- match(df$GeneID, map$`Input ID`)
+  replace <- !is.na(ix)
+  df$GeneID[replace] <- map$`Gene ID`[ix[replace]]
+  df
+}
+
+
+###  Step1
+# Remove version suffix from GeneIDs
+df <- pf3d7.gffs %>% plyr::ldply() %>%
+  mutate(GeneID = sub("\\.[0-9]+$", "", GeneID)) 
+
+annot <- getTable(org = "Plasmodium falciparum 3D7", db = "plasmodb")
+df <- map_legacy_ids(df, annot, "Plasmodium falciparum 3D7", "plasmodb") 
+subdf <- df %>% dplyr::filter(GeneID %in% annot$`Gene ID`) 
+
+###  Step 2 
+# Aggregate length per gene across releases
+df_agg <- subdf %>%
+  group_by(.id, GeneID) %>%
+  summarise(mean_length = round(mean(Length, na.rm = TRUE)), .groups = "drop") %>%
+  pivot_wider(names_from = GeneID, values_from = mean_length, values_fill = NA) %>%
+  column_to_rownames(".id") %>%
+  as.matrix() %>% { stopifnot(setequal(rownames(.), as.character(releases))); .[, colSums(!is.na(.)) == length(releases), drop = FALSE] } 
+
+###  Step 3
+# Coefficient of variation across releases
+cv <- apply(df_agg, 2, function(x) (sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)) * 100) %>%
+  sort(decreasing = TRUE)
+
+## How many genes have their effective exon length change >100 bp between versions 50 and 71
+table((df_agg["71", ] - df_agg["50", ]) > 100) ##4434
+
+## Check for how many genes the effective length has changed
+table(cv > 0, useNA = "ifany")
+hist(cv[is.finite(cv)], main = "Variation in exon-union length", xlab = "CV (%)") 
+
+## Let's filter top 20 genes whose effective length has changed drastically and see what they are
+
+annot %>%
+  dplyr::select(`Gene ID`, `Product Description`) %>% 
+  dplyr::distinct(`Gene ID`, .keep_all = TRUE) %>% 
+  dplyr::filter(`Gene ID` %in% utils::head(names(cv), 20L)) %>%
+  dplyr::mutate(cv = unname(cv[match(`Gene ID`, names(cv))])) %>% 
+  dplyr::arrange(dplyr::desc(cv))
+
+# plot top 2 variable genes
+plts <- names(cv)[1:2] %>%
+  lapply(function(gid) {
+    df %>%
+      filter(GeneID == gid) %>%
+      ggpubr::ggline(x = ".id", y = "Length",color = "#2595be", fill = "#2595be") +
+      labs(title = gid, x = "Release", y = "Effective Length") +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+  })
+
+library(sjPlot)
+plot_grid(plts)
+
+```
+
+These comparisons show how annotation changes can alter exon-union lengths. An observed difference in gene models motivates reassessing older quantifications, but does not itself prove that every corresponding RNA-seq read count will change.
+
+> If you are working on annotation of hypothetical genes, you should be cautious about which assembly you use since your gene might appear to be down regulated as per old annotation but this might change with change in the current annotation.
+
+Let's recycle the code above for *Toxoplasma*.
+
+```{r}
+###  Step1
+# Remove version suffix from GeneIDs
+df <- tgme49.gffs %>% plyr::ldply() %>%
+  mutate(GeneID = sub("\\.[0-9]+$", "", GeneID)) # strip terminal version suffix
+
+annot <- getTable(org = "Toxoplasma gondii ME49", db = "toxodb")
+df <- map_legacy_ids(df, annot, "Toxoplasma gondii ME49", "toxodb")
+subdf <- df %>% dplyr::filter(GeneID %in% annot$`Gene ID`)
+
+###  Step 2 
+# Aggregate length per gene across releases
+df_agg <- subdf %>%
+  group_by(.id, GeneID) %>%
+  summarise(mean_length = round(mean(Length, na.rm = TRUE)), .groups = "drop") %>%
+  pivot_wider(names_from = GeneID, values_from = mean_length, values_fill = NA) %>%
+  column_to_rownames(".id") %>%
+  as.matrix() %>% { stopifnot(setequal(rownames(.), as.character(releases))); .[, colSums(!is.na(.)) == length(releases), drop = FALSE] } 
+
+###  Step 3
+# Coefficient of variation across releases
+cv <- apply(df_agg, 2, function(x) (sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)) * 100) %>%
+  sort(decreasing = TRUE)
+
+## How many genes have their effective exon length change >100 bp
+table((df_agg["71", ] - df_agg["60", ]) > 100) # 2136
+
+## Check for how many genes the effective length has changed
+table(cv > 0, useNA = "ifany")
+hist(cv[is.finite(cv)], main = "Variation in exon-union length", xlab = "CV (%)")
+
+## Let's filter top 20 genes whose effective length has changed drastically and see what they are
+
+annot %>%
+  dplyr::select(`Gene ID`, `Product Description`) %>%
+  dplyr::distinct(`Gene ID`, .keep_all = TRUE) %>% 
+  dplyr::filter(`Gene ID` %in% utils::head(names(cv), 20L)) %>%
+  dplyr::mutate(cv = unname(cv[match(`Gene ID`, names(cv))])) %>% 
+  dplyr::arrange(dplyr::desc(cv))
+
+# plot top 2 variable genes
+plts <- names(cv)[1:2] %>%
+  lapply(function(gid) {
+    df %>%
+      filter(GeneID == gid) %>%
+      ggpubr::ggline(x = ".id", y = "Length",color = "#2595be", fill = "#2595be") +
+      labs(title = gid, x = "Release", y = "Effective Length") +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+  })
+
+library(sjPlot)
+plot_grid(plts)
+
+```
+
+The same procedure shows which shared *Toxoplasma* genes changed their exon-union lengths between the selected releases. 
+
+# Discussion
+
+The scope of reannotation influences the comparability of legacy datasets; whether reprocessing is required depends on the type of analysis, genome assembly, annotation changes and quantification method. A prior survey of PlasmoDB datasets suggested that many published analyses relied on annotations predating release 51; any reported counts should be interpreted relative to the survey date rather than as live database statistics. For analyses sensitive to gene-model changes, reprocessing against a documented, up-to-date reference is preferable when compatible raw data are available. When reanalysis is warranted, users should document the precise reference assembly, annotation release and quantification workflow.
+
+# Session {-}
+
+```{r, eval=TRUE}
+utils::sessionInfo()
+```

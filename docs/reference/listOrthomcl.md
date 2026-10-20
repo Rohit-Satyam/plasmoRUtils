@@ -1,0 +1,42 @@
+# List species metadata present in OrthoMCL
+
+A convenience function to quickly fetch the species related vocabulary
+of ≥ 857 species used by [OrthoMCL](https://orthomcl.org/orthomcl/app)
+database. This function helps users choose numeric IDs of the organisms
+between which they wish to fetch the paired orthologs. See also:
+[`getpairedOrthologs()`](https://rohit-satyam.github.io/plasmoRUtils/reference/getpairedOrthologs.md).
+
+## Usage
+
+``` r
+listOrthomcl(api_key = Sys.getenv("VEUPATHDB_API_KEY"))
+```
+
+## Arguments
+
+- api_key:
+
+  Character. VEuPathDB API key used for authentication. By default, the
+  value is obtained from the `VEUPATHDB_API_KEY` environment variable.
+
+## Value
+
+A data frame containing information about species present in OrthoMCL
+and their database associated ID.
+
+## Details
+
+User should note that the numeric IDs used by OrthoMCL are not stable
+and changes upon every update. So an ID which was previously assigned to
+`Plasmodium falciparum 3D7` might get assigned to a new organism in new
+release. Therefore users are encouraged to run this function prior to
+running of
+[`getpairedOrthologs()`](https://rohit-satyam.github.io/plasmoRUtils/reference/getpairedOrthologs.md)
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+listOrthomcl()
+} # }
+```
