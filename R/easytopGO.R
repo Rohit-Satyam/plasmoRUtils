@@ -44,7 +44,7 @@
 #'   optional `padj`, and associated/selected genes. The `gene_universe`
 #'   attribute gives available, feasible and selected-feasible counts. When
 #'   `return_GOdata = TRUE`, returns a `topGOdata` object. Full descriptions
-#'   of GO terms truncated by GenTable are restored when pRoloc is installed.
+#'   of GO terms truncated by GenTable are restored when AnnotationDbi is installed.
 #' @export
 #' @examples
 #' \dontrun{
