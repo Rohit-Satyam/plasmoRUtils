@@ -94,12 +94,12 @@
 #' @keywords internal
 # Revised .usetopGO() for plasmoRUtils.
 # Retains the original local names and final output columns.
-# Requires topGO; pRoloc is optional for restoring truncated GO terms.
+# Requires topGO.
 
 .usetopGO <- function(stats = "fisher", category = "BP", geneID, bkggset,
                       gene_2_GO = NULL,
                       algo = "weight01", fdr = FALSE,
-                      correction = "BY", cutoff = 0.05,
+                      correction = "BH", cutoff = 0.05,
                       go_cutoff = 0.05, return_GOdata = FALSE,
                       OrgDb = NULL, orgdb_keytype = "GID") {
   pkgs <- c("topGO", "biomaRt", "AnnotationForge")
@@ -116,8 +116,7 @@
   }
   
   require(topGO)
-
-
+  
   ## 1. Validate analysis options and gene-level input.
   stats <- match.arg(stats, c("fisher", "ks"))
   category <- match.arg(category, c("BP", "MF", "CC"))
@@ -178,8 +177,7 @@
   }
 
   ## Accept a pre-loaded OrgDb object directly, including custom GID DBs.
-  ## topGO already Depends on AnnotationDbi; resolve its exported generic
-  ## dynamically rather than importing or attaching it in this package.
+  ## topGO already Depends on AnnotationDbi; 
   if (!is.null(OrgDb)) {
     if (!is.null(gene_2_GO)) {
       stop("Supply either OrgDb or gene_2_GO, not both")
@@ -330,21 +328,41 @@
   rownames(goEnrichment) <- NULL
 
   ## 5. Restore complete descriptions where topGO has truncated terms.
+  
+  .goIdToTerm <- function(go_ids) {
+  go_ids <- as.character(go_ids)
+  terms <- rep(NA_character_, length(go_ids))
+  names(terms) <- go_ids
+  valid <- !is.na(go_ids) & nzchar(go_ids)
+  if (!any(valid)) return(terms)
+  annotation <- AnnotationDbi::select(
+    GO.db::GO.db,
+    keys = unique(go_ids[valid]),
+    columns = "TERM",
+    keytype = "GOID"
+  )
+
+  terms[valid] <- annotation$TERM[
+    match(go_ids[valid], annotation$GOID)
+  ]
+
+  return(terms)
+}
+
   if (nrow(goEnrichment)) {
     incomplete <- which(!is.na(goEnrichment$Term) &
       grepl("\\.\\.\\.$", trimws(goEnrichment$Term)))
     if (length(incomplete)) {
-      if (requireNamespace("pRoloc", quietly = TRUE)) {
-        full_terms <- pRoloc::goIdToTerm(
-          as.character(goEnrichment$GO.ID[incomplete]),
-          names = FALSE, keepNA = TRUE
+      if (requireNamespace("AnnotationDbi", quietly = TRUE)) {
+        full_terms <- .goIdToTerm(
+          as.character(goEnrichment$GO.ID[incomplete])
         )
         valid <- which(!is.na(full_terms) & nzchar(trimws(full_terms)))
         if (length(valid)) {
           goEnrichment$Term[incomplete[valid]] <- unname(full_terms[valid])
         }
       } else {
-        warning("pRoloc is not installed; some GO descriptions remain truncated.",
+        warning("AnnotationDbi is not installed; install it.",
           call. = FALSE
         )
       }
